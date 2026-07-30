@@ -57,7 +57,8 @@ public class App {
 
         }
 
-        System.out.println("\nThank you for using the University Enrollment System.");
+        System.out.println("\nExiting the application...");
+        System.out.println("Thank you for using the University Enrollment System!");
 
         input.close();
 
