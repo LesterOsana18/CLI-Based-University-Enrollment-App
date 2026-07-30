@@ -8,9 +8,9 @@ import java.sql.SQLException;
 public class DbConnection {
 
     // Database connection parameters
-    private static final String URL = "";
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
+    private static final String URL = ""; // Insert your database URL here
+    private static final String USERNAME = "root";
+    private static final String PASSWORD = ""; // Insert your database password here (if applicable)
 
     // Create and return a database connection
     public Connection getConnection() throws SQLException {
