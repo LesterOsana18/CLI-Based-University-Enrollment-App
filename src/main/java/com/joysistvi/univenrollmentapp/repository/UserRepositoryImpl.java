@@ -90,7 +90,25 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean save(User user) {
 
-        // TODO
+        String sql = """
+            INSERT INTO users (username, password, role)
+            VALUES (?, ?, ?)
+            """;
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, user.getUsername());
+            statement.setString(2, user.getPassword());
+            statement.setString(3, user.getRole().name());
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
 
         return false;
 
