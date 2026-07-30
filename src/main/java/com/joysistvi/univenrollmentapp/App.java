@@ -3,11 +3,13 @@ package com.joysistvi.univenrollmentapp;
 import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.config.DbConnection;
-import com.joysistvi.univenrollmentapp.session.Session;
-import com.joysistvi.univenrollmentapp.controller.*;
-import com.joysistvi.univenrollmentapp.repository.*;
-import com.joysistvi.univenrollmentapp.service.*;
-import com.joysistvi.univenrollmentapp.view.*;
+import com.joysistvi.univenrollmentapp.controller.UserController;
+import com.joysistvi.univenrollmentapp.repository.UserRepository;
+import com.joysistvi.univenrollmentapp.repository.UserRepositoryImpl;
+import com.joysistvi.univenrollmentapp.service.UserService;
+import com.joysistvi.univenrollmentapp.service.UserServiceImpl;
+import com.joysistvi.univenrollmentapp.view.LoginView;
+import com.joysistvi.univenrollmentapp.view.MainMenuView;
 
 // Main Class
 // Entry point of the University Enrollment Application
@@ -33,6 +35,7 @@ public class App {
         UserController userController = new UserController(userService);
 
         LoginView loginView = new LoginView(userController, input);
+        MainMenuView mainMenuView = new MainMenuView(input);
 
         // ==========================================================
         // APPLICATION LOOP
@@ -51,9 +54,8 @@ public class App {
 
             }
 
-            showMainMenu();
-
-            Session.logout();
+            // Display the role-based main menu
+            mainMenuView.run();
 
         }
 
@@ -61,64 +63,6 @@ public class App {
         System.out.println("Thank you for using the University Enrollment System!");
 
         input.close();
-
-    }
-
-    // Display the main menu based on the logged-in user's role
-    private static void showMainMenu() {
-
-        switch (Session.getCurrentUser().getRole()) {
-
-            case STUDENT:
-                showStudentMenu();
-                break;
-
-            case REGISTRAR:
-                showRegistrarMenu();
-                break;
-
-            case ADMIN:
-                showAdminMenu();
-                break;
-
-        }
-
-    }
-
-    // ==========================================================
-    // PLACEHOLDER MENUS
-    // ==========================================================
-
-    private static void showStudentMenu() {
-
-        System.out.println("\n=================================");
-        System.out.println("          STUDENT MENU");
-        System.out.println("=================================");
-
-        System.out.println("Feature not implemented yet.");
-        System.out.println("TODO: Student Module");
-
-    }
-
-    private static void showRegistrarMenu() {
-
-        System.out.println("\n=================================");
-        System.out.println("         REGISTRAR MENU");
-        System.out.println("=================================");
-
-        System.out.println("Feature not implemented yet.");
-        System.out.println("TODO: Registrar Module");
-
-    }
-
-    private static void showAdminMenu() {
-
-        System.out.println("\n=================================");
-        System.out.println("           ADMIN MENU");
-        System.out.println("=================================");
-
-        System.out.println("Feature not implemented yet.");
-        System.out.println("TODO: Admin Module");
 
     }
 }
