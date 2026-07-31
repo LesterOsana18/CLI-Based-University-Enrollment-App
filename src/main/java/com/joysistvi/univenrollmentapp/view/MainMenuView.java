@@ -2,15 +2,20 @@ package com.joysistvi.univenrollmentapp.view;
 
 import java.util.Scanner;
 
-// import com.joysistvi.univenrollmentapp.enums.Role;
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
+import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
+import com.joysistvi.univenrollmentapp.utils.HeaderPrinter;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
+import com.joysistvi.univenrollmentapp.utils.ScreenUtils;
 
 // View Class
 // Displays the application's main menu after a successful login
 public class MainMenuView {
 
-    // Scanner object for user input
+    // Scanner object
     private final Scanner input;
 
     // Constructor
@@ -23,11 +28,12 @@ public class MainMenuView {
 
         while (Session.isLoggedIn()) {
 
+            ScreenUtils.clearScreen();
+
             User currentUser = Session.getCurrentUser();
 
-            System.out.println("\n=========================================");
-            System.out.println("      UNIVERSITY ENROLLMENT SYSTEM");
-            System.out.println("=========================================");
+            HeaderPrinter.printHeader("UNIVERSITY ENROLLMENT SYSTEM");
+
             System.out.println("Logged in as : " + currentUser.getUsername());
             System.out.println("Role         : " + currentUser.getRole().getDisplayName());
 
@@ -57,17 +63,17 @@ public class MainMenuView {
 
     private void showAdminMenu() {
 
-        System.out.println("\n1. Students");
-        System.out.println("2. Courses");
-        System.out.println("3. Departments");
-        System.out.println("4. Enrollments");
-        System.out.println("5. Employees");
-        System.out.println("6. Users");
-        System.out.println("0. Logout");
+        MenuPrinter.printMenu(
+                "ADMIN MENU",
+                "Logout",
+                "Students",
+                "Courses",
+                "Departments",
+                "Enrollments",
+                "Employees",
+                "Users");
 
-        System.out.print("\nChoice: ");
-
-        int choice = readMenuChoice();
+        int choice = InputValidator.readMenuChoice(input, 0, 6);
 
         switch (choice) {
 
@@ -86,10 +92,6 @@ public class MainMenuView {
                 logout();
                 break;
 
-            default:
-
-                System.out.println("\nInvalid menu option.");
-
         }
 
     }
@@ -100,14 +102,14 @@ public class MainMenuView {
 
     private void showRegistrarMenu() {
 
-        System.out.println("\n1. Students");
-        System.out.println("2. Courses");
-        System.out.println("3. Enrollments");
-        System.out.println("0. Logout");
+        MenuPrinter.printMenu(
+                "REGISTRAR MENU",
+                "Logout",
+                "Students",
+                "Courses",
+                "Enrollments");
 
-        System.out.print("\nChoice: ");
-
-        int choice = readMenuChoice();
+        int choice = InputValidator.readMenuChoice(input, 0, 3);
 
         switch (choice) {
 
@@ -123,10 +125,6 @@ public class MainMenuView {
                 logout();
                 break;
 
-            default:
-
-                System.out.println("\nInvalid menu option.");
-
         }
 
     }
@@ -137,13 +135,13 @@ public class MainMenuView {
 
     private void showStudentMenu() {
 
-        System.out.println("\n1. View Courses");
-        System.out.println("2. My Enrollments");
-        System.out.println("0. Logout");
+        MenuPrinter.printMenu(
+                "STUDENT MENU",
+                "Logout",
+                "View Courses",
+                "My Enrollments");
 
-        System.out.print("\nChoice: ");
-
-        int choice = readMenuChoice();
+        int choice = InputValidator.readMenuChoice(input, 0, 2);
 
         switch (choice) {
 
@@ -158,10 +156,6 @@ public class MainMenuView {
                 logout();
                 break;
 
-            default:
-
-                System.out.println("\nInvalid menu option.");
-
         }
 
     }
@@ -170,32 +164,12 @@ public class MainMenuView {
     // HELPERS
     // ==========================================================
 
-    private int readMenuChoice() {
-
-        while (!input.hasNextInt()) {
-
-            System.out.println("\nError: Please enter a valid menu number.");
-            input.nextLine();
-            System.out.print("Choice: ");
-
-        }
-
-        int choice = input.nextInt();
-        input.nextLine();
-
-        return choice;
-
-    }
-
     private void featureNotImplemented() {
 
-        System.out.println("\n=========================================");
-        System.out.println("Feature not implemented yet.");
-        System.out.println("This module is currently assigned as a TODO.");
-        System.out.println("=========================================");
+        MessagePrinter.warning("Feature not implemented yet.");
+        MessagePrinter.info("This module is currently assigned as a TODO.");
 
-        System.out.print("\nPress Enter to continue...");
-        input.nextLine();
+        ConsoleUtils.pressEnterToContinue(input);
 
     }
 
@@ -203,7 +177,7 @@ public class MainMenuView {
 
         Session.logout();
 
-        System.out.println("\nYou have been logged out successfully.");
+        MessagePrinter.success("You have been logged out successfully.");
 
     }
 }
