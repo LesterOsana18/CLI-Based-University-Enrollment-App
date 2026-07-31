@@ -150,3 +150,13 @@ Please avoid modifying these files unless discussed with the team leader.
 # 🎯 Project Goal
 
 Build a clean, modular, and maintainable University Enrollment Application by following the MVC architecture and integrating each module seamlessly into the existing project foundation.
+
+---
+
+> ⚠️ **IMPORTANT NOTICE**
+>
+> Each module **must** follow the existing **MVC architecture**:
+>
+> **Repository → Service → Controller → View**
+>
+> Please integrate your module with the project's **shared utilities**, **session management**, and **role-based navigation**. Avoid bypassing layers or modifying the shared application infrastructure unless discussed with the team leader.
