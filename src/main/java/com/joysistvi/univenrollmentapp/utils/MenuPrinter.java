@@ -8,9 +8,10 @@ public final class MenuPrinter {
     private MenuPrinter() {
     }
 
-    // Prints a menu with numbered options
+    // Prints a menu with a customizable zero option
     public static void printMenu(
             String title,
+            String zeroOption,
             String... options) {
 
         HeaderPrinter.printHeader(title);
@@ -23,26 +24,7 @@ public final class MenuPrinter {
 
         }
 
-        System.out.println("0. Logout");
-
-        BorderPrinter.doubleLine();
-
-    }
-
-    // Prints a menu without automatically adding Logout
-    public static void printMenuWithExit(
-            String title,
-            String... options) {
-
-        HeaderPrinter.printHeader(title);
-
-        for (int i = 0; i < options.length; i++) {
-
-            System.out.printf("%d. %s%n",
-                    i + 1,
-                    options[i]);
-
-        }
+        System.out.printf("0. %s%n", zeroOption);
 
         BorderPrinter.doubleLine();
 

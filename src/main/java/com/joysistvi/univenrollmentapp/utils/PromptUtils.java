@@ -8,80 +8,97 @@ public final class PromptUtils {
     private PromptUtils() {
     }
 
-    // Prints a generic input prompt
+    // Generic prompt
     public static void prompt(String fieldName) {
 
         System.out.print(fieldName + ": ");
 
     }
 
-    // Prints the menu selection prompt
+    // Menu prompt
     public static void menuChoice() {
 
-        System.out.print("Enter your choice: ");
+        System.out.print("\nEnter your choice: ");
 
     }
 
-    // Username prompt
+    // ==========================================================
+    // ACCOUNT
+    // ==========================================================
+
     public static void username() {
-
         prompt("Username");
-
     }
 
-    // Password prompt
     public static void password() {
-
         prompt("Password");
-
     }
 
-    // Confirm password prompt
     public static void confirmPassword() {
-
         prompt("Confirm Password");
-
     }
 
-    // Student number prompt
+    // ==========================================================
+    // STUDENT
+    // ==========================================================
+
     public static void studentNumber() {
-
         prompt("Student Number");
-
     }
 
-    // Employee ID prompt
-    public static void employeeId() {
-
-        prompt("Employee ID");
-
+    public static void firstName() {
+        prompt("First Name");
     }
 
-    // Course code prompt
-    public static void courseCode() {
-
-        prompt("Course Code");
-
+    public static void lastName() {
+        prompt("Last Name");
     }
 
-    // Course name prompt
-    public static void courseName() {
-
-        prompt("Course Name");
-
-    }
-
-    // Department prompt
-    public static void department() {
-
-        prompt("Department");
-
-    }
-
-    // Email prompt
     public static void email() {
-
         prompt("Email");
+    }
 
+    // ==========================================================
+    // EMPLOYEE
+    // ==========================================================
+
+    public static void employeeId() {
+        prompt("Employee ID");
+    }
+
+    // ==========================================================
+    // COURSE
+    // ==========================================================
+
+    public static void courseCode() {
+        prompt("Course Code");
+    }
+
+    public static void courseName() {
+        prompt("Course Name");
+    }
+
+    public static void department() {
+        prompt("Department");
+    }
+
+    public static void units() {
+        prompt("Units");
+    }
+
+    // ==========================================================
+    // SEARCH
+    // ==========================================================
+
+    public static void keyword() {
+        prompt("Search");
+    }
+
+    // ==========================================================
+    // CONFIRMATION
+    // ==========================================================
+
+    public static void confirmation() {
+        System.out.print("Confirm (Y/N): ");
     }
 }
