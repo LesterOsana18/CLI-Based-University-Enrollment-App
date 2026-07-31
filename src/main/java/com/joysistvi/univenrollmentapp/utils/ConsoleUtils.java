@@ -17,28 +17,4 @@ public final class ConsoleUtils {
         input.nextLine();
 
     }
-
-    // Print a formatted header
-    public static void printHeader(String title) {
-
-        System.out.println("\n========================================");
-        System.out.println("      " + title.toUpperCase());
-        System.out.println("========================================");
-
-    }
-
-    // Print a success message
-    public static void printSuccess(String message) {
-        System.out.println("\n[SUCCESS] " + message);
-    }
-
-    // Print an error message
-    public static void printError(String message) {
-        System.out.println("\n[ERROR] " + message);
-    }
-
-    // Print a warning message
-    public static void printWarning(String message) {
-        System.out.println("\n[WARNING] " + message);
-    }
 }
