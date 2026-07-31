@@ -1,56 +1,216 @@
 package com.joysistvi.univenrollmentapp.repository;
 
-import com.joysistvi.univenrollmentapp.config.DbConnection;
-import com.joysistvi.univenrollmentapp.enums.Status;
-import com.joysistvi.univenrollmentapp.model.Student;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
+import com.joysistvi.univenrollmentapp.config.DbConnection;
+import com.joysistvi.univenrollmentapp.enums.Status;
+import com.joysistvi.univenrollmentapp.model.Student;
+
+// Repository Implementation Class
+// Implements all database operations for Student objects
 public class StudentRepositoryImpl implements StudentRepository {
-    private static final String SELECT_STUDENTS = "SELECT s.id, s.student_number, s.first_name, s.last_name, "
-            + "s.email, s.department_id, s.status, d.department_name "
-            + "FROM students s JOIN departments d ON s.department_id = d.id ";
 
-    @Override
-    public List<Student> getAllStudents() {
-        return executeStudentQuery(SELECT_STUDENTS + "ORDER BY s.student_number", null);
+    // Dependency Injection
+    private final DbConnection dbConnection;
+
+    // Constructor
+    public StudentRepositoryImpl(DbConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
+
+    // Helper method: maps one ResultSet row into a Student object
+    private Student mapRow(ResultSet resultSet) throws SQLException {
+
+        Student student = new Student();
+
+        student.setId(resultSet.getInt("id"));
+        student.setStudentNumber(resultSet.getString("student_number"));
+        student.setFirstName(resultSet.getString("first_name"));
+        student.setLastName(resultSet.getString("last_name"));
+        student.setEmail(resultSet.getString("email"));
+        student.setDepartmentId(resultSet.getInt("department_id"));
+        student.setUserId(resultSet.getInt("user_id"));
+        student.setStatus(Status.valueOf(resultSet.getString("status")));
+
+        return student;
+
     }
 
     @Override
-    public List<Student> searchStudents(String keyword) {
-        String query = SELECT_STUDENTS
-                + "WHERE LOWER(s.student_number) LIKE ? OR LOWER(s.first_name) LIKE ? "
-                + "OR LOWER(s.last_name) LIKE ? OR LOWER(s.email) LIKE ? "
-                + "OR LOWER(d.department_name) LIKE ? ORDER BY s.student_number";
-        return executeStudentQuery(query, keyword);
-    }
-
-    private List<Student> executeStudentQuery(String query, String keyword) {
+    public List<Student> findAll() {
         List<Student> students = new ArrayList<>();
-        try (Connection conn = new DbConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            if (keyword != null) {
-                String searchTerm = "%" + keyword.toLowerCase() + "%";
-                for (int index = 1; index <= 5; index++) pstmt.setString(index, searchTerm);
+        String sql = "SELECT * FROM students";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                students.add(mapRow(resultSet));
             }
-            try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) students.add(mapStudent(rs));
-            }
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+
+            System.out.println("Database Error: " + e.getMessage());
+
         }
+
         return students;
+
     }
 
-    private Student mapStudent(ResultSet rs) throws SQLException {
-        return new Student(
-                rs.getInt("id"), rs.getString("student_number"),
-                rs.getString("first_name"), rs.getString("last_name"),
-                rs.getString("email"), rs.getInt("department_id"),
-                rs.getString("department_name"), Status.valueOf(rs.getString("status")));
+    @Override
+    public Student findById(int id) {
+        String sql = "SELECT * FROM students WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return mapRow(resultSet);
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return null;
+
+    }
+
+    @Override
+    public Student findByUserId(int userId) {
+        String sql = "SELECT * FROM students WHERE user_id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, userId);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+                return mapRow(resultSet);
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return null;
+
+    }
+
+    @Override
+    public boolean save(Student student) {
+        String sql = "INSERT INTO students (student_number, first_name, last_name, email, department_id, user_id, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, student.getStudentNumber());
+            statement.setString(2, student.getFirstName());
+            statement.setString(3, student.getLastName());
+            statement.setString(4, student.getEmail());
+            statement.setInt(5, student.getDepartmentId());
+            statement.setInt(6, student.getUserId());
+            statement.setString(7, student.getStatus().name());
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean update(Student student) {
+        String sql = "UPDATE students SET student_number = ?, first_name = ?, last_name = ?, email = ?, department_id = ?, status = ? WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, student.getStudentNumber());
+            statement.setString(2, student.getFirstName());
+            statement.setString(3, student.getLastName());
+            statement.setString(4, student.getEmail());
+            statement.setInt(5, student.getDepartmentId());
+            statement.setString(6, student.getStatus().name());
+            statement.setInt(7, student.getId());
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean delete(int id) {
+        String sql = "DELETE FROM students WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean studentNumberExists(String studentNumber) {
+        String sql = "SELECT 1 FROM students WHERE student_number = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+                PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, studentNumber);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            return resultSet.next();
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
     }
 }

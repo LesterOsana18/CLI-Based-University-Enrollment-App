@@ -1,34 +1,60 @@
 package com.joysistvi.univenrollmentapp.model;
 
+// Model Class
+// Stores the information of a Prerequisite object using encapsulation
 public class Prerequisite {
-    private final int id;
-    private final int courseId;
-    private final String courseCode;
-    private final String courseName;
-    private final int prerequisiteCourseId;
-    private final String prerequisiteCourseCode;
-    private final String prerequisiteCourseName;
 
-    public Prerequisite(int id, int courseId, int prerequisiteCourseId) {
-        this(id, courseId, null, null, prerequisiteCourseId, null, null);
+    // Private fields (Encapsulation)
+    private int id;
+    private int courseId;
+    private int prerequisiteCourseId;
+
+    // Default constructor
+    public Prerequisite() {
     }
 
-    public Prerequisite(int id, int courseId, String courseCode, String courseName,
-            int prerequisiteCourseId, String prerequisiteCourseCode, String prerequisiteCourseName) {
+    // Constructor for existing records (includes ID)
+    public Prerequisite(int id, int courseId, int prerequisiteCourseId) {
+
         this.id = id;
         this.courseId = courseId;
-        this.courseCode = courseCode;
-        this.courseName = courseName;
         this.prerequisiteCourseId = prerequisiteCourseId;
-        this.prerequisiteCourseCode = prerequisiteCourseCode;
-        this.prerequisiteCourseName = prerequisiteCourseName;
+
     }
 
-    public int getId() { return id; }
-    public int getCourseId() { return courseId; }
-    public String getCourseCode() { return courseCode; }
-    public String getCourseName() { return courseName; }
-    public int getPrerequisiteCourseId() { return prerequisiteCourseId; }
-    public String getPrerequisiteCourseCode() { return prerequisiteCourseCode; }
-    public String getPrerequisiteCourseName() { return prerequisiteCourseName; }
+    // Constructor for creating a new prerequisite link (no ID yet)
+    public Prerequisite(int courseId, int prerequisiteCourseId) {
+
+        this.courseId = courseId;
+        this.prerequisiteCourseId = prerequisiteCourseId;
+
+    }
+
+    // ==========================================================
+    // Getter (Accessor) and Setter (Mutator) Methods
+    // ==========================================================
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(int courseId) {
+        this.courseId = courseId;
+    }
+
+    public int getPrerequisiteCourseId() {
+        return prerequisiteCourseId;
+    }
+
+    public void setPrerequisiteCourseId(int prerequisiteCourseId) {
+        this.prerequisiteCourseId = prerequisiteCourseId;
+    }
 }

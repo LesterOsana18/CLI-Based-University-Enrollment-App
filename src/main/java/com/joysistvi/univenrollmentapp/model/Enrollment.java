@@ -3,6 +3,8 @@ package com.joysistvi.univenrollmentapp.model;
 import com.joysistvi.univenrollmentapp.enums.Semester;
 import java.sql.Date;
 
+// Model Class
+// Stores the information of an Enrollment object using encapsulation
 public class Enrollment {
     private final int id;
     private final int studentId;
