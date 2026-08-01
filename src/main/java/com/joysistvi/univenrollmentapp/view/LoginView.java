@@ -6,7 +6,13 @@ import com.joysistvi.univenrollmentapp.controller.UserController;
 import com.joysistvi.univenrollmentapp.enums.Role;
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
+import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
+import com.joysistvi.univenrollmentapp.utils.HeaderPrinter;
 import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
+import com.joysistvi.univenrollmentapp.utils.PasswordUtils;
+import com.joysistvi.univenrollmentapp.utils.ScreenUtils;
 
 // View Class
 // Handles user login and registration
@@ -15,34 +21,36 @@ public class LoginView {
     // Dependency Injection
     private final UserController userController;
 
-    // Scanner object
+    // Scanner
     private final Scanner input;
 
     // Constructor
     public LoginView(UserController userController,
-                     Scanner scanner) {
+                     Scanner input) {
 
         this.userController = userController;
-        this.input = scanner;
+        this.input = input;
 
     }
 
-    // Display the Login Menu
+    // Display Login Menu
     public boolean run() {
 
         while (true) {
 
-            System.out.println("\n=========================================");
-            System.out.println(" UNIVERSITY ENROLLMENT SYSTEM");
-            System.out.println("=========================================");
-            System.out.println("1. Login");
-            System.out.println("2. Register");
-            System.out.println("0. Exit");
+            ScreenUtils.clearScreen();
 
-            System.out.print("\nChoice: ");
+            MenuPrinter.printMenu(
+                    "UNIVERSITY ENROLLMENT SYSTEM",
+                    "Exit",
+                    "Login",
+                    "Register");
 
             int choice =
-                    InputValidator.readMenuChoice(input);
+                    InputValidator.readMenuChoice(
+                            input,
+                            0,
+                            2);
 
             switch (choice) {
 
@@ -63,12 +71,9 @@ public class LoginView {
 
                     return false;
 
-                default:
-
-                    System.out.println(
-                            "\nInvalid menu option.");
-
             }
+
+            ConsoleUtils.pressEnterToContinue(input);
 
         }
 
@@ -80,7 +85,9 @@ public class LoginView {
 
     private boolean login() {
 
-        System.out.println("\n=== User Login ===");
+        ScreenUtils.clearScreen();
+
+        HeaderPrinter.printHeader("USER LOGIN");
 
         String username =
                 InputValidator.readRequiredString(
@@ -93,12 +100,14 @@ public class LoginView {
                         "Password");
 
         User user =
-                userController.login(username, password);
+                userController.login(
+                        username,
+                        password);
 
         if (user == null) {
 
-            System.out.println(
-                    "\nInvalid username or password.");
+            MessagePrinter.error(
+                    "Invalid username or password.");
 
             return false;
 
@@ -106,8 +115,11 @@ public class LoginView {
 
         Session.login(user);
 
-        System.out.println(
-                "\nWelcome, "
+        MessagePrinter.success(
+                "Login successful!");
+
+        MessagePrinter.info(
+                "Welcome, "
                         + user.getUsername()
                         + "!");
 
@@ -121,83 +133,77 @@ public class LoginView {
 
     private void register() {
 
-        System.out.println(
-                "\n=== User Registration ===");
+        ScreenUtils.clearScreen();
+
+        HeaderPrinter.printHeader(
+                "USER REGISTRATION");
 
         String username =
                 InputValidator.readRequiredString(
                         input,
                         "Username");
 
-        String password =
+        String password;
+
+        while (true) {
+
+            System.out.println();
+            System.out.println("Password Requirements");
+            System.out.println("---------------------");
+            System.out.println("• Minimum of 8 characters");
+            System.out.println("• At least 1 digit (0-9)");
+            System.out.println("• At least 1 special character");
+            System.out.println();
+
+            password =
+                    InputValidator.readRequiredString(
+                            input,
+                            "Password");
+
+            String validation =
+                    PasswordUtils.getPasswordValidationMessage(
+                            password);
+
+            if (validation == null) {
+                break;
+            }
+
+            MessagePrinter.error(validation);
+
+        }
+
+        String confirmPassword =
                 InputValidator.readRequiredString(
                         input,
-                        "Password");
-
-        System.out.print("Confirm Password: ");
-        String confirmPassword =
-                input.nextLine();
+                        "Confirm Password");
 
         if (!password.equals(confirmPassword)) {
 
-            System.out.println(
-                    "\nPasswords do not match.");
+            MessagePrinter.error(
+                    "Passwords do not match.");
 
             return;
 
         }
 
-        System.out.println("\nSelect Role:");
-        System.out.println("1. Student");
-        System.out.println("2. Registrar");
-        System.out.println("3. Administrator");
-
-        Role role = null;
-
-        while (role == null) {
-
-            System.out.print("\nChoice: ");
-
-            int choice =
-                    InputValidator.readMenuChoice(input);
-
-            switch (choice) {
-
-                case 1:
-                    role = Role.STUDENT;
-                    break;
-
-                case 2:
-                    role = Role.REGISTRAR;
-                    break;
-
-                case 3:
-                    role = Role.ADMIN;
-                    break;
-
-                default:
-
-                    System.out.println(
-                            "\nInvalid option.");
-
-            }
-
-        }
-
         User user =
-                new User(username,
-                         password,
-                         role);
+                new User(
+                        username,
+                        password,
+                        Role.STUDENT);
 
         if (userController.register(user)) {
 
-            System.out.println(
-                    "\nRegistration successful!");
+            MessagePrinter.success(
+                    "Registration successful!");
+
+            MessagePrinter.info(
+                    "Your account has been created as a STUDENT account.");
 
         } else {
 
-            System.out.println(
-                    "\nUsername already exists.");
+            MessagePrinter.error(
+                    "Username already exists.");
 
         }
 

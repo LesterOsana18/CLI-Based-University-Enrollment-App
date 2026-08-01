@@ -8,17 +8,37 @@ import com.joysistvi.univenrollmentapp.repository.UserRepository;
 import com.joysistvi.univenrollmentapp.repository.UserRepositoryImpl;
 import com.joysistvi.univenrollmentapp.service.UserService;
 import com.joysistvi.univenrollmentapp.service.UserServiceImpl;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.view.LoginView;
 import com.joysistvi.univenrollmentapp.view.MainMenuView;
 
 // Main Class
 // Entry point of the University Enrollment Application
-public class App {
+public final class App {
 
     // Shared Scanner instance
-    private static final Scanner input = new Scanner(System.in);
+    private static final Scanner INPUT = new Scanner(System.in);
+
+    // Prevent instantiation
+    private App() {
+    }
 
     public static void main(String[] args) {
+
+        try {
+
+            startApplication();
+
+        } finally {
+
+            INPUT.close();
+
+        }
+
+    }
+
+    // Starts the application
+    private static void startApplication() {
 
         // ==========================================================
         // DATABASE CONNECTION
@@ -30,39 +50,43 @@ public class App {
         // DEPENDENCY INJECTION
         // ==========================================================
 
-        UserRepository userRepository = new UserRepositoryImpl(dbConnection);
-        UserService userService = new UserServiceImpl(userRepository);
-        UserController userController = new UserController(userService);
+        UserRepository userRepository =
+                new UserRepositoryImpl(dbConnection);
 
-        LoginView loginView = new LoginView(userController, input);
-        MainMenuView mainMenuView = new MainMenuView(input);
+        UserService userService =
+                new UserServiceImpl(userRepository);
+
+        UserController userController =
+                new UserController(userService);
+
+        LoginView loginView =
+                new LoginView(userController, INPUT);
+
+        MainMenuView mainMenuView =
+                new MainMenuView(INPUT);
 
         // ==========================================================
         // APPLICATION LOOP
         // ==========================================================
 
-        boolean running = true;
+        while (true) {
 
-        while (running) {
-
-            boolean authenticated = loginView.run();
+            boolean authenticated =
+                    loginView.run();
 
             if (!authenticated) {
-
-                running = false;
-                continue;
-
+                break;
             }
 
-            // Display the role-based main menu
             mainMenuView.run();
 
         }
 
-        System.out.println("\nExiting the application...");
-        System.out.println("Thank you for using the University Enrollment System!");
+        MessagePrinter.info(
+                "Thank you for using the University Enrollment System!");
 
-        input.close();
+        MessagePrinter.info(
+                "Application terminated.");
 
     }
 }
