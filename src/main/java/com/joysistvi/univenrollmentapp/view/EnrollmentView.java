@@ -38,20 +38,20 @@ public class EnrollmentView {
 
     private void displayEnrollments(List<Enrollment> enrollments, String label) {
         if (enrollments.isEmpty()) {
-            TableFormatter.printNoRecordsFound(label);
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-15s %-22s %-12s %-28s %-14s %-16s %-12s%n",
                 "ID", "Student No.", "Student", "Course", "Course Name", "School Year", "Semester", "Enrolled");
-        TableFormatter.printDivider();
+        printDivider();
         for (Enrollment enrollment : enrollments) {
             System.out.printf("%-5d %-15s %-22s %-12s %-28s %-14s %-16s %-12s%n",
                     enrollment.getId(), enrollment.getStudentNumber(), enrollment.getStudentName(),
                     enrollment.getCourseCode(), enrollment.getCourseName(), enrollment.getSchoolYear(),
                     enrollment.getSemester().getDisplayName(), enrollment.getDateEnrolled());
         }
-        TableFormatter.printTotalRecords(label, enrollments.size());
+        TableFormatter.printTotalRecords(enrollments.size());
     }
 
     private int readInt() {
@@ -63,5 +63,9 @@ public class EnrollmentView {
         int value = input.nextInt();
         input.nextLine();
         return value;
+    }
+
+    private void printDivider() {
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
     }
 }

@@ -36,19 +36,19 @@ public class PrerequisiteView {
     private void displayAllPrerequisites() {
         List<Prerequisite> prerequisites = controller.getAllPrerequisites();
         if (prerequisites.isEmpty()) {
-            TableFormatter.printNoRecordsFound("prerequisites");
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-14s %-30s %-14s %-30s%n",
                 "ID", "Course", "Course Name", "Prerequisite", "Prerequisite Name");
-        TableFormatter.printDivider();
+        printDivider();
         for (Prerequisite prerequisite : prerequisites) {
             System.out.printf("%-5d %-14s %-30s %-14s %-30s%n",
                     prerequisite.getId(), prerequisite.getCourseCode(), prerequisite.getCourseName(),
                     prerequisite.getPrerequisiteCourseCode(), prerequisite.getPrerequisiteCourseName());
         }
-        TableFormatter.printTotalRecords("prerequisites", prerequisites.size());
+        TableFormatter.printTotalRecords(prerequisites.size());
     }
 
     private void createPrerequisite() {
@@ -88,7 +88,7 @@ public class PrerequisiteView {
     private CoursePair readCoursePair() {
         List<Course> courses = courseController.getAllCourses();
         if (courses.isEmpty()) {
-            TableFormatter.printNoRecordsFound("active courses");
+            TableFormatter.printNoRecordsFound();
             return null;
         }
         printCourses(courses);
@@ -108,9 +108,9 @@ public class PrerequisiteView {
     }
 
     private void printCourses(List<Course> courses) {
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-14s %-30s%n", "ID", "Code", "Course Name");
-        TableFormatter.printDivider();
+        printDivider();
         for (Course course : courses) {
             System.out.printf("%-5d %-14s %-30s%n", course.getId(), course.getCourseCode(), course.getCourseName());
         }
@@ -129,6 +129,10 @@ public class PrerequisiteView {
         int value = input.nextInt();
         input.nextLine();
         return value;
+    }
+
+    private void printDivider() {
+        System.out.println("--------------------------------------------------------------------------------------------------------");
     }
 
     private record CoursePair(int courseId, int prerequisiteCourseId) { }

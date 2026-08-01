@@ -38,20 +38,20 @@ public class StudentView {
 
     private void displayStudents(List<Student> students, String label) {
         if (students.isEmpty()) {
-            TableFormatter.printNoRecordsFound(label);
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-15s %-22s %-28s %-28s %-12s%n",
                 "ID", "Student No.", "Name", "Email", "Department", "Status");
-        TableFormatter.printDivider();
+        printDivider();
         for (Student student : students) {
             System.out.printf("%-5d %-15s %-22s %-28s %-28s %-12s%n",
                     student.getId(), student.getStudentNumber(),
                     student.getFirstName() + " " + student.getLastName(),
                     student.getEmail(), student.getDepartmentName(), student.getStatus().getDisplayName());
         }
-        TableFormatter.printTotalRecords(label, students.size());
+        TableFormatter.printTotalRecords(students.size());
     }
 
     private int readInt() {
@@ -63,5 +63,9 @@ public class StudentView {
         int value = input.nextInt();
         input.nextLine();
         return value;
+    }
+
+    private void printDivider() {
+        System.out.println("------------------------------------------------------------------------------------------------------------------------");
     }
 }

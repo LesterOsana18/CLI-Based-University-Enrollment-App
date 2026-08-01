@@ -120,17 +120,17 @@ public class UserView {
 
     private void printUsers(List<User> users) {
         if (users.isEmpty()) {
-            TableFormatter.printNoRecordsFound("users");
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-20s %-15s %-22s%n", "ID", "Username", "Role", "Created At");
-        TableFormatter.printDivider();
+        printDivider();
         for (User user : users) {
             System.out.printf("%-5d %-20s %-15s %-22s%n", user.getId(), user.getUsername(),
                     user.getRole().getDisplayName(), user.getCreatedAt());
         }
-        TableFormatter.printTotalRecords("users", users.size());
+        TableFormatter.printTotalRecords(users.size());
     }
 
     private User findUser(List<User> users, int id) {
@@ -146,5 +146,9 @@ public class UserView {
         int value = input.nextInt();
         input.nextLine();
         return value;
+    }
+
+    private void printDivider() {
+        System.out.println("--------------------------------------------------------------------------------");
     }
 }

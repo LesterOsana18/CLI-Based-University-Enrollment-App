@@ -59,7 +59,6 @@ public class DepartmentView {
         displayAllDepartments();
         System.out.print("Enter department ID to update: ");
         int id = readMenuChoice();
-        System.out.print("Enter new department name: ");
         String name = readDepartmentName("Enter new department name: ");
         if (name == null) return;
 
@@ -85,17 +84,17 @@ public class DepartmentView {
 
     private void printDepartments(List<Department> departments, String label) {
         if (departments.isEmpty()) {
-            TableFormatter.printNoRecordsFound(label);
+            TableFormatter.printNoRecordsFound();
             return;
         }
 
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-30s%n", "ID", "Department Name");
-        TableFormatter.printDivider();
+        printDivider();
         for (Department department : departments) {
             System.out.printf("%-5d %-30s%n", department.getId(), department.getDepartmentName());
         }
-        TableFormatter.printTotalRecords(label, departments.size());
+        TableFormatter.printTotalRecords(departments.size());
     }
 
     private String readDepartmentName(String prompt) {
@@ -123,5 +122,9 @@ public class DepartmentView {
 
         return choice;
 
+    }
+
+    private void printDivider() {
+        System.out.println("----------------------------------------");
     }
 }

@@ -111,12 +111,12 @@ public class CourseView {
     private void printDepartments() {
         List<Department> departments = departmentController.getAllDepartments();
         if (departments.isEmpty()) {
-            TableFormatter.printNoRecordsFound("active departments");
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-30s%n", "ID", "Department Name");
-        TableFormatter.printDivider();
+        printDivider();
         for (Department department : departments) {
             System.out.printf("%-5d %-30s%n", department.getId(), department.getDepartmentName());
         }
@@ -129,18 +129,18 @@ public class CourseView {
 
     private void printCourses(List<Course> courses, String label) {
         if (courses.isEmpty()) {
-            TableFormatter.printNoRecordsFound(label);
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-12s %-30s %-7s %-30s%n", "ID", "Code", "Course Name", "Units", "Department");
-        TableFormatter.printDivider();
+        printDivider();
         for (Course course : courses) {
             System.out.printf("%-5d %-12s %-30s %-7d %-30s%n",
                     course.getId(), course.getCourseCode(), course.getCourseName(),
                     course.getUnits(), course.getDepartmentName());
         }
-        TableFormatter.printTotalRecords(label, courses.size());
+        TableFormatter.printTotalRecords(courses.size());
     }
 
     private int readInt() {
@@ -152,6 +152,10 @@ public class CourseView {
         int value = input.nextInt();
         input.nextLine();
         return value;
+    }
+
+    private void printDivider() {
+        System.out.println("--------------------------------------------------------------------------------------------------------");
     }
 
     private record CourseDetails(String courseCode, String courseName, int units, int departmentId) { }

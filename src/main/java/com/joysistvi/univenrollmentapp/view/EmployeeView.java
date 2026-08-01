@@ -137,13 +137,13 @@ public class EmployeeView {
 
     private void printEmployees(List<Employee> employees, String label) {
         if (employees.isEmpty()) {
-            TableFormatter.printNoRecordsFound(label);
+            TableFormatter.printNoRecordsFound();
             return;
         }
-        TableFormatter.printDivider();
+        printDivider();
         System.out.printf("%-5s %-15s %-20s %-15s %-15s %-12s%n",
                 "ID", "Employee ID", "Name", "Username", "Position", "Status");
-        TableFormatter.printDivider();
+        printDivider();
         for (Employee employee : employees) {
             System.out.printf("%-5d %-15s %-20s %-15s %-15s %-12s%n",
                     employee.getId(), employee.getEmployeeId(),
@@ -151,7 +151,7 @@ public class EmployeeView {
                     employee.getUsername(), employee.getPosition().getDisplayName(),
                     employee.getStatus().getDisplayName());
         }
-        TableFormatter.printTotalRecords(label, employees.size());
+        TableFormatter.printTotalRecords(employees.size());
     }
 
     private Employee findEmployee(List<Employee> employees, int id) {
@@ -167,5 +167,9 @@ public class EmployeeView {
         int value = input.nextInt();
         input.nextLine();
         return value;
+    }
+
+    private void printDivider() {
+        System.out.println("--------------------------------------------------------------------------------------------------------");
     }
 }
