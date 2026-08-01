@@ -3,6 +3,7 @@ package com.joysistvi.univenrollmentapp.view;
 import java.util.Scanner;
 
 // import com.joysistvi.univenrollmentapp.enums.Role;
+import com.joysistvi.univenrollmentapp.controller.StudentController;
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
 
@@ -13,9 +14,13 @@ public class MainMenuView {
     // Scanner object for user input
     private final Scanner input;
 
+    // Student module entry point
+    private final StudentView studentView;
+
     // Constructor
-    public MainMenuView(Scanner scanner) {
+    public MainMenuView(Scanner scanner, StudentController studentController) {
         this.input = scanner;
+        this.studentView = new StudentView(scanner, studentController);
     }
 
     // Display the Main Menu
@@ -146,8 +151,7 @@ public class MainMenuView {
 
     private void showStudentMenu() {
 
-        System.out.println("\n1. View Courses");
-        System.out.println("2. My Enrollments");
+        System.out.println("\n1. Student Portal");
         System.out.println("0. Logout");
 
         System.out.print("\nChoice: ");
@@ -157,9 +161,7 @@ public class MainMenuView {
         switch (choice) {
 
             case 1:
-            case 2:
-
-                featureNotImplemented();
+                studentView.run(Session.getCurrentUser().getId());
                 break;
 
             case 0:
