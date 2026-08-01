@@ -68,3 +68,63 @@ INSERT INTO prerequisites (id, course_id, prerequisite_course_id) VALUES
 (18, 25, 23),
 (19, 26, 25),
 (20, 30, 28);
+
+-- ===========================================================
+-- Default System Accounts
+-- These accounts are required to bootstrap the application.
+-- Passwords must be stored as BCrypt hashes.
+-- ===========================================================
+
+/*
+===========================================================
+    DEFAULT SYSTEM ACCOUNTS
+
+    Administrator
+    Username : admin
+    Password : admin123
+
+    Registrar #1
+    Username : registrar1
+    Password : registrar123
+
+    Registrar #2
+    Username : registrar2
+    Password : registrar123
+
+    NOTE:
+    Passwords are stored in the database as BCrypt hashes.
+===========================================================
+*/
+
+-- Users --
+INSERT INTO users (id, username, password, role) VALUES
+(1, 'admin', '$2a$12$XtkEkcWMk31cCYL4cxM3OO5Ymjlhrue04XpqRKINkERvcRiuYNrRq', 'ADMIN'),
+(2, 'registrar1', '$2a$12$sDiXXuC36QU4G56ZP5jnquMwnVk80UDfyDSt4Sb79zzFa0pI2vXze', 'REGISTRAR'),
+(3, 'registrar2', '$2a$12$sDiXXuC36QU4G56ZP5jnquMwnVk80UDfyDSt4Sb79zzFa0pI2vXze', 'REGISTRAR');
+
+-- Employees --
+INSERT INTO employees (id, employee_id, first_name, last_name, position, user_id) VALUES
+(
+    1,
+    'ADM-0001',
+    'System',
+    'Administrator',
+    'ADMIN',
+    1
+),
+(
+    2,
+    'REG-1001',
+    'Maria',
+    'Santos',
+    'REGISTRAR',
+    2
+),
+(
+    3,
+    'REG-1002',
+    'Juan',
+    'Dela Cruz',
+    'REGISTRAR',
+    3
+);
