@@ -72,7 +72,11 @@ public class MainMenuView {
         switch (choice) {
 
             case 1:
+                featureNotImplemented();
+                break;
             case 2:
+                new CourseView().displayMenu(input);
+                break;
             case 3:
                 new DepartmentView().displayMenu(input);
                 break;
