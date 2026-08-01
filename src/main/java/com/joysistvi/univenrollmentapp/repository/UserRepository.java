@@ -23,7 +23,13 @@ public interface UserRepository {
     // Update an existing user
     boolean update(User user);
 
-    // Delete a user
+    // Archive a user
+    boolean archive(int id);
+
+    // Restore an archived user
+    boolean restore(int id);
+
+    // Permanently delete a user
     boolean delete(int id);
 
     // Check if a username already exists

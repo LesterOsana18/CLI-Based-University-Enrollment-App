@@ -172,22 +172,83 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
+    // Archive a user
     @Override
-    public boolean delete(int id) {
+    public boolean archive(int id) {
 
-        String sql = "DELETE FROM users WHERE id = ?";
+        String sql =
+                "UPDATE users " +
+                "SET is_archived = TRUE " +
+                "WHERE id = ? AND is_archived = FALSE";
+
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
             statement.setInt(1, id);
+
             return statement.executeUpdate() > 0;
+
         } catch (SQLException e) {
+
             System.out.println("Database Error: " + e.getMessage());
+
         }
 
         return false;
 
     }
 
+    // Restore an archived user
+    @Override
+    public boolean restore(int id) {
+
+        String sql =
+                "UPDATE users " +
+                "SET is_archived = FALSE " +
+                "WHERE id = ? AND is_archived = TRUE";
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    // Permanently delete a user
+    @Override
+    public boolean delete(int id) {
+
+        String sql =
+                "DELETE FROM users WHERE id = ?";
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    // Check if a username already exists
     @Override
     public boolean usernameExists(String username) {
 

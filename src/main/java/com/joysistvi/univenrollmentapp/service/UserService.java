@@ -23,6 +23,12 @@ public interface UserService {
     // Update an existing user
     boolean updateUser(User user);
 
-    // Delete a user
-    boolean deleteUser(int id);
+    // Archive a user
+    boolean archiveUser(int id);
+
+    // Restore an archived user
+    boolean restoreUser(int id);
+
+    // Permanently delete a user
+    boolean permanentlyDeleteUser(int id);
 }

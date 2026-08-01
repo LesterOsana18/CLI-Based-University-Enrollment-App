@@ -53,9 +53,13 @@ public class UserController {
         return userService.archiveUser(id);
     }
 
-    // Restore an archived user
+    // Restore a user
     public boolean restoreUser(int id) {
         return userService.restoreUser(id);
     }
 
+    // Permanently delete a user
+    public boolean permanentlyDeleteUser(int id) {
+        return userService.permanentlyDeleteUser(id);
+    }
 }

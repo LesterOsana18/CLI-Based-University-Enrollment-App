@@ -72,11 +72,16 @@ public class UserServiceImpl implements UserService {
     public boolean updateUser(User user) {
 
         User existingUser = userRepository.findById(user.getId());
-        if (existingUser == null) return false;
+        if (existingUser == null) {
+            return false;
+        }
 
         User userWithSameUsername = userRepository.findByUsername(user.getUsername());
-        if (userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
+        if (userWithSameUsername != null
+                && userWithSameUsername.getId() != user.getId()) {
+
             return false;
+
         }
 
         if (user.getPassword() != null && !user.getPassword().isBlank()) {
@@ -88,11 +93,29 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    // Delete a user
+    // Archive a user
     @Override
-    public boolean deleteUser(int id) {
+    public boolean archiveUser(int id) {
+
+        return userRepository.archive(id);
+
+    }
+
+    // Restore an archived user
+    @Override
+    public boolean restoreUser(int id) {
+
+        return userRepository.restore(id);
+
+    }
+
+    // Permanently delete a user
+    @Override
+    public boolean permanentlyDeleteUser(int id) {
 
         return userRepository.delete(id);
 
     }
+
+    
 }
