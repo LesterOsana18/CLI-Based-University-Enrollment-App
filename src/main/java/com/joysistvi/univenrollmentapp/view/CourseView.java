@@ -21,6 +21,7 @@ public class CourseView {
         System.out.println("3. Update Course");
         System.out.println("4. Archive Course");
         System.out.println("5. View Archived Courses");
+        System.out.println("6. Manage Prerequisites");
         System.out.println("0. Back");
         System.out.print("Enter choice: ");
 
@@ -30,6 +31,7 @@ public class CourseView {
             case 3 -> updateCourse();
             case 4 -> deleteCourse();
             case 5 -> displayArchivedCourses();
+            case 6 -> new PrerequisiteView().displayMenu(input);
             case 0 -> { }
             default -> System.out.println("Invalid menu option.");
         }
