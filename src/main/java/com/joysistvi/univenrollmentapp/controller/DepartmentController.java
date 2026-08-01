@@ -63,4 +63,8 @@ public class DepartmentController {
         return departmentService.restoreDepartment(id);
     }
 
+    // Delete a department permanently
+    public boolean deleteDepartment(int id) {
+        return departmentService.deleteDepartment(id);
+    }
 }

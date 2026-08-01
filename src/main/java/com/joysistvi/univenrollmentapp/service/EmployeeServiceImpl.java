@@ -49,7 +49,7 @@ public class EmployeeServiceImpl implements EmployeeService {
                 username,
                 Status.ACTIVE);
 
-        return repository.createEmployee(
+        return repository.save(
                 employee,
                 PasswordUtils.hashPassword(password));
     }
@@ -75,18 +75,18 @@ public class EmployeeServiceImpl implements EmployeeService {
                 username,
                 status);
 
-        return repository.updateEmployee(employee);
+        return repository.update(employee);
 
     }
 
     @Override
     public boolean archiveEmployee(int id) {
-        return repository.archiveEmployee(id);
+        return repository.archive(id);
     }
 
     @Override
     public boolean restoreEmployee(int id) {
-        return repository.restoreEmployee(id);
+        return repository.restore(id);
     }
 
 }

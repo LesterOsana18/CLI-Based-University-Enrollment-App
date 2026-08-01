@@ -15,11 +15,8 @@ public class EmployeeController {
     private final EmployeeService employeeService;
 
     // Constructor
-    public EmployeeController(
-            EmployeeService employeeService) {
-
+    public EmployeeController(EmployeeService employeeService) {
         this.employeeService = employeeService;
-
     }
 
     // Retrieve all active employees
@@ -48,7 +45,6 @@ public class EmployeeController {
                 username,
                 password,
                 position);
-
     }
 
     // Update an existing employee
@@ -69,17 +65,25 @@ public class EmployeeController {
                 employee.getUserId(),
                 employee.getUsername(),
                 status);
-
     }
 
-    // Archive an employee
+    // Deactivate employee
+    public boolean deactivateEmployee(int id) {
+        return employeeService.archiveEmployee(id);
+    }
+
+    // Reactivate employee
+    public boolean reactivateEmployee(int id) {
+        return employeeService.restoreEmployee(id);
+    }
+
+    // Archive employee
     public boolean archiveEmployee(int id) {
         return employeeService.archiveEmployee(id);
     }
 
-    // Restore an archived employee
+    // Restore employee
     public boolean restoreEmployee(int id) {
         return employeeService.restoreEmployee(id);
     }
-
 }

@@ -9,19 +9,25 @@ import com.joysistvi.univenrollmentapp.model.Enrollment;
 // Defines the business operations for Enrollment management
 public interface EnrollmentService {
 
-    // Retrieve a student's enrollment history
-    List<Enrollment> getEnrollmentHistory(int studentId);
+   // Retrieve all enrollments
+   List<Enrollment> getAllEnrollments();
 
-    // Enroll a student into a course
-    String enrollStudent(
-            int studentId,
-            int courseId,
-            String schoolYear,
-            Semester semester);
+   // Search enrollments by keyword
+   List<Enrollment> searchEnrollments(String keyword);
 
-    // Drop an enrollment
-    boolean dropEnrollment(
-            int enrollmentId,
-            int studentId);
+   // Retrieve a student's enrollment history
+   List<Enrollment> getEnrollmentHistory(int studentId);
+
+   // Enroll a student into a course
+   String enrollStudent(
+        int studentId,
+        int courseId,
+        String schoolYear,
+        Semester semester);
+
+   // Drop an enrollment
+   boolean dropEnrollment(
+        int enrollmentId,
+        int studentId);
 
 }

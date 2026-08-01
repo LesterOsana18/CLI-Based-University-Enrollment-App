@@ -1,6 +1,7 @@
 package com.joysistvi.univenrollmentapp.repository;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,7 +24,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         this.dbConnection = dbConnection;
     }
 
-    // Converts a MySQL enum string ('1st', '2nd', 'Summer') into our Java enum
+    // Converts database value to Java enum
     private Semester toSemester(String value) {
 
         return switch (value) {
@@ -36,7 +37,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     }
 
-    // Converts our Java enum back into the exact MySQL enum string
+    // Converts Java enum to database value
     private String toDbValue(Semester semester) {
 
         return switch (semester) {
@@ -47,8 +48,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     }
 
-    // Helper method: maps one ResultSet row into an Enrollment object
-    private Enrollment mapRow(ResultSet resultSet) throws SQLException {
+    // Maps a ResultSet row to an Enrollment object
+    private Enrollment mapRow(ResultSet resultSet)
+            throws SQLException {
 
         Enrollment enrollment = new Enrollment();
 
@@ -58,26 +60,33 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         enrollment.setSchoolYear(resultSet.getString("school_year"));
         enrollment.setSemester(
                 toSemester(resultSet.getString("semester")));
-        enrollment.setDateEnrolled(resultSet.getDate("date_enrolled"));
+
+        Date date = resultSet.getDate("date_enrolled");
+
+        if (date != null) {
+            enrollment.setDateEnrolled(date);
+        }
 
         return enrollment;
 
     }
 
     @Override
-    public List<Enrollment> findByStudentId(int studentId) {
+    public List<Enrollment> getAllEnrollments() {
 
         List<Enrollment> enrollments = new ArrayList<>();
 
-        String sql = "SELECT * FROM enrollments WHERE student_id = ? ORDER BY date_enrolled DESC";
+        String sql = """
+                SELECT *
+                FROM enrollments
+                WHERE is_archived = FALSE
+                ORDER BY date_enrolled DESC
+                """;
 
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
-
-            statement.setInt(1, studentId);
-
-            ResultSet resultSet = statement.executeQuery();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
                 enrollments.add(mapRow(resultSet));
@@ -95,9 +104,110 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
+    public List<Enrollment> searchEnrollments(String keyword) {
+
+        List<Enrollment> enrollments = new ArrayList<>();
+
+        String sql = """
+                SELECT e.*
+                FROM enrollments e
+                JOIN students s
+                ON e.student_id = s.id
+                JOIN courses c
+                ON e.course_id = c.id
+                WHERE e.is_archived = FALSE
+                AND (
+                        s.student_number LIKE ?
+                    OR s.first_name LIKE ?
+                    OR s.last_name LIKE ?
+                    OR c.course_code LIKE ?
+                    OR c.course_name LIKE ?
+                    OR e.school_year LIKE ?
+                    OR e.semester LIKE ?
+                )
+                ORDER BY e.date_enrolled DESC
+                """;
+
+        String search = "%" + keyword + "%";
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)) {
+
+            statement.setString(1, search);
+            statement.setString(2, search);
+            statement.setString(3, search);
+            statement.setString(4, search);
+            statement.setString(5, search);
+            statement.setString(6, search);
+            statement.setString(7, search);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    enrollments.add(mapRow(resultSet));
+                }
+
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Database Error: " + e.getMessage());
+
+        }
+
+        return enrollments;
+
+    }
+
+    @Override
+    public List<Enrollment> findByStudentId(int studentId) {
+
+        List<Enrollment> enrollments = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM enrollments
+                WHERE student_id = ?
+                  AND is_archived = FALSE
+                ORDER BY date_enrolled DESC
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, studentId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+
+                while (resultSet.next()) {
+                    enrollments.add(mapRow(resultSet));
+                }
+
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Database Error: " + e.getMessage());
+
+        }
+
+        return enrollments;
+
+    }
+
+    @Override
     public Enrollment findById(int id) {
 
-        String sql = "SELECT * FROM enrollments WHERE id = ?";
+        String sql = """
+                SELECT *
+                FROM enrollments
+                WHERE id = ?
+                  AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement =
@@ -105,10 +215,12 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
             statement.setInt(1, id);
 
-            ResultSet resultSet = statement.executeQuery();
+            try (ResultSet resultSet = statement.executeQuery()) {
 
-            if (resultSet.next()) {
-                return mapRow(resultSet);
+                if (resultSet.next()) {
+                    return mapRow(resultSet);
+                }
+
             }
 
         } catch (SQLException e) {
@@ -124,13 +236,20 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     @Override
     public boolean existsByStudentCourseTerm(
-            int studentId, int courseId, String schoolYear, Semester semester) {
+            int studentId,
+            int courseId,
+            String schoolYear,
+            Semester semester) {
 
         String sql = """
-            SELECT 1 FROM enrollments
-            WHERE student_id = ? AND course_id = ?
-              AND school_year = ? AND semester = ?
-            """;
+                SELECT 1
+                FROM enrollments
+                WHERE student_id = ?
+                  AND course_id = ?
+                  AND school_year = ?
+                  AND semester = ?
+                  AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement =
@@ -141,9 +260,9 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
             statement.setString(3, schoolYear);
             statement.setString(4, toDbValue(semester));
 
-            ResultSet resultSet = statement.executeQuery();
-
-            return resultSet.next();
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
 
         } catch (SQLException e) {
 
@@ -160,9 +279,10 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     public boolean save(Enrollment enrollment) {
 
         String sql = """
-            INSERT INTO enrollments (student_id, course_id, school_year, semester)
-            VALUES (?, ?, ?, ?)
-            """;
+                INSERT INTO enrollments
+                (student_id, course_id, school_year, semester)
+                VALUES (?, ?, ?, ?)
+                """;
 
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement =
@@ -187,9 +307,14 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean archive(int id) {
 
-        String sql = "DELETE FROM enrollments WHERE id = ?";
+        String sql = """
+                UPDATE enrollments
+                SET is_archived = TRUE
+                WHERE id = ?
+                  AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement =
@@ -209,4 +334,61 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         return false;
 
     }
+
+    @Override
+    public boolean restore(int id) {
+
+        String sql = """
+                UPDATE enrollments
+                SET is_archived = FALSE
+                WHERE id = ?
+                  AND is_archived = TRUE
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean delete(int id) {
+
+        String sql = """
+                DELETE FROM enrollments
+                WHERE id = ?
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
 }

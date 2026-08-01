@@ -2,60 +2,63 @@ package com.joysistvi.univenrollmentapp.view;
 
 import java.util.Scanner;
 
-// import com.joysistvi.univenrollmentapp.enums.Role;
-import com.joysistvi.univenrollmentapp.controller.StudentController;
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
-import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
-import com.joysistvi.univenrollmentapp.utils.HeaderPrinter;
-import com.joysistvi.univenrollmentapp.utils.InputValidator;
-import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
-import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
-import com.joysistvi.univenrollmentapp.utils.ScreenUtils;
 
-// View Class
-// Displays the application's main menu after a successful login
 public class MainMenuView {
 
-    // Scanner object
     private final Scanner input;
 
-    // Student module entry point
     private final StudentView studentView;
+    private final CourseView courseView;
+    private final DepartmentView departmentView;
+    private final EnrollmentView enrollmentView;
+    private final EmployeeView employeeView;
+    private final UserView userView;
+    private final PrerequisiteView prerequisiteView;
 
-    // Constructor
-    public MainMenuView(Scanner scanner, StudentController studentController) {
-        this.input = scanner;
-        this.studentView = new StudentView(scanner, studentController);
+    public MainMenuView(
+            Scanner input,
+            StudentView studentView,
+            CourseView courseView,
+            DepartmentView departmentView,
+            EnrollmentView enrollmentView,
+            EmployeeView employeeView,
+            UserView userView,
+            PrerequisiteView prerequisiteView) {
+
+        this.input = input;
+        this.studentView = studentView;
+        this.courseView = courseView;
+        this.departmentView = departmentView;
+        this.enrollmentView = enrollmentView;
+        this.employeeView = employeeView;
+        this.userView = userView;
+        this.prerequisiteView = prerequisiteView;
+
     }
 
-    // Display the Main Menu
-    public void run() {
+    public void displayMenu() {
 
         while (Session.isLoggedIn()) {
 
-            ScreenUtils.clearScreen();
-
             User currentUser = Session.getCurrentUser();
 
-            HeaderPrinter.printHeader("UNIVERSITY ENROLLMENT SYSTEM");
-
+            System.out.println("\n==========================================");
+            System.out.println(" UNIVERSITY ENROLLMENT SYSTEM");
+            System.out.println("==========================================");
             System.out.println("Logged in as : " + currentUser.getUsername());
             System.out.println("Role         : " + currentUser.getRole().getDisplayName());
 
             switch (currentUser.getRole()) {
 
-                case ADMIN:
-                    showAdminMenu();
-                    break;
+                case ADMIN -> showAdminMenu(currentUser);
 
-                case REGISTRAR:
-                    showRegistrarMenu();
-                    break;
+                case REGISTRAR -> showRegistrarMenu(currentUser);
 
-                case STUDENT:
-                    showStudentMenu();
-                    break;
+                case STUDENT -> studentView.displayMenu(
+                        input,
+                        currentUser.getId());
 
             }
 
@@ -63,137 +66,93 @@ public class MainMenuView {
 
     }
 
-    // ==========================================================
-    // ADMIN MENU
-    // ==========================================================
+    private void showAdminMenu(User currentUser) {
 
-    private void showAdminMenu() {
+        System.out.println("\n===== ADMIN MENU =====");
+        System.out.println("1. Student Management");
+        System.out.println("2. Course Management");
+        System.out.println("3. Department Management");
+        System.out.println("4. Enrollment Directory");
+        System.out.println("5. Employee Management");
+        System.out.println("6. User Management");
+        System.out.println("7. Prerequisite Management");
+        System.out.println("0. Logout");
+        System.out.print("Enter choice: ");
 
-        MenuPrinter.printMenu(
-                "ADMIN MENU",
-                "Logout",
-                "Students",
-                "Courses",
-                "Departments",
-                "Enrollments",
-                "Employees",
-                "Users");
+        switch (readInt()) {
 
-        int choice = InputValidator.readMenuChoice(input, 0, 6);
+            case 1 -> studentView.displayMenu(input, currentUser.getId());
 
-        switch (choice) {
+            case 2 -> courseView.displayMenu(input);
 
-            case 1:
-                new StudentView().displayMenu(input);
-                break;
-            case 2:
-                new CourseView().displayMenu(input);
-                break;
-            case 3:
-                new DepartmentView().displayMenu(input);
-                break;
-            case 4:
-                new EnrollmentView().displayMenu(input);
-                break;
-            case 5:
-                new EmployeeView().displayMenu(input);
-                break;
-            case 6:
-                new UserView().displayMenu(input);
-                break;
+            case 3 -> departmentView.displayMenu(input);
 
-            case 0:
+            case 4 -> enrollmentView.displayMenu(input);
 
-                logout();
-                break;
+            case 5 -> employeeView.displayMenu(input);
+
+            case 6 -> userView.displayMenu(input);
+
+            case 7 -> prerequisiteView.displayMenu(input);
+
+            case 0 -> logout();
+
+            default -> System.out.println("Invalid menu option.");
 
         }
 
     }
 
-    // ==========================================================
-    // REGISTRAR MENU
-    // ==========================================================
+    private void showRegistrarMenu(User currentUser) {
 
-    private void showRegistrarMenu() {
+        System.out.println("\n===== REGISTRAR MENU =====");
+        System.out.println("1. Student Management");
+        System.out.println("2. Course Management");
+        System.out.println("3. Enrollment Directory");
+        System.out.println("4. Prerequisite Management");
+        System.out.println("0. Logout");
+        System.out.print("Enter choice: ");
 
-        MenuPrinter.printMenu(
-                "REGISTRAR MENU",
-                "Logout",
-                "Students",
-                "Courses",
-                "Enrollments");
+        switch (readInt()) {
 
-        int choice = InputValidator.readMenuChoice(input, 0, 3);
+            case 1 -> studentView.displayMenu(input, currentUser.getId());
 
-        switch (choice) {
+            case 2 -> courseView.displayMenu(input);
 
-            case 1:
-                new StudentView().displayMenu(input);
-                break;
-            case 2:
-                featureNotImplemented();
-                break;
-            case 3:
-                new EnrollmentView().displayMenu(input);
-                break;
+            case 3 -> enrollmentView.displayMenu(input);
 
-            case 0:
+            case 4 -> prerequisiteView.displayMenu(input);
 
-                logout();
-                break;
+            case 0 -> logout();
+
+            default -> System.out.println("Invalid menu option.");
 
         }
-
-    }
-
-    // ==========================================================
-    // STUDENT MENU
-    // ==========================================================
-
-    private void showStudentMenu() {
-
-        MenuPrinter.printMenu(
-                "STUDENT MENU",
-                "Logout",
-                "View Courses",
-                "My Enrollments");
-
-        int choice = InputValidator.readMenuChoice(input, 0, 2);
-
-        switch (choice) {
-
-            case 1:
-                studentView.run(Session.getCurrentUser().getId());
-                break;
-
-            case 0:
-
-                logout();
-                break;
-
-        }
-
-    }
-
-    // ==========================================================
-    // HELPERS
-    // ==========================================================
-
-    private void featureNotImplemented() {
-
-        MessagePrinter.warning("Feature not implemented yet.");
-        MessagePrinter.info("This module is currently assigned as a TODO.");
-
-        ConsoleUtils.pressEnterToContinue(input);
 
     }
 
     private void logout() {
 
         Session.logout();
-
-        MessagePrinter.success("You have been logged out successfully.");
+        System.out.println("Logged out successfully.");
 
     }
+
+    private int readInt() {
+
+        while (!input.hasNextInt()) {
+
+            System.out.println("Please enter a valid number.");
+            input.nextLine();
+            System.out.print("Choice: ");
+
+        }
+
+        int value = input.nextInt();
+        input.nextLine();
+
+        return value;
+
+    }
+
 }

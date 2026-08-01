@@ -15,15 +15,17 @@ public interface CourseService {
     List<Course> getArchivedCourses();
 
     // Create a course
-    boolean createCourse(Course course);
+    boolean save(Course course);
 
     // Update a course
-    boolean updateCourse(int id, Course course);
+    boolean update(int id, Course course);
 
     // Archive a course
-    boolean archiveCourse(int id);
+    boolean archive(int id);
 
     // Restore an archived course
-    boolean restoreCourse(int id);
+    boolean restore(int id);
 
+    // Permanently delete a course
+    boolean delete(int id);
 }

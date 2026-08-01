@@ -1,8 +1,5 @@
 package com.joysistvi.univenrollmentapp.view;
 
-import com.joysistvi.univenrollmentapp.controller.StudentController;
-import com.joysistvi.univenrollmentapp.model.Student;
-import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -12,335 +9,254 @@ import com.joysistvi.univenrollmentapp.model.Course;
 import com.joysistvi.univenrollmentapp.model.Enrollment;
 import com.joysistvi.univenrollmentapp.model.Prerequisite;
 import com.joysistvi.univenrollmentapp.model.Student;
-import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
-import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
-// View Class
-// Displays the Student module menu and handles console interaction
 public class StudentView {
 
-    private final Scanner input;
-    private final StudentController studentController;
+    private Scanner input;
+    private final StudentController controller;
 
-    // Constructor
-    public StudentView(Scanner input, StudentController studentController) {
-        this.input = input;
-        this.studentController = studentController;
+    public StudentView(StudentController controller) {
+        this.controller = controller;
     }
 
-    // Entry point called by MainMenuView for a logged-in student
-    public void run(int userId) {
+    public void displayMenu(Scanner input, int userId) {
+        this.input = input;
 
-        Student student = studentController.getStudentByUserId(userId);
+        Student student = controller.getStudentByUserId(userId);
 
         if (student == null) {
-
-            ConsoleUtils.printError(
-                    "No student profile is linked to this account. Please contact the registrar.");
-
-            ConsoleUtils.pressEnterToContinue(input);
+            System.out.println("No student profile is linked to this account.");
             return;
-
         }
 
-        boolean back = false;
+        while (true) {
 
-        while (!back) {
-
-            ConsoleUtils.printHeader("Student Menu");
-            System.out.println("1. Student Dashboard");
+            System.out.println("\n===== Student Menu =====");
+            System.out.println("1. View Student Information");
             System.out.println("2. View Available Courses");
             System.out.println("3. View Enrollment History");
             System.out.println("4. Enroll in a Course");
-            System.out.println("5. Drop an Enrolled Course");
-            System.out.println("6. View Prerequisite Information");
+            System.out.println("5. Drop Enrolled Course");
+            System.out.println("6. View Prerequisites");
             System.out.println("0. Back");
+            System.out.print("Enter choice: ");
 
-            int choice = InputValidator.readMenuChoice(input);
-
-            switch (choice) {
-
-                case 1:
-                    showDashboard(student);
-                    break;
-
-                case 2:
-                    showAvailableCourses();
-                    break;
-
-                case 3:
-                    showEnrollmentHistory(student);
-                    break;
-
-                case 4:
-                    enrollInCourse(student);
-                    break;
-
-                case 5:
-                    dropEnrolledCourse(student);
-                    break;
-
-                case 6:
-                    showPrerequisites();
-                    break;
-
-                case 0:
-                    back = true;
-                    break;
-
-                default:
-                    ConsoleUtils.printError("Invalid menu option.");
-
+            switch (readInt()) {
+                case 1 -> showStudentInformation(student);
+                case 2 -> showAvailableCourses();
+                case 3 -> showEnrollmentHistory(student);
+                case 4 -> enrollInCourse(student);
+                case 5 -> dropEnrollment(student);
+                case 6 -> showPrerequisites();
+                case 0 -> {
+                    return;
+                }
+                default -> System.out.println("Invalid menu option.");
             }
-
         }
-
     }
 
-    // ==========================================================
-    // 1. STUDENT DASHBOARD / INFORMATION
-    // ==========================================================
+    private void showStudentInformation(Student student) {
 
-    private void showDashboard(Student student) {
-
-        ConsoleUtils.printHeader("Student Information");
+        printDivider();
+        System.out.println("Student Information");
+        printDivider();
 
         System.out.println("Student Number : " + student.getStudentNumber());
         System.out.println("Name           : " + student.getFirstName() + " " + student.getLastName());
         System.out.println("Email          : " + student.getEmail());
         System.out.println("Status         : " + student.getStatus());
 
-        ConsoleUtils.pressEnterToContinue(input);
-
     }
-
-    // ==========================================================
-    // 2. VIEW AVAILABLE COURSES
-    // ==========================================================
 
     private void showAvailableCourses() {
 
-        ConsoleUtils.printHeader("Available Courses");
-
-        List<Course> courses = studentController.listAvailableCourses();
+        List<Course> courses = controller.getAllCourses();
 
         if (courses.isEmpty()) {
-
-            TableFormatter.printNoRecordsFound("courses");
-
-        } else {
-
-            for (Course course : courses) {
-
-                System.out.println(
-                        course.getCourseCode() + " - " + course.getCourseName()
-                        + " (" + course.getUnits() + " units)"
-                        + " [" + course.getDepartmentName() + "]");
-
-            }
-
-            TableFormatter.printDivider();
-            TableFormatter.printTotalRecords("courses", courses.size());
-
+            TableFormatter.printNoRecordsFound();
+            return;
         }
 
-        ConsoleUtils.pressEnterToContinue(input);
+        printDivider();
+        System.out.printf("%-5s %-12s %-35s %-7s %-25s%n",
+                "ID", "Code", "Course Name", "Units", "Department");
+        printDivider();
 
+        for (Course course : courses) {
+            System.out.printf("%-5d %-12s %-35s %-7d %-25s%n",
+                    course.getId(),
+                    course.getCourseCode(),
+                    course.getCourseName(),
+                    course.getUnits(),
+                    course.getDepartmentName());
+        }
+
+        TableFormatter.printTotalRecords(courses.size());
     }
-
-    // ==========================================================
-    // 3. VIEW ENROLLMENT HISTORY
-    // ==========================================================
 
     private void showEnrollmentHistory(Student student) {
 
-        ConsoleUtils.printHeader("Enrollment History");
+        List<Enrollment> enrollments =
+                controller.getEnrollmentHistory(student.getId());
 
-        List<Enrollment> history =
-                studentController.listEnrollmentHistory(student.getId());
-
-        if (history.isEmpty()) {
-
-            TableFormatter.printNoRecordsFound("enrollment records");
-
-        } else {
-
-            for (Enrollment enrollment : history) {
-
-                System.out.println(
-                        "Enrollment ID: " + enrollment.getId()
-                        + " | Course ID: " + enrollment.getCourseId()
-                        + " | S.Y. " + enrollment.getSchoolYear()
-                        + " | " + enrollment.getSemester()
-                        + " | Enrolled on: " + enrollment.getDateEnrolled());
-
-            }
-
-            TableFormatter.printDivider();
-            TableFormatter.printTotalRecords("enrollment records", history.size());
-
+        if (enrollments.isEmpty()) {
+            TableFormatter.printNoRecordsFound();
+            return;
         }
 
-        ConsoleUtils.pressEnterToContinue(input);
+        printDivider();
+        System.out.printf("%-5s %-12s %-18s %-12s %-15s %-15s%n",
+                "ID",
+                "Course ID",
+                "School Year",
+                "Semester",
+                "Enrolled",
+                "Status");
+        printDivider();
 
+        for (Enrollment enrollment : enrollments) {
+
+            System.out.printf("%-5d %-12d %-18s %-12s %-15s %-15s%n",
+                    enrollment.getId(),
+                    enrollment.getCourseId(),
+                    enrollment.getSchoolYear(),
+                    enrollment.getSemester().getDisplayName(),
+                    enrollment.getDateEnrolled(),
+                    "ACTIVE");
+        }
+
+        TableFormatter.printTotalRecords(enrollments.size());
     }
-
-    // ==========================================================
-    // 4. ENROLL IN A COURSE
-    // ==========================================================
 
     private void enrollInCourse(Student student) {
 
-        ConsoleUtils.printHeader("Enroll in a Course");
+        showAvailableCourses();
 
-        showAvailableCoursesInline();
+        System.out.print("\nEnter Course ID: ");
+        int courseId = readInt();
 
-        int courseId = InputValidator.readPositiveInt(input, "Course ID");
-        String schoolYear = InputValidator.readRequiredString(input, "School Year (e.g. 2025-2026)");
+        System.out.print("Enter School Year (e.g. 2026-2027): ");
+        String schoolYear = input.nextLine().trim();
+
         Semester semester = readSemester();
 
-        String result = studentController.enroll(
-                student.getId(), courseId, schoolYear, semester);
+        String result = controller.enrollStudent(
+                student.getId(),
+                courseId,
+                schoolYear,
+                semester);
 
-        if (result.equals("Enrollment successful.")) {
-            ConsoleUtils.printSuccess(result);
-        } else {
-            ConsoleUtils.printError(result);
-        }
-
-        ConsoleUtils.pressEnterToContinue(input);
-
+        System.out.println(result);
     }
 
-    // ==========================================================
-    // 5. DROP AN ENROLLED COURSE
-    // ==========================================================
+        private void dropEnrollment(Student student) {
 
-    private void dropEnrolledCourse(Student student) {
+        List<Enrollment> enrollments =
+                controller.getEnrollmentHistory(student.getId());
 
-        ConsoleUtils.printHeader("Drop an Enrolled Course");
-
-        List<Enrollment> history =
-                studentController.listEnrollmentHistory(student.getId());
-
-        if (history.isEmpty()) {
-
-            TableFormatter.printNoRecordsFound("enrollment records");
-            ConsoleUtils.pressEnterToContinue(input);
+        if (enrollments.isEmpty()) {
+            TableFormatter.printNoRecordsFound();
             return;
-
         }
 
-        for (Enrollment enrollment : history) {
+        printDivider();
+        System.out.printf("%-5s %-12s %-18s %-12s%n",
+                "ID",
+                "Course ID",
+                "School Year",
+                "Semester");
+        printDivider();
 
-            System.out.println(
-                    "Enrollment ID: " + enrollment.getId()
-                    + " | Course ID: " + enrollment.getCourseId()
-                    + " | S.Y. " + enrollment.getSchoolYear()
-                    + " | " + enrollment.getSemester());
-
+        for (Enrollment enrollment : enrollments) {
+            System.out.printf("%-5d %-12d %-18s %-12s%n",
+                    enrollment.getId(),
+                    enrollment.getCourseId(),
+                    enrollment.getSchoolYear(),
+                    enrollment.getSemester().getDisplayName());
         }
 
-        int enrollmentId = InputValidator.readPositiveInt(input, "Enrollment ID to drop");
+        System.out.print("\nEnter Enrollment ID to drop: ");
+        int enrollmentId = readInt();
 
-        boolean confirmed = InputValidator.confirmAction(
-                input, "\nAre you sure you want to drop this enrollment?");
-
-        if (!confirmed) {
-
-            ConsoleUtils.printWarning("Drop cancelled.");
-            ConsoleUtils.pressEnterToContinue(input);
-            return;
-
-        }
-
-        boolean dropped = studentController.drop(enrollmentId, student.getId());
-
-        if (dropped) {
-            ConsoleUtils.printSuccess("Enrollment dropped successfully.");
+        if (controller.dropEnrollment(enrollmentId, student.getId())) {
+            System.out.println("Enrollment dropped successfully.");
         } else {
-            ConsoleUtils.printError("Could not drop that enrollment. Please check the Enrollment ID.");
+            System.out.println("Failed to drop enrollment.");
         }
-
-        ConsoleUtils.pressEnterToContinue(input);
-
     }
-
-    // ==========================================================
-    // 6. VIEW PREREQUISITE INFORMATION
-    // ==========================================================
 
     private void showPrerequisites() {
 
-        ConsoleUtils.printHeader("Prerequisite Information");
-
-        List<Prerequisite> prerequisites = studentController.listAllPrerequisites();
+        List<Prerequisite> prerequisites =
+                controller.getAllPrerequisites();
 
         if (prerequisites.isEmpty()) {
+            TableFormatter.printNoRecordsFound();
+            return;
+        }
 
-            TableFormatter.printNoRecordsFound("prerequisite records");
+        printDivider();
+        System.out.printf("%-5s %-15s %-30s %-15s %-30s%n",
+                "ID",
+                "Course",
+                "Course Name",
+                "Prerequisite",
+                "Prerequisite Name");
+        printDivider();
 
-        } else {
+        for (Prerequisite prerequisite : prerequisites) {
 
-            for (Prerequisite prerequisite : prerequisites) {
-
-                String course = prerequisite.getCourseCode() != null
-                        ? prerequisite.getCourseCode()
-                        : ("Course ID " + prerequisite.getCourseId());
-
-                String prereq = prerequisite.getPrerequisiteCourseCode() != null
-                        ? prerequisite.getPrerequisiteCourseCode()
-                        : ("Course ID " + prerequisite.getPrerequisiteCourseId());
-
-                System.out.println(course + "  requires  " + prereq);
-
-            }
-
-            TableFormatter.printDivider();
-            TableFormatter.printTotalRecords("prerequisite records", prerequisites.size());
+            System.out.printf("%-5d %-15s %-30s %-15s %-30s%n",
+                    prerequisite.getId(),
+                    prerequisite.getCourseCode(),
+                    prerequisite.getCourseName(),
+                    prerequisite.getPrerequisiteCourseCode(),
+                    prerequisite.getPrerequisiteCourseName());
 
         }
 
-        ConsoleUtils.pressEnterToContinue(input);
-
-    }
-
-    // ==========================================================
-    // HELPERS
-    // ==========================================================
-
-    private void showAvailableCoursesInline() {
-
-        List<Course> courses = studentController.listAvailableCourses();
-
-        for (Course course : courses) {
-
-            System.out.println(
-                    "  [" + course.getId() + "] " + course.getCourseCode()
-                    + " - " + course.getCourseName()
-                    + " (" + course.getUnits() + " units)");
-
-        }
-
-        System.out.println();
-
+        TableFormatter.printTotalRecords(prerequisites.size());
     }
 
     private Semester readSemester() {
 
-        while (true) {
+        System.out.println("\nSelect Semester:");
+        System.out.println("1. First");
+        System.out.println("2. Second");
+        System.out.println("3. Summer");
+        System.out.print("Choice: ");
 
-            System.out.println("Semester: 1) 1st  2) 2nd  3) Summer");
-            int choice = InputValidator.readMenuChoice(input);
-
-            switch (choice) {
-                case 1: return Semester.FIRST;
-                case 2: return Semester.SECOND;
-                case 3: return Semester.SUMMER;
-                default: ConsoleUtils.printError("Please choose 1, 2, or 3.");
+        return switch (readInt()) {
+            case 1 -> Semester.FIRST;
+            case 2 -> Semester.SECOND;
+            case 3 -> Semester.SUMMER;
+            default -> {
+                System.out.println("Invalid semester. Defaulting to First Semester.");
+                yield Semester.FIRST;
             }
+        };
+    }
+
+    private int readInt() {
+
+        while (!input.hasNextInt()) {
+
+            System.out.println("Please enter a valid number.");
+            input.nextLine();
+            System.out.print("Choice: ");
 
         }
 
+        int value = input.nextInt();
+        input.nextLine();
+
+        return value;
     }
+
+    private void printDivider() {
+        System.out.println("--------------------------------------------------------------------------------------------------------");
+    }
+
 }

@@ -1,7 +1,5 @@
 package com.joysistvi.univenrollmentapp.repository;
 
-import com.joysistvi.univenrollmentapp.config.DbConnection;
-import com.joysistvi.univenrollmentapp.model.Course;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,94 +7,216 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.joysistvi.univenrollmentapp.config.DbConnection;
+import com.joysistvi.univenrollmentapp.model.Course;
+
+// Repository Implementation
+// Implements database operations for Course objects
 public class CourseRepositoryImpl implements CourseRepository {
+
+    private final DbConnection dbConnection;
+
+    public CourseRepositoryImpl(DbConnection dbConnection) {
+        this.dbConnection = dbConnection;
+    }
+
     @Override
     public List<Course> getAllCourses() {
-        return getCoursesByArchiveStatus(false);
+        return findCourses(false);
     }
 
     @Override
     public List<Course> getArchivedCourses() {
-        return getCoursesByArchiveStatus(true);
+        return findCourses(true);
     }
 
-    private List<Course> getCoursesByArchiveStatus(boolean archived) {
-        List<Course> courses = new ArrayList<>();
-        String query = "SELECT c.id, c.course_code, c.course_name, c.units, c.department_id, d.department_name "
-                + "FROM courses c JOIN departments d ON c.department_id = d.id "
-                + "WHERE c.is_archived = ? ORDER BY c.course_code";
+    @Override
+    public Course findById(int id) {
 
-        try (Connection conn = new DbConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setBoolean(1, archived);
-            ResultSet rs = pstmt.executeQuery();
-            while (rs.next()) {
-                courses.add(new Course(
-                        rs.getInt("id"),
-                        rs.getString("course_code"),
-                        rs.getString("course_name"),
-                        rs.getInt("units"),
-                        rs.getInt("department_id"),
-                        rs.getString("department_name")));
+        String sql = """
+                SELECT c.*, d.department_name
+                FROM courses c
+                JOIN departments d
+                    ON c.department_id = d.id
+                WHERE c.id = ?
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()) {
+
+                return new Course(
+                        resultSet.getInt("id"),
+                        resultSet.getString("course_code"),
+                        resultSet.getString("course_name"),
+                        resultSet.getInt("units"),
+                        resultSet.getInt("department_id"),
+                        resultSet.getString("department_name"));
+
             }
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+
+            System.out.println("Database Error: " + e.getMessage());
+
         }
+
+        return null;
+
+    }
+
+    private List<Course> findCourses(boolean archived) {
+
+        List<Course> courses = new ArrayList<>();
+
+        String sql = """
+                SELECT c.*, d.department_name
+                FROM courses c
+                JOIN departments d
+                    ON c.department_id = d.id
+                WHERE c.is_archived = ?
+                ORDER BY c.course_code
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setBoolean(1, archived);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                courses.add(new Course(
+                        resultSet.getInt("id"),
+                        resultSet.getString("course_code"),
+                        resultSet.getString("course_name"),
+                        resultSet.getInt("units"),
+                        resultSet.getInt("department_id"),
+                        resultSet.getString("department_name")));
+
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
         return courses;
+
     }
 
     @Override
-    public boolean createCourse(Course course) {
-        String query = "INSERT INTO courses (course_code, course_name, units, department_id) VALUES (?, ?, ?, ?)";
-        try (Connection conn = new DbConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, course.getCourseCode());
-            pstmt.setString(2, course.getCourseName());
-            pstmt.setInt(3, course.getUnits());
-            pstmt.setInt(4, course.getDepartmentId());
-            return pstmt.executeUpdate() > 0;
+    public boolean save(Course course) {
+
+        String sql = """
+                INSERT INTO courses
+                (course_code, course_name, units, department_id)
+                VALUES (?, ?, ?, ?)
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(1, course.getCourseCode());
+            statement.setString(2, course.getCourseName());
+            statement.setInt(3, course.getUnits());
+            statement.setInt(4, course.getDepartmentId());
+
+            return statement.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
+
+            System.out.println("Database Error: " + e.getMessage());
+
         }
+
+        return false;
+
     }
 
     @Override
-    public boolean updateCourse(int id, Course course) {
-        String query = "UPDATE courses SET course_code = ?, course_name = ?, units = ?, department_id = ? "
-                + "WHERE id = ? AND is_archived = 0";
-        try (Connection conn = new DbConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setString(1, course.getCourseCode());
-            pstmt.setString(2, course.getCourseName());
-            pstmt.setInt(3, course.getUnits());
-            pstmt.setInt(4, course.getDepartmentId());
-            pstmt.setInt(5, id);
-            return pstmt.executeUpdate() > 0;
+    public boolean update(Course course) {
+
+        String sql = """
+                UPDATE courses
+                SET course_code = ?,
+                    course_name = ?,
+                    units = ?,
+                    department_id = ?
+                WHERE id = ?
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setString(1, course.getCourseCode());
+            statement.setString(2, course.getCourseName());
+            statement.setInt(3, course.getUnits());
+            statement.setInt(4, course.getDepartmentId());
+            statement.setInt(5, course.getId());
+
+            return statement.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
+
+            System.out.println("Database Error: " + e.getMessage());
+
         }
+
+        return false;
+
     }
 
     @Override
-    public boolean softDeleteCourse(int id) {
-        return executeUpdate("UPDATE courses SET is_archived = 1 WHERE id = ? AND is_archived = 0", id);
+    public boolean archive(int id) {
+        return executeUpdate(
+                "UPDATE courses SET is_archived = TRUE WHERE id = ?",
+                id);
     }
 
     @Override
-    public boolean hardDeleteCourse(int id) {
-        return executeUpdate("DELETE FROM courses WHERE id = ? AND is_archived = 1", id);
+    public boolean restore(int id) {
+        return executeUpdate(
+                "UPDATE courses SET is_archived = FALSE WHERE id = ?",
+                id);
     }
 
-    private boolean executeUpdate(String query, int id) {
-        try (Connection conn = new DbConnection().getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(query)) {
-            pstmt.setInt(1, id);
-            return pstmt.executeUpdate() > 0;
+    @Override
+    public boolean delete(int id) {
+        return executeUpdate(
+                "DELETE FROM courses WHERE id = ?",
+                id);
+    }
+
+    private boolean executeUpdate(String sql, int id) {
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return false;
+
+            System.out.println("Database Error: " + e.getMessage());
+
         }
+
+        return false;
+
     }
+
 }

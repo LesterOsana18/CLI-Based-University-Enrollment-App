@@ -28,23 +28,27 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean createCourse(Course course) {
-        return repository.createCourse(course);
+    public boolean save(Course course) {
+        return repository.save(course);
     }
 
     @Override
-    public boolean updateCourse(int id, Course course) {
-        return repository.updateCourse(id, course);
+    public boolean update(int id, Course course) {
+        return repository.update(course);
     }
 
     @Override
-    public boolean archiveCourse(int id) {
-        return repository.archiveCourse(id);
+    public boolean archive(int id) {
+        return repository.archive(id);
     }
 
     @Override
-    public boolean restoreCourse(int id) {
-        return repository.restoreCourse(id);
+    public boolean restore(int id) {
+        return repository.restore(id);
     }
 
+    @Override
+    public boolean delete(int id) {
+        return repository.delete(id);
+    }
 }

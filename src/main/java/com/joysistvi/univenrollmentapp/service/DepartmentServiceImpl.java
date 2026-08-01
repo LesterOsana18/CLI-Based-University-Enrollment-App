@@ -29,22 +29,27 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public boolean createDepartment(Department department) {
-        return repository.createDepartment(department);
+        return repository.save(department);
     }
 
     @Override
     public boolean updateDepartment(int id, String departmentName) {
-        return repository.updateDepartment(id, departmentName);
+        return repository.update(id, departmentName);
     }
 
     @Override
     public boolean archiveDepartment(int id) {
-        return repository.archiveDepartment(id);
+        return repository.archive(id);
     }
 
     @Override
     public boolean restoreDepartment(int id) {
-        return repository.restoreDepartment(id);
+        return repository.restore(id);
     }
 
+    // Delete a department permanently
+    @Override
+    public boolean deleteDepartment(int id) {
+        return repository.delete(id);
+    }
 }

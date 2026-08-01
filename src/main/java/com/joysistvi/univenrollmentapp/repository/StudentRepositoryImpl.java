@@ -43,13 +43,49 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public List<Student> findAll() {
+
         List<Student> students = new ArrayList<>();
-        String sql = "SELECT * FROM students";
+
+        String sql = """
+                SELECT *
+                FROM students
+                WHERE is_archived = FALSE
+                ORDER BY student_number
+                """;
 
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery()) {
 
-            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                students.add(mapRow(resultSet));
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return students;
+
+    }
+
+    @Override
+    public List<Student> findArchived() {
+
+        List<Student> students = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM students
+                WHERE is_archived = TRUE
+                ORDER BY student_number
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql);
+            ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
                 students.add(mapRow(resultSet));
@@ -67,18 +103,24 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public Student findById(int id) {
-        String sql = "SELECT * FROM students WHERE id = ?";
+
+        String sql = """
+                SELECT *
+                FROM students
+                WHERE id = ?
+                AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                return mapRow(resultSet);
-            }
+            return resultSet.next()
+                    ? mapRow(resultSet)
+                    : null;
 
         } catch (SQLException e) {
 
@@ -92,18 +134,24 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public Student findByUserId(int userId) {
-        String sql = "SELECT * FROM students WHERE user_id = ?";
+
+        String sql = """
+                SELECT *
+                FROM students
+                WHERE user_id = ?
+                AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, userId);
 
             ResultSet resultSet = statement.executeQuery();
 
-            if (resultSet.next()) {
-                return mapRow(resultSet);
-            }
+            return resultSet.next()
+                    ? mapRow(resultSet)
+                    : null;
 
         } catch (SQLException e) {
 
@@ -170,11 +218,17 @@ public class StudentRepositoryImpl implements StudentRepository {
     }
 
     @Override
-    public boolean delete(int id) {
-        String sql = "DELETE FROM students WHERE id = ?";
+    public boolean archive(int id) {
+
+        String sql = """
+                UPDATE students
+                SET is_archived = TRUE
+                WHERE id = ?
+                AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
 
@@ -182,8 +236,59 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         } catch (SQLException e) {
 
-            System.out.println(
-                    "Database Error: " + e.getMessage());
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean restore(int id) {
+
+        String sql = """
+                UPDATE students
+                SET is_archived = FALSE
+                WHERE id = ?
+                AND is_archived = TRUE
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    @Override
+    public boolean delete(int id) {
+
+        String sql = """
+                DELETE FROM students
+                WHERE id = ?
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
 
         }
 
@@ -193,10 +298,16 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     @Override
     public boolean studentNumberExists(String studentNumber) {
-        String sql = "SELECT 1 FROM students WHERE student_number = ?";
+
+        String sql = """
+                SELECT 1
+                FROM students
+                WHERE student_number = ?
+                AND is_archived = FALSE
+                """;
 
         try (Connection connection = dbConnection.getConnection();
-                PreparedStatement statement = connection.prepareStatement(sql)) {
+            PreparedStatement statement = connection.prepareStatement(sql)) {
 
             statement.setString(1, studentNumber);
 

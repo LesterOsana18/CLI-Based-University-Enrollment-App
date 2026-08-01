@@ -8,7 +8,11 @@ import java.util.Scanner;
 
 public class EnrollmentView {
     private Scanner input;
-    private final EnrollmentController controller = new EnrollmentController();
+    private final EnrollmentController controller;
+
+    public EnrollmentView(EnrollmentController controller) {
+        this.controller = controller;
+    }
 
     public void displayMenu(Scanner input) {
         this.input = input;

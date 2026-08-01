@@ -31,6 +31,16 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
     }
 
+    // Retrieve all enrollments
+    public List<Enrollment> getAllEnrollments() {
+        return enrollmentRepository.getAllEnrollments();
+    }
+
+    // Search enrollments by keyword
+    public List<Enrollment> searchEnrollments(String keyword) {
+        return enrollmentRepository.searchEnrollments(keyword);
+    }
+
     @Override
     public List<Enrollment> getEnrollmentHistory(int studentId) {
         return enrollmentRepository.findByStudentId(studentId);

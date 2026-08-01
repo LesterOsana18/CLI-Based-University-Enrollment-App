@@ -1,11 +1,8 @@
 package com.joysistvi.univenrollmentapp.view;
 
-import com.joysistvi.univenrollmentapp.config.DbConnection;
 import com.joysistvi.univenrollmentapp.controller.UserController;
 import com.joysistvi.univenrollmentapp.enums.Role;
 import com.joysistvi.univenrollmentapp.model.User;
-import com.joysistvi.univenrollmentapp.repository.UserRepositoryImpl;
-import com.joysistvi.univenrollmentapp.service.UserServiceImpl;
 import com.joysistvi.univenrollmentapp.session.Session;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 import java.util.List;
@@ -13,8 +10,12 @@ import java.util.Scanner;
 
 public class UserView {
     private Scanner input;
-    private final UserController controller = new UserController(
-            new UserServiceImpl(new UserRepositoryImpl(new DbConnection())));
+    
+    private final UserController controller;
+
+    public UserView(UserController controller) {
+        this.controller = controller;
+    }
 
     public void displayMenu(Scanner input) {
         this.input = input;
@@ -97,7 +98,7 @@ public class UserView {
             System.out.println("You cannot delete the account currently signed in.");
             return;
         }
-        if (controller.deleteUser(id)) {
+        if (controller.permanentlyDeleteUser(id)) {
             System.out.println("User deleted successfully.");
         } else {
             System.out.println("Failed to delete user. Please check the ID and try again.");

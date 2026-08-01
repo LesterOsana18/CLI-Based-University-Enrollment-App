@@ -3,36 +3,15 @@ package com.joysistvi.univenrollmentapp;
 import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.config.DbConnection;
-import com.joysistvi.univenrollmentapp.controller.StudentController;
-import com.joysistvi.univenrollmentapp.controller.UserController;
-import com.joysistvi.univenrollmentapp.repository.EnrollmentRepository;
-import com.joysistvi.univenrollmentapp.repository.EnrollmentRepositoryImpl;
-import com.joysistvi.univenrollmentapp.repository.StudentRepository;
-import com.joysistvi.univenrollmentapp.repository.StudentRepositoryImpl;
-import com.joysistvi.univenrollmentapp.repository.UserRepository;
-import com.joysistvi.univenrollmentapp.repository.UserRepositoryImpl;
-import com.joysistvi.univenrollmentapp.service.CourseService;
-import com.joysistvi.univenrollmentapp.service.CourseServiceImpl;
-import com.joysistvi.univenrollmentapp.service.EnrollmentService;
-import com.joysistvi.univenrollmentapp.service.EnrollmentServiceImpl;
-import com.joysistvi.univenrollmentapp.service.PrerequisiteService;
-import com.joysistvi.univenrollmentapp.service.PrerequisiteServiceImpl;
-import com.joysistvi.univenrollmentapp.service.StudentService;
-import com.joysistvi.univenrollmentapp.service.StudentServiceImpl;
-import com.joysistvi.univenrollmentapp.service.UserService;
-import com.joysistvi.univenrollmentapp.service.UserServiceImpl;
-import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
-import com.joysistvi.univenrollmentapp.view.LoginView;
-import com.joysistvi.univenrollmentapp.view.MainMenuView;
+import com.joysistvi.univenrollmentapp.controller.*;
+import com.joysistvi.univenrollmentapp.repository.*;
+import com.joysistvi.univenrollmentapp.service.*;
+import com.joysistvi.univenrollmentapp.view.*;
 
-// Main Class
-// Entry point of the University Enrollment Application
 public final class App {
 
-    // Shared Scanner instance
     private static final Scanner INPUT = new Scanner(System.in);
 
-    // Prevent instantiation
     private App() {
     }
 
@@ -40,7 +19,145 @@ public final class App {
 
         try {
 
-            startApplication();
+            DbConnection dbConnection = new DbConnection();
+
+            // ======================================================
+            // Repositories
+            // ======================================================
+
+            UserRepository userRepository =
+                    new UserRepositoryImpl(dbConnection);
+
+            StudentRepository studentRepository =
+                    new StudentRepositoryImpl(dbConnection);
+
+            DepartmentRepository departmentRepository =
+                    new DepartmentRepositoryImpl(dbConnection);
+
+            CourseRepository courseRepository =
+                    new CourseRepositoryImpl(dbConnection);
+
+            PrerequisiteRepository prerequisiteRepository =
+                    new PrerequisiteRepositoryImpl(dbConnection);
+
+            EnrollmentRepository enrollmentRepository =
+                    new EnrollmentRepositoryImpl(dbConnection);
+
+            EmployeeRepository employeeRepository =
+                    new EmployeeRepositoryImpl(dbConnection);
+
+            // ======================================================
+            // Services
+            // ======================================================
+
+            UserService userService =
+                    new UserServiceImpl(userRepository);
+
+            StudentService studentService =
+                    new StudentServiceImpl(studentRepository);
+
+            DepartmentService departmentService =
+                    new DepartmentServiceImpl(departmentRepository);
+
+            CourseService courseService =
+                    new CourseServiceImpl(courseRepository);
+
+            PrerequisiteService prerequisiteService =
+                    new PrerequisiteServiceImpl(prerequisiteRepository);
+
+            EnrollmentService enrollmentService =
+                    new EnrollmentServiceImpl(
+                            enrollmentRepository,
+                            studentRepository,
+                            prerequisiteService);
+
+            EmployeeService employeeService =
+                    new EmployeeServiceImpl(employeeRepository);
+
+            // ======================================================
+            // Controllers
+            // ======================================================
+
+            UserController userController =
+                    new UserController(userService);
+
+            DepartmentController departmentController =
+                    new DepartmentController(departmentService);
+
+            CourseController courseController =
+                    new CourseController(courseService);
+
+            PrerequisiteController prerequisiteController =
+                    new PrerequisiteController(prerequisiteService);
+
+            EnrollmentController enrollmentController =
+                    new EnrollmentController(enrollmentService);
+
+            EmployeeController employeeController =
+                    new EmployeeController(employeeService);
+
+            StudentController studentController =
+                    new StudentController(
+                            studentService,
+                            courseService,
+                            enrollmentService,
+                            prerequisiteService);
+
+            // ======================================================
+            // Views
+            // ======================================================
+
+            StudentView studentView =
+                    new StudentView(studentController);
+
+            CourseView courseView =
+                    new CourseView(
+                            courseController,
+                            departmentController,
+                            prerequisiteController);
+
+            DepartmentView departmentView =
+                    new DepartmentView(departmentController);
+
+            EnrollmentView enrollmentView =
+                    new EnrollmentView(enrollmentController);
+
+            EmployeeView employeeView =
+                    new EmployeeView(employeeController);
+
+            UserView userView =
+                    new UserView(userController);
+
+            PrerequisiteView prerequisiteView =
+                    new PrerequisiteView(
+                            prerequisiteController,
+                            courseController);
+
+            MainMenuView mainMenuView =
+                    new MainMenuView(
+                            INPUT,
+                            studentView,
+                            courseView,
+                            departmentView,
+                            enrollmentView,
+                            employeeView,
+                            userView,
+                            prerequisiteView);
+
+            LoginView loginView =
+                    new LoginView(userController, INPUT);
+
+            while (true) {
+
+                if (!loginView.run()) {
+                    break;
+                }
+
+                mainMenuView.displayMenu();
+
+            }
+
+            System.out.println("\nThank you for using the University Enrollment System!");
 
         } finally {
 
@@ -50,98 +167,4 @@ public final class App {
 
     }
 
-    // Starts the application
-    private static void startApplication() {
-
-        // ==========================================================
-        // DATABASE CONNECTION
-        // ==========================================================
-
-        DbConnection dbConnection = new DbConnection();
-
-        // ==========================================================
-        // DEPENDENCY INJECTION - USER MODULE
-        // ==========================================================
-
-        UserRepository userRepository =
-                new UserRepositoryImpl(dbConnection);
-
-        UserService userService =
-                new UserServiceImpl(userRepository);
-
-        UserController userController =
-                new UserController(userService);
-
-        // ==========================================================
-        // DEPENDENCY INJECTION - STUDENT MODULE
-        // ==========================================================
-
-        StudentRepository studentRepository = new StudentRepositoryImpl(dbConnection);
-        EnrollmentRepository enrollmentRepository = new EnrollmentRepositoryImpl(dbConnection);
-
-        StudentService studentService = new StudentServiceImpl(studentRepository);
-        CourseService courseService = new CourseServiceImpl();
-        PrerequisiteService prerequisiteService = new PrerequisiteServiceImpl();
-        EnrollmentService enrollmentService =
-                new EnrollmentServiceImpl(enrollmentRepository, studentRepository);
-
-        StudentController studentController = new StudentController(
-                studentService, courseService, enrollmentService, prerequisiteService);
-
-        // ==========================================================
-        // VIEWS
-        // ==========================================================
-
-        UserRepository userRepository = new UserRepositoryImpl(dbConnection);
-        UserService userService = new UserServiceImpl(userRepository);
-        UserController userController = new UserController(userService);
-
-        // ==========================================================
-        // DEPENDENCY INJECTION - STUDENT MODULE
-        // ==========================================================
-
-        StudentRepository studentRepository = new StudentRepositoryImpl(dbConnection);
-        EnrollmentRepository enrollmentRepository = new EnrollmentRepositoryImpl(dbConnection);
-
-        StudentService studentService = new StudentServiceImpl(studentRepository);
-        CourseService courseService = new CourseServiceImpl();
-        PrerequisiteService prerequisiteService = new PrerequisiteServiceImpl();
-        EnrollmentService enrollmentService =
-                new EnrollmentServiceImpl(enrollmentRepository, studentRepository);
-
-        StudentController studentController = new StudentController(
-                studentService, courseService, enrollmentService, prerequisiteService);
-
-        // ==========================================================
-        // VIEWS
-        // ==========================================================
-
-        LoginView loginView = new LoginView(userController, input);
-        MainMenuView mainMenuView = new MainMenuView(input, studentController);
-
-        // ==========================================================
-        // APPLICATION LOOP
-        // ==========================================================
-
-        while (true) {
-
-            boolean authenticated =
-                    loginView.run();
-
-            if (!authenticated) {
-                running = false;
-                continue;
-            }
-
-            mainMenuView.run();
-
-        }
-
-        MessagePrinter.info(
-                "Thank you for using the University Enrollment System!");
-
-        MessagePrinter.info(
-                "Application terminated.");
-
-    }
 }

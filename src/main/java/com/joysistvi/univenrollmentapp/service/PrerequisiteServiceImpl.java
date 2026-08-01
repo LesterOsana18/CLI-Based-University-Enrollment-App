@@ -33,20 +33,20 @@ public class PrerequisiteServiceImpl implements PrerequisiteService {
     @Override
     public boolean createPrerequisite(int courseId, int prerequisiteCourseId) {
         if (!isValidRelationship(courseId, prerequisiteCourseId, null)) return false;
-        return repository.createPrerequisite(new Prerequisite(0, courseId, prerequisiteCourseId));
+        return repository.save(new Prerequisite(0, courseId, prerequisiteCourseId));
     }
 
     // Method to update an existing prerequisite relationship
     @Override
     public boolean updatePrerequisite(int id, int courseId, int prerequisiteCourseId) {
         if (!isValidRelationship(courseId, prerequisiteCourseId, id)) return false;
-        return repository.updatePrerequisite(id, new Prerequisite(id, courseId, prerequisiteCourseId));
+        return repository.update(id, courseId, prerequisiteCourseId);
     }
 
     // Method to delete a prerequisite relationship
     @Override
     public boolean deletePrerequisite(int id) {
-        return repository.deletePrerequisite(id);
+        return repository.delete(id);
     }
 
     // Helper method to validate the prerequisite relationship

@@ -41,7 +41,7 @@ public class CourseController {
                 units,
                 departmentId);
 
-        return courseService.createCourse(course);
+        return courseService.save(course);
 
     }
 
@@ -60,18 +60,22 @@ public class CourseController {
                 units,
                 departmentId);
 
-        return courseService.updateCourse(id, course);
+        return courseService.update(id, course);
 
     }
 
     // Archive a course
     public boolean archiveCourse(int id) {
-        return courseService.archiveCourse(id);
+        return courseService.archive(id);
     }
 
     // Restore an archived course
     public boolean restoreCourse(int id) {
-        return courseService.restoreCourse(id);
+        return courseService.restore(id);
     }
 
+    // Permanently delete a course
+    public boolean deleteCourse(int id) {
+        return courseService.delete(id);
+    }
 }

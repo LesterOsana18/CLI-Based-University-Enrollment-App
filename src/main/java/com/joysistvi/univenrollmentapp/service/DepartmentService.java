@@ -26,4 +26,6 @@ public interface DepartmentService {
     // Restore an archived department
     boolean restoreDepartment(int id);
 
+    // Delete a department permanently
+    boolean deleteDepartment(int id);
 }

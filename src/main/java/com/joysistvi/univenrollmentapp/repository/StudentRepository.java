@@ -10,6 +10,9 @@ public interface StudentRepository {
     // Retrieve all students
     List<Student> findAll();
 
+    // Retrieve all archived students
+    List<Student> findArchived();
+
     // Retrieve a student by ID
     Student findById(int id);
 
@@ -21,6 +24,12 @@ public interface StudentRepository {
 
     // Update an existing student
     boolean update(Student student);
+
+    // Archive a student
+    boolean archive(int id);
+
+    // Restore an archived student
+    boolean restore(int id);
 
     // Delete a student
     boolean delete(int id);

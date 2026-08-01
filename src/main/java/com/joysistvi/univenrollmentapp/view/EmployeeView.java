@@ -4,15 +4,22 @@ import com.joysistvi.univenrollmentapp.controller.EmployeeController;
 import com.joysistvi.univenrollmentapp.enums.Position;
 import com.joysistvi.univenrollmentapp.model.Employee;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
+
 import java.util.List;
 import java.util.Scanner;
 
 public class EmployeeView {
+
     private Scanner input;
-    private final EmployeeController controller = new EmployeeController();
+    private final EmployeeController controller;
+
+    public EmployeeView(EmployeeController controller) {
+        this.controller = controller;
+    }
 
     public void displayMenu(Scanner input) {
         this.input = input;
+
         System.out.println("===== Employee Management =====");
         System.out.println("1. View Active Employees");
         System.out.println("2. Create Employee");
@@ -30,101 +37,175 @@ public class EmployeeView {
             case 4 -> deactivateEmployee();
             case 5 -> displayInactiveEmployees();
             case 6 -> reactivateEmployee();
-            case 0 -> { }
+            case 0 -> {
+            }
             default -> System.out.println("Invalid menu option.");
         }
     }
 
     private void displayActiveEmployees() {
-        printEmployees(controller.getActiveEmployees(), "active employees");
+        printEmployees(controller.getActiveEmployees());
     }
 
     private void displayInactiveEmployees() {
-        printEmployees(controller.getInactiveEmployees(), "inactive employees");
+        printEmployees(controller.getArchivedEmployees());
     }
 
     private void createEmployee() {
-        System.out.print("Enter employee ID: ");
+
+        System.out.print("Enter Employee ID: ");
         String employeeId = input.nextLine().trim();
-        System.out.print("Enter first name: ");
+
+        System.out.print("Enter First Name: ");
         String firstName = input.nextLine().trim();
-        System.out.print("Enter last name: ");
+
+        System.out.print("Enter Last Name: ");
         String lastName = input.nextLine().trim();
-        System.out.print("Enter username: ");
+
+        System.out.print("Enter Username: ");
         String username = input.nextLine().trim();
-        System.out.print("Enter password: ");
+
+        System.out.print("Enter Password: ");
         String password = input.nextLine();
+
         Position position = readPosition();
-        if (employeeId.isEmpty() || firstName.isEmpty() || lastName.isEmpty()
-                || username.isEmpty() || password.isBlank() || position == null) {
-            System.out.println("All employee details are required.");
+
+        if (employeeId.isBlank()
+                || firstName.isBlank()
+                || lastName.isBlank()
+                || username.isBlank()
+                || password.isBlank()
+                || position == null) {
+
+            System.out.println("All fields are required.");
             return;
         }
 
-        if (controller.createEmployee(employeeId, firstName, lastName, username, password, position)) {
-            System.out.println("Employee and user account created successfully.");
+        if (controller.createEmployee(
+                employeeId,
+                firstName,
+                lastName,
+                username,
+                password,
+                position)) {
+
+            System.out.println("Employee created successfully.");
+
         } else {
-            System.out.println("Failed to create employee. The employee ID or username may already exist.");
+
+            System.out.println("Failed to create employee.");
+
         }
     }
 
     private void updateEmployee() {
+
         List<Employee> employees = controller.getActiveEmployees();
-        printEmployees(employees, "active employees");
-        if (employees.isEmpty()) return;
-        System.out.print("Enter employee record ID to update: ");
+
+        printEmployees(employees);
+
+        if (employees.isEmpty()) {
+            return;
+        }
+
+        System.out.print("Enter Employee Record ID: ");
         Employee employee = findEmployee(employees, readInt());
+
         if (employee == null) {
             System.out.println("Employee not found.");
             return;
         }
 
-        System.out.print("Enter employee ID: ");
+        System.out.print("Enter Employee ID: ");
         String employeeId = input.nextLine().trim();
-        System.out.print("Enter first name: ");
+
+        System.out.print("Enter First Name: ");
         String firstName = input.nextLine().trim();
-        System.out.print("Enter last name: ");
+
+        System.out.print("Enter Last Name: ");
         String lastName = input.nextLine().trim();
+
         Position position = readPosition();
-        if (employeeId.isEmpty() || firstName.isEmpty() || lastName.isEmpty() || position == null) {
-            System.out.println("All employee details are required.");
+
+        if (employeeId.isBlank()
+                || firstName.isBlank()
+                || lastName.isBlank()
+                || position == null) {
+
+            System.out.println("All fields are required.");
             return;
         }
 
-        if (controller.updateEmployee(employee, employeeId, firstName, lastName, position, employee.getStatus())) {
+        if (controller.updateEmployee(
+                employee,
+                employeeId,
+                firstName,
+                lastName,
+                position,
+                employee.getStatus())) {
+
             System.out.println("Employee updated successfully.");
+
         } else {
-            System.out.println("Failed to update employee. The employee ID may already exist.");
+
+            System.out.println("Failed to update employee.");
+
         }
     }
 
     private void deactivateEmployee() {
+
         List<Employee> employees = controller.getActiveEmployees();
-        printEmployees(employees, "active employees");
-        if (employees.isEmpty()) return;
-        System.out.print("Enter employee record ID to deactivate: ");
+
+        printEmployees(employees);
+
+        if (employees.isEmpty()) {
+            return;
+        }
+
+        System.out.print("Enter Employee Record ID: ");
+
         if (controller.deactivateEmployee(readInt())) {
+
             System.out.println("Employee deactivated successfully.");
+
         } else {
-            System.out.println("Failed to deactivate employee. Please check the ID and try again.");
+
+            System.out.println("Failed to deactivate employee.");
+
         }
     }
 
     private void reactivateEmployee() {
-        List<Employee> employees = controller.getInactiveEmployees();
-        printEmployees(employees, "inactive employees");
-        if (employees.isEmpty()) return;
-        System.out.print("Enter employee record ID to reactivate: ");
+
+        List<Employee> employees = controller.getArchivedEmployees();
+
+        printEmployees(employees);
+
+        if (employees.isEmpty()) {
+            return;
+        }
+
+        System.out.print("Enter Employee Record ID: ");
+
         if (controller.reactivateEmployee(readInt())) {
+
             System.out.println("Employee reactivated successfully.");
+
         } else {
-            System.out.println("Failed to reactivate employee. Please check the ID and try again.");
+
+            System.out.println("Failed to reactivate employee.");
+
         }
     }
 
     private Position readPosition() {
-        System.out.println("Select position: 1. Registrar  2. Administrator");
-        System.out.print("Enter position: ");
+
+        System.out.println("Select Position");
+        System.out.println("1. Registrar");
+        System.out.println("2. Administrator");
+        System.out.print("Choice: ");
+
         return switch (readInt()) {
             case 1 -> Position.REGISTRAR;
             case 2 -> Position.ADMIN;
@@ -135,41 +216,63 @@ public class EmployeeView {
         };
     }
 
-    private void printEmployees(List<Employee> employees, String label) {
+    private void printEmployees(List<Employee> employees) {
+
         if (employees.isEmpty()) {
             TableFormatter.printNoRecordsFound();
             return;
         }
+
         printDivider();
-        System.out.printf("%-5s %-15s %-20s %-15s %-15s %-12s%n",
-                "ID", "Employee ID", "Name", "Username", "Position", "Status");
+
+        System.out.printf(
+                "%-5s %-15s %-25s %-20s %-15s %-12s%n",
+                "ID",
+                "Employee ID",
+                "Name",
+                "Username",
+                "Position",
+                "Status");
+
         printDivider();
+
         for (Employee employee : employees) {
-            System.out.printf("%-5d %-15s %-20s %-15s %-15s %-12s%n",
-                    employee.getId(), employee.getEmployeeId(),
+
+            System.out.printf(
+                    "%-5d %-15s %-25s %-20s %-15s %-12s%n",
+                    employee.getId(),
+                    employee.getEmployeeId(),
                     employee.getFirstName() + " " + employee.getLastName(),
-                    employee.getUsername(), employee.getPosition().getDisplayName(),
+                    employee.getUsername(),
+                    employee.getPosition().getDisplayName(),
                     employee.getStatus().getDisplayName());
         }
+
         TableFormatter.printTotalRecords(employees.size());
     }
 
     private Employee findEmployee(List<Employee> employees, int id) {
-        return employees.stream().filter(employee -> employee.getId() == id).findFirst().orElse(null);
+        return employees.stream()
+                .filter(employee -> employee.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     private int readInt() {
+
         while (!input.hasNextInt()) {
             System.out.println("Please enter a valid number.");
             input.nextLine();
             System.out.print("Choice: ");
         }
+
         int value = input.nextInt();
         input.nextLine();
+
         return value;
     }
 
     private void printDivider() {
-        System.out.println("--------------------------------------------------------------------------------------------------------");
+        System.out.println("----------------------------------------------------------------------------------------------------------------");
     }
 }

@@ -1,11 +1,25 @@
 package com.joysistvi.univenrollmentapp.repository;
 
-import com.joysistvi.univenrollmentapp.model.Employee;
 import java.util.List;
 
+import com.joysistvi.univenrollmentapp.model.Employee;
+
 public interface EmployeeRepository {
-    List<Employee> getEmployeesByStatus(boolean active);
-    boolean createEmployee(Employee employee, String hashedPassword);
-    boolean updateEmployee(Employee employee);
-    boolean updateStatus(int id, boolean active);
+
+    List<Employee> getActiveEmployees();
+
+    List<Employee> getArchivedEmployees();
+
+    Employee findById(int id);
+
+    boolean save(Employee employee, String hashedPassword);
+
+    boolean update(Employee employee);
+
+    boolean archive(int id);
+
+    boolean restore(int id);
+
+    boolean delete(int id);
+
 }

@@ -43,17 +43,17 @@ public class StudentController {
     }
 
     // Retrieve all available courses
-    public List<Course> listAvailableCourses() {
+    public List<Course> getAllCourses() {
         return courseService.getAllCourses();
     }
 
     // Retrieve the student's enrollment history
-    public List<Enrollment> listEnrollmentHistory(int studentId) {
+    public List<Enrollment> getEnrollmentHistory(int studentId) {
         return enrollmentService.getEnrollmentHistory(studentId);
     }
 
     // Enroll the student in a course
-    public String enroll(
+    public String enrollStudent(
             int studentId,
             int courseId,
             String schoolYear,
@@ -79,7 +79,7 @@ public class StudentController {
     }
 
     // Retrieve all prerequisites
-    public List<Prerequisite> listAllPrerequisites() {
+    public List<Prerequisite> getAllPrerequisites() {
         return prerequisiteService.getAllPrerequisites();
     }
 
