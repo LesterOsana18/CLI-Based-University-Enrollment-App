@@ -1,39 +1,50 @@
 package com.joysistvi.univenrollmentapp.service;
 
-import com.joysistvi.univenrollmentapp.model.Department;
-import com.joysistvi.univenrollmentapp.repository.DepartmentRepositoryImpl;
 import java.util.List;
 
+import com.joysistvi.univenrollmentapp.model.Department;
+import com.joysistvi.univenrollmentapp.repository.DepartmentRepository;
+
+// Service Implementation
+// Implements the business logic for Department management
 public class DepartmentServiceImpl implements DepartmentService {
-    DepartmentRepositoryImpl repo = new DepartmentRepositoryImpl();
+
+    // Dependency Injection
+    private final DepartmentRepository repository;
+
+    // Constructor
+    public DepartmentServiceImpl(DepartmentRepository repository) {
+        this.repository = repository;
+    }
+
     @Override
     public List<Department> getAllDepartments() {
-        return repo.getAllDepartments();
+        return repository.getAllDepartments();
     }
 
     @Override
     public List<Department> getArchivedDepartments() {
-        return repo.getArchivedDepartments();
+        return repository.getArchivedDepartments();
     }
 
     @Override
     public boolean createDepartment(Department department) {
-        return repo.createDepartment(department);
+        return repository.createDepartment(department);
     }
 
     @Override
-    public boolean updateDeparment(int id, String department_name) {
-        return repo.updateDeparment(id, department_name);
+    public boolean updateDepartment(int id, String departmentName) {
+        return repository.updateDepartment(id, departmentName);
     }
 
     @Override
-    public boolean softDeleteDepartment(int id) {
-        return repo.softDeleteDepartment(id);
+    public boolean archiveDepartment(int id) {
+        return repository.archiveDepartment(id);
     }
 
     @Override
-    public boolean hardDeleteDepartment(int id) {
-        return repo.hardDeleteDepartment(id);
+    public boolean restoreDepartment(int id) {
+        return repository.restoreDepartment(id);
     }
-   
+
 }

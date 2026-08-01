@@ -1,11 +1,21 @@
 package com.joysistvi.univenrollmentapp.service;
 
-import com.joysistvi.univenrollmentapp.model.Course;
-import com.joysistvi.univenrollmentapp.repository.CourseRepositoryImpl;
 import java.util.List;
 
+import com.joysistvi.univenrollmentapp.model.Course;
+import com.joysistvi.univenrollmentapp.repository.CourseRepository;
+
+// Service Implementation
+// Implements the business logic for Course management
 public class CourseServiceImpl implements CourseService {
-    private final CourseRepositoryImpl repository = new CourseRepositoryImpl();
+
+    // Dependency Injection
+    private final CourseRepository repository;
+
+    // Constructor
+    public CourseServiceImpl(CourseRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Course> getAllCourses() {
@@ -28,12 +38,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public boolean softDeleteCourse(int id) {
-        return repository.softDeleteCourse(id);
+    public boolean archiveCourse(int id) {
+        return repository.archiveCourse(id);
     }
 
     @Override
-    public boolean hardDeleteCourse(int id) {
-        return repository.hardDeleteCourse(id);
+    public boolean restoreCourse(int id) {
+        return repository.restoreCourse(id);
     }
+
 }
