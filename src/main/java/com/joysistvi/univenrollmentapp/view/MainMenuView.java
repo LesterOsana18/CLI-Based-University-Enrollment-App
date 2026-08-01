@@ -81,7 +81,7 @@ public class MainMenuView {
                 new DepartmentView().displayMenu(input);
                 break;
             case 4:
-                featureNotImplemented();
+                new EnrollmentView().displayMenu(input);
                 break;
             case 5:
                 new EmployeeView().displayMenu(input);
@@ -124,9 +124,10 @@ public class MainMenuView {
                 new StudentView().displayMenu(input);
                 break;
             case 2:
-            case 3:
-
                 featureNotImplemented();
+                break;
+            case 3:
+                new EnrollmentView().displayMenu(input);
                 break;
 
             case 0:
