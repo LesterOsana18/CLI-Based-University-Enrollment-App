@@ -1,18 +1,33 @@
 package com.joysistvi.univenrollmentapp.controller;
 
-import com.joysistvi.univenrollmentapp.model.Enrollment;
-import com.joysistvi.univenrollmentapp.service.EnrollmentServiceImpl;
 import java.util.List;
 
-public class EnrollmentController {
-    private final EnrollmentServiceImpl service = new EnrollmentServiceImpl();
+import com.joysistvi.univenrollmentapp.model.Enrollment;
+import com.joysistvi.univenrollmentapp.service.EnrollmentService;
 
-    public List<Enrollment> getAllEnrollments() {
-        return service.getAllEnrollments();
+// Controller Class
+// Handles requests related to enrollment management
+public class EnrollmentController {
+
+    // Dependency Injection
+    private final EnrollmentService enrollmentService;
+
+    // Constructor
+    public EnrollmentController(
+            EnrollmentService enrollmentService) {
+
+        this.enrollmentService = enrollmentService;
+
     }
 
+    // Retrieve all enrollments
+    public List<Enrollment> getAllEnrollments() {
+        return enrollmentService.getAllEnrollments();
+    }
+
+    // Search enrollments
     public List<Enrollment> searchEnrollments(String keyword) {
-        return service.searchEnrollments(keyword);
+        return enrollmentService.searchEnrollments(keyword);
     }
 
 }

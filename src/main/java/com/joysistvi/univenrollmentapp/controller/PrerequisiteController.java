@@ -1,26 +1,57 @@
 package com.joysistvi.univenrollmentapp.controller;
 
-import com.joysistvi.univenrollmentapp.model.Prerequisite;
-import com.joysistvi.univenrollmentapp.service.PrerequisiteServiceImpl;
 import java.util.List;
 
+import com.joysistvi.univenrollmentapp.model.Prerequisite;
+import com.joysistvi.univenrollmentapp.service.PrerequisiteService;
+
+// Controller Class
+// Handles requests related to course prerequisites
 public class PrerequisiteController {
-    private final PrerequisiteServiceImpl service = new PrerequisiteServiceImpl();
 
+    // Dependency Injection
+    private final PrerequisiteService prerequisiteService;
+
+    // Constructor
+    public PrerequisiteController(
+            PrerequisiteService prerequisiteService) {
+
+        this.prerequisiteService = prerequisiteService;
+
+    }
+
+    // Retrieve all prerequisites
     public List<Prerequisite> getAllPrerequisites() {
-        return service.getAllPrerequisites();
+        return prerequisiteService.getAllPrerequisites();
     }
 
-    public boolean createPrerequisite(int courseId, int prerequisiteCourseId) {
-        return service.createPrerequisite(courseId, prerequisiteCourseId);
+    // Create a prerequisite
+    public boolean createPrerequisite(
+            int courseId,
+            int prerequisiteCourseId) {
+
+        return prerequisiteService.createPrerequisite(
+                courseId,
+                prerequisiteCourseId);
+
     }
 
-    public boolean updatePrerequisite(int id, int courseId, int prerequisiteCourseId) {
-        return service.updatePrerequisite(id, courseId, prerequisiteCourseId);
+    // Update a prerequisite
+    public boolean updatePrerequisite(
+            int id,
+            int courseId,
+            int prerequisiteCourseId) {
+
+        return prerequisiteService.updatePrerequisite(
+                id,
+                courseId,
+                prerequisiteCourseId);
+
     }
 
+    // Remove a prerequisite
     public boolean deletePrerequisite(int id) {
-        return service.deletePrerequisite(id);
+        return prerequisiteService.deletePrerequisite(id);
     }
 
 }
