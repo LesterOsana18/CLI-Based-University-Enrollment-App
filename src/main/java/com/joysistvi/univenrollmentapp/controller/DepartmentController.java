@@ -1,34 +1,66 @@
 package com.joysistvi.univenrollmentapp.controller;
 
-
-import com.joysistvi.univenrollmentapp.model.Department;
-import com.joysistvi.univenrollmentapp.service.DepartmentServiceImpl;
 import java.util.List;
 
-public class DepartmentController  {
-    DepartmentServiceImpl service = new DepartmentServiceImpl();
-    
-    public List<Department> getAllDepartments(){
-        return service.getAllDepartments();
+import com.joysistvi.univenrollmentapp.model.Department;
+import com.joysistvi.univenrollmentapp.service.DepartmentService;
+
+// Controller Class
+// Handles requests related to department management
+public class DepartmentController {
+
+    // Dependency Injection
+    private final DepartmentService departmentService;
+
+    // Constructor
+    public DepartmentController(
+            DepartmentService departmentService) {
+
+        this.departmentService = departmentService;
+
     }
 
+    // Retrieve all active departments
+    public List<Department> getAllDepartments() {
+        return departmentService.getAllDepartments();
+    }
+
+    // Retrieve all archived departments
     public List<Department> getArchivedDepartments() {
-        return service.getArchivedDepartments();
+        return departmentService.getArchivedDepartments();
     }
 
+    // Create a new department
     public boolean createDepartment(String departmentName) {
-        return service.createDepartment(new Department(0, departmentName));
+
+        Department department =
+                new Department(
+                        0,
+                        departmentName);
+
+        return departmentService.createDepartment(department);
+
     }
 
-    public boolean updateDepartment(int id, String department_name) {
-        return service.updateDeparment(id, department_name);
+    // Update an existing department
+    public boolean updateDepartment(
+            int id,
+            String departmentName) {
+
+        return departmentService.updateDepartment(
+                id,
+                departmentName);
+
     }
 
-    public boolean deleteDepartment(int id) {
-        return service.softDeleteDepartment(id);
+    // Archive a department
+    public boolean archiveDepartment(int id) {
+        return departmentService.archiveDepartment(id);
     }
 
-    public boolean permanentlyDeleteDepartment(int id) {
-        return service.hardDeleteDepartment(id);
+    // Restore an archived department
+    public boolean restoreDepartment(int id) {
+        return departmentService.restoreDepartment(id);
     }
+
 }

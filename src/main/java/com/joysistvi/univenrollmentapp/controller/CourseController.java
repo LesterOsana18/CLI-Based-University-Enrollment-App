@@ -1,34 +1,77 @@
 package com.joysistvi.univenrollmentapp.controller;
 
-import com.joysistvi.univenrollmentapp.model.Course;
-import com.joysistvi.univenrollmentapp.service.CourseServiceImpl;
 import java.util.List;
 
+import com.joysistvi.univenrollmentapp.model.Course;
+import com.joysistvi.univenrollmentapp.service.CourseService;
+
+// Controller Class
+// Handles requests related to course management
 public class CourseController {
-    private final CourseServiceImpl service = new CourseServiceImpl();
 
+    // Dependency Injection
+    private final CourseService courseService;
+
+    // Constructor
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
+    }
+
+    // Retrieve all active courses
     public List<Course> getAllCourses() {
-        return service.getAllCourses();
+        return courseService.getAllCourses();
     }
 
+    // Retrieve all archived courses
     public List<Course> getArchivedCourses() {
-        return service.getArchivedCourses();
+        return courseService.getArchivedCourses();
     }
 
-    public boolean createCourse(String courseCode, String courseName, int units, int departmentId) {
-        return service.createCourse(new Course(0, courseCode, courseName, units, departmentId));
+    // Create a new course
+    public boolean createCourse(
+            String courseCode,
+            String courseName,
+            int units,
+            int departmentId) {
+
+        Course course = new Course(
+                0,
+                courseCode,
+                courseName,
+                units,
+                departmentId);
+
+        return courseService.createCourse(course);
+
     }
 
-    public boolean updateCourse(int id, String courseCode, String courseName, int units, int departmentId) {
-        return service.updateCourse(id, new Course(id, courseCode, courseName, units, departmentId));
+    // Update an existing course
+    public boolean updateCourse(
+            int id,
+            String courseCode,
+            String courseName,
+            int units,
+            int departmentId) {
+
+        Course course = new Course(
+                id,
+                courseCode,
+                courseName,
+                units,
+                departmentId);
+
+        return courseService.updateCourse(id, course);
+
     }
 
-    public boolean deleteCourse(int id) {
-        return service.softDeleteCourse(id);
+    // Archive a course
+    public boolean archiveCourse(int id) {
+        return courseService.archiveCourse(id);
     }
 
-    public boolean permanentlyDeleteCourse(int id) {
-        return service.hardDeleteCourse(id);
+    // Restore an archived course
+    public boolean restoreCourse(int id) {
+        return courseService.restoreCourse(id);
     }
 
 }
