@@ -3,9 +3,22 @@ package com.joysistvi.univenrollmentapp;
 import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.config.DbConnection;
+import com.joysistvi.univenrollmentapp.controller.StudentController;
 import com.joysistvi.univenrollmentapp.controller.UserController;
+import com.joysistvi.univenrollmentapp.repository.EnrollmentRepository;
+import com.joysistvi.univenrollmentapp.repository.EnrollmentRepositoryImpl;
+import com.joysistvi.univenrollmentapp.repository.StudentRepository;
+import com.joysistvi.univenrollmentapp.repository.StudentRepositoryImpl;
 import com.joysistvi.univenrollmentapp.repository.UserRepository;
 import com.joysistvi.univenrollmentapp.repository.UserRepositoryImpl;
+import com.joysistvi.univenrollmentapp.service.CourseService;
+import com.joysistvi.univenrollmentapp.service.CourseServiceImpl;
+import com.joysistvi.univenrollmentapp.service.EnrollmentService;
+import com.joysistvi.univenrollmentapp.service.EnrollmentServiceImpl;
+import com.joysistvi.univenrollmentapp.service.PrerequisiteService;
+import com.joysistvi.univenrollmentapp.service.PrerequisiteServiceImpl;
+import com.joysistvi.univenrollmentapp.service.StudentService;
+import com.joysistvi.univenrollmentapp.service.StudentServiceImpl;
 import com.joysistvi.univenrollmentapp.service.UserService;
 import com.joysistvi.univenrollmentapp.service.UserServiceImpl;
 import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
@@ -47,7 +60,7 @@ public final class App {
         DbConnection dbConnection = new DbConnection();
 
         // ==========================================================
-        // DEPENDENCY INJECTION
+        // DEPENDENCY INJECTION - USER MODULE
         // ==========================================================
 
         UserRepository userRepository =
@@ -59,11 +72,31 @@ public final class App {
         UserController userController =
                 new UserController(userService);
 
+        // ==========================================================
+        // DEPENDENCY INJECTION - STUDENT MODULE
+        // ==========================================================
+
+        StudentRepository studentRepository = new StudentRepositoryImpl(dbConnection);
+        EnrollmentRepository enrollmentRepository = new EnrollmentRepositoryImpl(dbConnection);
+
+        StudentService studentService = new StudentServiceImpl(studentRepository);
+        CourseService courseService = new CourseServiceImpl();
+        PrerequisiteService prerequisiteService = new PrerequisiteServiceImpl();
+        EnrollmentService enrollmentService =
+                new EnrollmentServiceImpl(enrollmentRepository, studentRepository);
+
+        StudentController studentController = new StudentController(
+                studentService, courseService, enrollmentService, prerequisiteService);
+
+        // ==========================================================
+        // VIEWS
+        // ==========================================================
+
         LoginView loginView =
                 new LoginView(userController, INPUT);
 
         MainMenuView mainMenuView =
-                new MainMenuView(INPUT);
+                new MainMenuView(INPUT, studentController);
 
         // ==========================================================
         // APPLICATION LOOP
@@ -75,7 +108,8 @@ public final class App {
                     loginView.run();
 
             if (!authenticated) {
-                break;
+                running = false;
+                continue;
             }
 
             mainMenuView.run();

@@ -1,9 +1,14 @@
 package com.joysistvi.univenrollmentapp.service;
 
 import com.joysistvi.univenrollmentapp.model.Student;
-import java.util.List;
+//import java.util.List;
 
+//import com.joysistvi.univenrollmentapp.model.Student;
+
+// Service Interface
+// Defines the business operations for Student objects
 public interface StudentService {
-    List<Student> getAllStudents();
-    List<Student> searchStudents(String keyword);
+
+    // Retrieve a student's profile using their linked user account ID
+    Student getStudentByUserId(int userId);
 }

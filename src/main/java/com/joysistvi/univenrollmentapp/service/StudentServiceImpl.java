@@ -1,19 +1,22 @@
 package com.joysistvi.univenrollmentapp.service;
 
 import com.joysistvi.univenrollmentapp.model.Student;
-import com.joysistvi.univenrollmentapp.repository.StudentRepositoryImpl;
-import java.util.List;
+import com.joysistvi.univenrollmentapp.repository.StudentRepository;
 
+// Service Implementation
+// Implements the business operations for Student objects
 public class StudentServiceImpl implements StudentService {
-    private final StudentRepositoryImpl repository = new StudentRepositoryImpl();
 
-    @Override
-    public List<Student> getAllStudents() {
-        return repository.getAllStudents();
+    // Dependency Injection
+    private final StudentRepository studentRepository;
+
+    // Constructor
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
     @Override
-    public List<Student> searchStudents(String keyword) {
-        return repository.searchStudents(keyword.trim());
+    public Student getStudentByUserId(int userId) {
+        return studentRepository.findByUserId(userId);
     }
 }
