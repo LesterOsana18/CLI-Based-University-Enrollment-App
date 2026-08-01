@@ -22,8 +22,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
 
-        // TODO
-        return null;
+        return userRepository.findAll();
 
     }
 
@@ -31,8 +30,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(int id) {
 
-        // TODO
-        return null;
+        return userRepository.findById(id);
 
     }
 
@@ -73,8 +71,20 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(User user) {
 
-        // TODO
-        return false;
+        User existingUser = userRepository.findById(user.getId());
+        if (existingUser == null) return false;
+
+        User userWithSameUsername = userRepository.findByUsername(user.getUsername());
+        if (userWithSameUsername != null && userWithSameUsername.getId() != user.getId()) {
+            return false;
+        }
+
+        if (user.getPassword() != null && !user.getPassword().isBlank()) {
+            user.setPassword(PasswordUtils.hashPassword(user.getPassword()));
+        } else {
+            user.setPassword(null);
+        }
+        return userRepository.update(user);
 
     }
 
@@ -82,8 +92,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean deleteUser(int id) {
 
-        // TODO
-        return false;
+        return userRepository.delete(id);
 
     }
 }

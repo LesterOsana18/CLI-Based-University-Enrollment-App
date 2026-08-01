@@ -78,13 +78,22 @@ public class MainMenuView {
         switch (choice) {
 
             case 1:
+                new StudentView().displayMenu(input);
+                break;
             case 2:
+                new CourseView().displayMenu(input);
+                break;
             case 3:
+                new DepartmentView().displayMenu(input);
+                break;
             case 4:
+                new EnrollmentView().displayMenu(input);
+                break;
             case 5:
+                new EmployeeView().displayMenu(input);
+                break;
             case 6:
-
-                featureNotImplemented();
+                new UserView().displayMenu(input);
                 break;
 
             case 0:
@@ -114,10 +123,13 @@ public class MainMenuView {
         switch (choice) {
 
             case 1:
+                new StudentView().displayMenu(input);
+                break;
             case 2:
-            case 3:
-
                 featureNotImplemented();
+                break;
+            case 3:
+                new EnrollmentView().displayMenu(input);
                 break;
 
             case 0:
