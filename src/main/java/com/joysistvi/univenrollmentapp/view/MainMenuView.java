@@ -87,8 +87,7 @@ public class MainMenuView {
                 new EmployeeView().displayMenu(input);
                 break;
             case 6:
-
-                featureNotImplemented();
+                new UserView().displayMenu(input);
                 break;
 
             case 0:

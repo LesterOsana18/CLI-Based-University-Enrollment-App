@@ -28,8 +28,17 @@ public class UserRepositoryImpl implements UserRepository {
     public List<User> findAll() {
 
         List<User> users = new ArrayList<>();
+        String sql = "SELECT id, username, password, role, created_at FROM users ORDER BY username";
 
-        // TODO
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println("Database Error: " + e.getMessage());
+        }
 
         return users;
 
@@ -38,7 +47,16 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User findById(int id) {
 
-        // TODO
+        String sql = "SELECT id, username, password, role, created_at FROM users WHERE id = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next() ? mapUser(resultSet) : null;
+            }
+        } catch (SQLException e) {
+            System.out.println("Database Error: " + e.getMessage());
+        }
 
         return null;
 
@@ -60,19 +78,7 @@ public class UserRepositoryImpl implements UserRepository {
 
             if (resultSet.next()) {
 
-                User user = new User();
-
-                user.setId(resultSet.getInt("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setPassword(resultSet.getString("password"));
-                user.setRole(
-                        Role.valueOf(
-                                resultSet.getString("role")));
-
-                user.setCreatedAt(
-                        resultSet.getTimestamp("created_at"));
-
-                return user;
+                return mapUser(resultSet);
 
             }
 
@@ -117,7 +123,50 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean update(User user) {
 
-        // TODO
+        boolean changePassword = user.getPassword() != null && !user.getPassword().isBlank();
+        String sql = changePassword
+                ? "UPDATE users SET username = ?, password = ?, role = ? WHERE id = ?"
+                : "UPDATE users SET username = ?, role = ? WHERE id = ?";
+        try (Connection connection = dbConnection.getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement statement = connection.prepareStatement(sql)) {
+                if (user.getRole() == Role.STUDENT && hasEmployeeProfile(connection, user.getId())) {
+                    connection.rollback();
+                    return false;
+                }
+
+                statement.setString(1, user.getUsername());
+                int parameter = 2;
+                if (changePassword) {
+                    statement.setString(parameter++, user.getPassword());
+                }
+                statement.setString(parameter++, user.getRole().name());
+                statement.setInt(parameter, user.getId());
+                if (statement.executeUpdate() == 0) {
+                    connection.rollback();
+                    return false;
+                }
+
+                if (user.getRole() != Role.STUDENT) {
+                    try (PreparedStatement employeeStatement = connection.prepareStatement(
+                            "UPDATE employees SET position = ? WHERE user_id = ?")) {
+                        employeeStatement.setString(1, user.getRole().name());
+                        employeeStatement.setInt(2, user.getId());
+                        employeeStatement.executeUpdate();
+                    }
+                }
+                connection.commit();
+                return true;
+            } catch (SQLException e) {
+                connection.rollback();
+                System.out.println("Database Error: " + e.getMessage());
+                return false;
+            } finally {
+                connection.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.out.println("Database Error: " + e.getMessage());
+        }
 
         return false;
 
@@ -126,7 +175,14 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean delete(int id) {
 
-        // TODO
+        String sql = "DELETE FROM users WHERE id = ?";
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, id);
+            return statement.executeUpdate() > 0;
+        } catch (SQLException e) {
+            System.out.println("Database Error: " + e.getMessage());
+        }
 
         return false;
 
@@ -137,5 +193,24 @@ public class UserRepositoryImpl implements UserRepository {
 
         return findByUsername(username) != null;
 
+    }
+
+    private User mapUser(ResultSet resultSet) throws SQLException {
+        return new User(
+                resultSet.getInt("id"),
+                resultSet.getString("username"),
+                resultSet.getString("password"),
+                Role.valueOf(resultSet.getString("role")),
+                resultSet.getTimestamp("created_at"));
+    }
+
+    private boolean hasEmployeeProfile(Connection connection, int userId) throws SQLException {
+        String sql = "SELECT 1 FROM employees WHERE user_id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setInt(1, userId);
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
+        }
     }
 }
