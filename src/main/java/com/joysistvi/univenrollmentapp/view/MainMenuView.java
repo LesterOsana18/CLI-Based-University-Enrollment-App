@@ -74,6 +74,8 @@ public class MainMenuView {
             case 1:
             case 2:
             case 3:
+                new DepartmentView().displayMenu(input);
+                break;
             case 4:
             case 5:
             case 6:
