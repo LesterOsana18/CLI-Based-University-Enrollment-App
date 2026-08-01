@@ -10,38 +10,76 @@ public final class InputValidator {
     private InputValidator() {
     }
 
-    // Read and validate a menu option
+    // ==========================================================
+    // MENU INPUT
+    // ==========================================================
+
+    // Reads and validates a menu choice
     public static int readMenuChoice(Scanner input) {
 
-        while (!input.hasNextInt()) {
-
-            System.out.println("\nError: Please enter a valid menu number.\n");
-            input.nextLine();
+        while (true) {
 
             System.out.print("Enter your choice: ");
 
+            if (input.hasNextInt()) {
+
+                int choice = input.nextInt();
+                input.nextLine();
+
+                return choice;
+
+            }
+
+            MessagePrinter.error("Please enter a valid menu number.");
+
+            input.nextLine();
+
         }
-
-        int choice = input.nextInt();
-        input.nextLine();
-
-        return choice;
 
     }
 
-    // Read and validate a positive integer
-    public static int readPositiveInt(Scanner input, String fieldName) {
+    // Reads and validates a menu choice within a range
+    public static int readMenuChoice(
+            Scanner input,
+            int min,
+            int max) {
+
+        while (true) {
+
+            int choice = readMenuChoice(input);
+
+            if (choice >= min && choice <= max) {
+                return choice;
+            }
+
+            MessagePrinter.error(
+                    "Please enter a number between "
+                            + min + " and " + max + ".");
+
+        }
+
+    }
+
+    // ==========================================================
+    // INTEGER INPUT
+    // ==========================================================
+
+    // Reads and validates a positive integer
+    public static int readPositiveInt(
+            Scanner input,
+            String fieldName) {
 
         while (true) {
 
             System.out.print(fieldName + ": ");
 
-            while (!input.hasNextInt()) {
+            if (!input.hasNextInt()) {
 
-                System.out.println("\nError: " + fieldName + " must be a number.\n");
+                MessagePrinter.error(fieldName + " must be a number.");
+
                 input.nextLine();
 
-                System.out.print(fieldName + ": ");
+                continue;
 
             }
 
@@ -52,59 +90,146 @@ public final class InputValidator {
                 return value;
             }
 
-            System.out.println("\nError: " + fieldName + " must be greater than zero.\n");
+            MessagePrinter.error(
+                    fieldName + " must be greater than zero.");
 
         }
 
     }
 
-    // Read and validate a non-empty string
-    public static String readRequiredString(Scanner input, String fieldName) {
+    // ==========================================================
+    // STRING INPUT
+    // ==========================================================
 
-        String value;
+    // Reads and validates a required string
+    public static String readRequiredString(
+            Scanner input,
+            String fieldName) {
 
-        do {
+        while (true) {
 
             System.out.print(fieldName + ": ");
-            value = input.nextLine().trim();
 
-            if (value.isEmpty()) {
+            String value = input.nextLine().trim();
 
-                System.out.println("\nError: " + fieldName + " cannot be empty.\n");
-
+            if (!value.isEmpty()) {
+                return value;
             }
 
-        } while (value.isEmpty());
+            MessagePrinter.error(
+                    fieldName + " cannot be empty.");
 
-        return value;
+        }
 
     }
 
-    // Read and validate an email address
+    // Reads an optional string
+    public static String readOptionalString(
+            Scanner input,
+            String fieldName) {
+
+        System.out.print(fieldName + ": ");
+
+        return input.nextLine().trim();
+
+    }
+
+    // ==========================================================
+    // EMAIL INPUT
+    // ==========================================================
+
+    // Reads and validates an email address
     public static String readEmail(Scanner input) {
 
         while (true) {
 
             System.out.print("Email: ");
+
             String email = input.nextLine().trim();
 
-            if (email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+            if (email.matches(
+                    "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+
                 return email;
+
             }
 
-            System.out.println("\nError: Please enter a valid email address.\n");
+            MessagePrinter.error(
+                    "Please enter a valid email address.");
 
         }
 
     }
 
-    // Read and validate a yes/no confirmation
-    public static boolean confirmAction(Scanner input, String message) {
+    // ==========================================================
+    // PASSWORD INPUT
+    // ==========================================================
 
-        System.out.println(message);
-        System.out.print("Press 'Y' to confirm or any other key to cancel: ");
+    // Reads a password
+    public static String readPassword(Scanner input) {
 
-        return input.nextLine().equalsIgnoreCase("Y");
+        System.out.print("Password: ");
+
+        return input.nextLine();
+
+    }
+
+    // Reads and confirms a password
+    public static String readConfirmedPassword(
+            Scanner input) {
+
+        while (true) {
+
+            String password = readPassword(input);
+
+            System.out.print("Confirm Password: ");
+
+            String confirmPassword = input.nextLine();
+
+            if (password.equals(confirmPassword)) {
+
+                return password;
+
+            }
+
+            MessagePrinter.error(
+                    "Passwords do not match.");
+
+        }
+
+    }
+
+    // ==========================================================
+    // CONFIRMATION
+    // ==========================================================
+
+    // Reads a yes/no confirmation
+    public static boolean confirmAction(
+            Scanner input,
+            String message) {
+
+        while (true) {
+
+            System.out.print(message + " (Y/N): ");
+
+            String choice = input.nextLine().trim();
+
+            if (choice.equalsIgnoreCase("Y")) {
+
+                return true;
+
+            }
+
+            if (choice.equalsIgnoreCase("N")) {
+
+                return false;
+
+            }
+
+            MessagePrinter.error(
+                    "Please enter Y or N.");
+
+        }
 
     }
 }

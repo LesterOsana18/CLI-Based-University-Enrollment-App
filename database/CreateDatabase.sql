@@ -10,7 +10,9 @@ USE university_enrollment_db;
 CREATE TABLE departments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     department_name VARCHAR(100) NOT NULL UNIQUE,
-    is_archived BOOLEAN NOT NULL DEFAULT FALSE
+
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    archived_at TIMESTAMP NULL
 );
 
 -- Users --
@@ -19,7 +21,10 @@ CREATE TABLE users (
     username VARCHAR(50) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('STUDENT','REGISTRAR','ADMIN') NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    archived_at TIMESTAMP NULL
 );
 
 -- Students --
@@ -32,6 +37,9 @@ CREATE TABLE students (
     department_id INT NOT NULL,
     user_id INT NOT NULL UNIQUE,
     status ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    archived_at TIMESTAMP NULL,
 
     FOREIGN KEY (department_id)
         REFERENCES departments(id),
@@ -51,6 +59,9 @@ CREATE TABLE employees (
     user_id INT NOT NULL UNIQUE,
     status ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE',
 
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    archived_at TIMESTAMP NULL,
+
     FOREIGN KEY (user_id)
         REFERENCES users(id)
         ON DELETE CASCADE
@@ -64,6 +75,9 @@ CREATE TABLE courses (
     units TINYINT UNSIGNED NOT NULL,
     department_id INT NOT NULL,
     is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
+    archived_at TIMESTAMP NULL,
 
     FOREIGN KEY (department_id)
         REFERENCES departments(id)
