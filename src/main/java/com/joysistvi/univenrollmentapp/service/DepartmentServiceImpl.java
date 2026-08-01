@@ -12,23 +12,28 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<Department> getArchivedDepartments() {
+        return repo.getArchivedDepartments();
+    }
+
+    @Override
     public boolean createDepartment(Department department) {
         return repo.createDepartment(department);
     }
 
     @Override
     public boolean updateDeparment(int id, String department_name) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return repo.updateDeparment(id, department_name);
     }
 
     @Override
     public boolean softDeleteDepartment(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return repo.softDeleteDepartment(id);
     }
 
     @Override
     public boolean hardDeleteDepartment(int id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return repo.hardDeleteDepartment(id);
     }
    
 }

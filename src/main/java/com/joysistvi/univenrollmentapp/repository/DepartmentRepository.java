@@ -4,9 +4,10 @@ import com.joysistvi.univenrollmentapp.model.Department;
 import java.util.List;
 
 public interface DepartmentRepository {
-    public List<Department> getAllDepartments();
-    public boolean createDepartment(Department department);
-    public boolean updateDeparment(int id, String department_name);
-    public boolean softDeleteDepartment(int id);
-    public boolean hardDeleteDepartment(int id);
+    List<Department> getAllDepartments();
+    List<Department> getArchivedDepartments();
+    boolean createDepartment(Department department);
+    boolean updateDeparment(int id, String departmentName);
+    boolean softDeleteDepartment(int id);
+    boolean hardDeleteDepartment(int id);
 }
