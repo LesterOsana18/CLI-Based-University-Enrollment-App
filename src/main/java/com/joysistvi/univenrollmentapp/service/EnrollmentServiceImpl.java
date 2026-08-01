@@ -14,20 +14,20 @@ import com.joysistvi.univenrollmentapp.repository.StudentRepository;
 // Implements the business operations for Enrollment objects
 public class EnrollmentServiceImpl implements EnrollmentService {
 
-    // Dependency Injection (our own repositories)
+    // Dependency Injection
     private final EnrollmentRepository enrollmentRepository;
     private final StudentRepository studentRepository;
-
-    // Admin dev's services only expose a no-arg constructor, so we instantiate directly
-    private final PrerequisiteService prerequisiteService = new PrerequisiteServiceImpl();
+    private final PrerequisiteService prerequisiteService;
 
     // Constructor
     public EnrollmentServiceImpl(
             EnrollmentRepository enrollmentRepository,
-            StudentRepository studentRepository) {
+            StudentRepository studentRepository,
+            PrerequisiteService prerequisiteService) {
 
         this.enrollmentRepository = enrollmentRepository;
         this.studentRepository = studentRepository;
+        this.prerequisiteService = prerequisiteService;
 
     }
 
