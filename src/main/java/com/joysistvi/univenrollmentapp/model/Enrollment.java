@@ -1,5 +1,11 @@
 package com.joysistvi.univenrollmentapp.model;
 
+import java.sql.Date;
+
+import com.joysistvi.univenrollmentapp.enums.Semester;
+
+// Model Class
+// Stores the information of an Enrollment object using encapsulation
 import com.joysistvi.univenrollmentapp.enums.Semester;
 import java.sql.Date;
 

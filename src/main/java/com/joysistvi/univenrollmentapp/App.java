@@ -92,11 +92,32 @@ public final class App {
         // VIEWS
         // ==========================================================
 
-        LoginView loginView =
-                new LoginView(userController, INPUT);
+        UserRepository userRepository = new UserRepositoryImpl(dbConnection);
+        UserService userService = new UserServiceImpl(userRepository);
+        UserController userController = new UserController(userService);
 
-        MainMenuView mainMenuView =
-                new MainMenuView(INPUT, studentController);
+        // ==========================================================
+        // DEPENDENCY INJECTION - STUDENT MODULE
+        // ==========================================================
+
+        StudentRepository studentRepository = new StudentRepositoryImpl(dbConnection);
+        EnrollmentRepository enrollmentRepository = new EnrollmentRepositoryImpl(dbConnection);
+
+        StudentService studentService = new StudentServiceImpl(studentRepository);
+        CourseService courseService = new CourseServiceImpl();
+        PrerequisiteService prerequisiteService = new PrerequisiteServiceImpl();
+        EnrollmentService enrollmentService =
+                new EnrollmentServiceImpl(enrollmentRepository, studentRepository);
+
+        StudentController studentController = new StudentController(
+                studentService, courseService, enrollmentService, prerequisiteService);
+
+        // ==========================================================
+        // VIEWS
+        // ==========================================================
+
+        LoginView loginView = new LoginView(userController, input);
+        MainMenuView mainMenuView = new MainMenuView(input, studentController);
 
         // ==========================================================
         // APPLICATION LOOP

@@ -11,4 +11,7 @@ public interface StudentService {
 
     // Retrieve a student's profile using their linked user account ID
     Student getStudentByUserId(int userId);
+
+    // Retrieve a student's profile using their linked user account ID
+    Student getStudentByUserId(int userId);
 }

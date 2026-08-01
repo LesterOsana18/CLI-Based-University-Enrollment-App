@@ -4,6 +4,7 @@ package com.joysistvi.univenrollmentapp.model;
 // Stores the information of a Prerequisite object using encapsulation
 public class Prerequisite {
 
+
     // Private fields (Encapsulation)
     private int id;
     private int courseId;

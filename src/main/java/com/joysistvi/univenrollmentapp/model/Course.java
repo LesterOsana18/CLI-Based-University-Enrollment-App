@@ -3,6 +3,7 @@ package com.joysistvi.univenrollmentapp.model;
 // Model Class
 // Stores the information of a Course object using encapsulation
 public class Course {
+
     private final int id;
     private final String courseCode;
     private final String courseName;
