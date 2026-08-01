@@ -9,7 +9,8 @@ USE university_enrollment_db;
 -- Departments --
 CREATE TABLE departments (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    department_name VARCHAR(100) NOT NULL UNIQUE
+    department_name VARCHAR(100) NOT NULL UNIQUE,
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 -- Users --
@@ -62,6 +63,7 @@ CREATE TABLE courses (
     course_name VARCHAR(100) NOT NULL,
     units TINYINT UNSIGNED NOT NULL,
     department_id INT NOT NULL,
+    is_archived BOOLEAN NOT NULL DEFAULT FALSE,
 
     FOREIGN KEY (department_id)
         REFERENCES departments(id)

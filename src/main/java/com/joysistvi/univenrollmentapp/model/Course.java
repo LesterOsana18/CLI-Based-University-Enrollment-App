@@ -4,81 +4,47 @@ package com.joysistvi.univenrollmentapp.model;
 // Stores the information of a Course object using encapsulation
 public class Course {
 
-    // Private fields (Encapsulation)
-    private int id;
-    private String courseCode;
-    private String courseName;
-    private int units;
-    private int departmentId;
+    private final int id;
+    private final String courseCode;
+    private final String courseName;
+    private final int units;
+    private final int departmentId;
+    private final String departmentName;
 
-    // Default constructor
-    public Course() {
+    public Course(int id, String courseCode, String courseName, int units, int departmentId) {
+        this(id, courseCode, courseName, units, departmentId, null);
     }
 
-    // Constructor for existing records (includes ID)
-    public Course(int id, String courseCode, String courseName,
-            int units, int departmentId) {
-
+    public Course(int id, String courseCode, String courseName, int units, int departmentId, String departmentName) {
         this.id = id;
         this.courseCode = courseCode;
         this.courseName = courseName;
         this.units = units;
         this.departmentId = departmentId;
-
+        this.departmentName = departmentName;
     }
-
-    // Constructor for creating a new course (no ID yet)
-    public Course(String courseCode, String courseName,
-            int units, int departmentId) {
-
-        this.courseCode = courseCode;
-        this.courseName = courseName;
-        this.units = units;
-        this.departmentId = departmentId;
-
-    }
-
-    // ==========================================================
-    // Getter (Accessor) and Setter (Mutator) Methods
-    // ==========================================================
 
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getCourseCode() {
         return courseCode;
     }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
     public String getCourseName() {
         return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
     }
 
     public int getUnits() {
         return units;
     }
 
-    public void setUnits(int units) {
-        this.units = units;
-    }
-
     public int getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
+    public String getDepartmentName() {
+        return departmentName;
     }
 }

@@ -49,10 +49,6 @@ public class Student {
 
     }
 
-    // ==========================================================
-    // Getter (Accessor) and Setter (Mutator) Methods
-    // ==========================================================
-
     public int getId() {
         return id;
     }
