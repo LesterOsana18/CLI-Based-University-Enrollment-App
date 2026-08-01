@@ -6,10 +6,10 @@ import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.service.UserService;
 
 // Controller Class
-// Acts as the bridge between the View and the Service layer
+// Handles requests related to user management
 public class UserController {
 
-    // Dependency Injection (Constructor Injection)
+    // Dependency Injection
     private final UserService userService;
 
     // Constructor
@@ -28,8 +28,14 @@ public class UserController {
     }
 
     // Authenticate a user
-    public User login(String username, String password) {
-        return userService.login(username, password);
+    public User login(
+            String username,
+            String password) {
+
+        return userService.login(
+                username,
+                password);
+
     }
 
     // Register a new user
@@ -42,8 +48,14 @@ public class UserController {
         return userService.updateUser(user);
     }
 
-    // Delete a user
-    public boolean deleteUser(int id) {
-        return userService.deleteUser(id);
+    // Archive a user
+    public boolean archiveUser(int id) {
+        return userService.archiveUser(id);
     }
+
+    // Restore an archived user
+    public boolean restoreUser(int id) {
+        return userService.restoreUser(id);
+    }
+
 }
