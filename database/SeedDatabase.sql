@@ -71,7 +71,7 @@ INSERT INTO prerequisites (id, course_id, prerequisite_course_id) VALUES
 
 -- Students --
 INSERT INTO students (student_number, first_name, last_name, email, department_id, user_id, status, is_archived) VALUES
-('2022-00001-MN-0','John','Santos','john.santos@university.edu',1,NULL,'ACTIVE',FALSE),
+('2022-08948-MN-0','Lester','Osana','lester.osana@university.edu',1,NULL,'ACTIVE',FALSE),
 ('2022-00002-MN-0','Maria','Cruz','maria.cruz@university.edu',1,NULL,'ACTIVE',FALSE),
 ('2022-00003-MN-0','Jose','Reyes','jose.reyes@university.edu',2,NULL,'ACTIVE',FALSE),
 ('2022-00004-MN-0','Anna','Garcia','anna.garcia@university.edu',3,NULL,'ACTIVE',FALSE),
