@@ -67,4 +67,19 @@ public class UserController {
     public boolean deleteUser(int id) {
         return userService.deleteUser(id);
     }
+
+    // Register a new student account
+    public String registerStudentAccount(
+            String studentNumber,
+            String email,
+            String username,
+            String password) {
+
+        return userService.registerStudentAccount(
+                studentNumber,
+                email,
+                username,
+                password);
+
+    }
 }

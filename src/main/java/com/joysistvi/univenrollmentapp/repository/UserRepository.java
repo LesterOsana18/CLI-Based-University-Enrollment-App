@@ -37,4 +37,11 @@ public interface UserRepository {
 
     // Check if a username already exists
     boolean usernameExists(String username);
+
+    // Register a new student account
+    String registerStudentAccount(
+        String studentNumber,
+        String email,
+        String username,
+        String password);
 }

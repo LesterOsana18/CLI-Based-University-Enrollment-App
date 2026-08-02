@@ -3,7 +3,6 @@ package com.joysistvi.univenrollmentapp.view;
 import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.controller.UserController;
-import com.joysistvi.univenrollmentapp.enums.Role;
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
 import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
@@ -136,7 +135,17 @@ public class LoginView {
         ScreenUtils.clearScreen();
 
         HeaderPrinter.printHeader(
-                "USER REGISTRATION");
+                "STUDENT ACCOUNT REGISTRATION");
+
+        String studentNumber =
+                InputValidator.readRequiredString(
+                        input,
+                        "Student Number");
+
+        String email =
+                InputValidator.readRequiredString(
+                        input,
+                        "Registered Email");
 
         String username =
                 InputValidator.readRequiredString(
@@ -147,28 +156,28 @@ public class LoginView {
 
         while (true) {
 
-            System.out.println();
-            System.out.println("Password Requirements");
-            System.out.println("---------------------");
-            System.out.println("• Minimum of 8 characters");
-            System.out.println("• At least 1 digit (0-9)");
-            System.out.println("• At least 1 special character");
-            System.out.println();
+                System.out.println();
+                System.out.println("Password Requirements");
+                System.out.println("---------------------");
+                System.out.println("• Minimum of 8 characters");
+                System.out.println("• At least 1 digit (0-9)");
+                System.out.println("• At least 1 special character");
+                System.out.println();
 
-            password =
-                    InputValidator.readRequiredString(
-                            input,
-                            "Password");
+                password =
+                        InputValidator.readRequiredString(
+                                input,
+                                "Password");
 
-            String validation =
-                    PasswordUtils.getPasswordValidationMessage(
-                            password);
+                String validation =
+                        PasswordUtils.getPasswordValidationMessage(
+                                password);
 
-            if (validation == null) {
+                if (validation == null) {
                 break;
-            }
+                }
 
-            MessagePrinter.error(validation);
+                MessagePrinter.error(validation);
 
         }
 
@@ -179,33 +188,58 @@ public class LoginView {
 
         if (!password.equals(confirmPassword)) {
 
-            MessagePrinter.error(
-                    "Passwords do not match.");
+                MessagePrinter.error(
+                        "Passwords do not match.");
 
-            return;
+                return;
 
         }
 
-        User user =
-                new User(
+        String result =
+                userController.registerStudentAccount(
+                        studentNumber,
+                        email,
                         username,
-                        password,
-                        Role.STUDENT);
+                        password);
 
-        if (userController.createUser(user)) {
+        switch (result) {
 
-            MessagePrinter.success(
-                    "Registration successful!");
+                case "SUCCESS" -> {
 
-            MessagePrinter.info(
-                    "Your account has been created as a STUDENT account.");
+                MessagePrinter.success(
+                        "Registration successful!");
 
-        } else {
+                MessagePrinter.info(
+                        "You may now log in using your username and password.");
 
-            MessagePrinter.error(
-                    "Username already exists.");
+                }
+
+                case "STUDENT_NOT_FOUND" ->
+
+                MessagePrinter.error(
+                        "Your student number does not exist in the database. Please contact your assigned registrar.");
+
+                case "EMAIL_MISMATCH" ->
+
+                MessagePrinter.error(
+                        "The email address does not match our records.");
+
+                case "ACCOUNT_ALREADY_EXISTS" ->
+
+                MessagePrinter.error(
+                        "A user account has already been created for this student.");
+
+                case "USERNAME_EXISTS" ->
+
+                MessagePrinter.error(
+                        "Username already exists.");
+
+                default ->
+
+                MessagePrinter.error(
+                        "Registration failed.");
 
         }
 
-    }
+        }
 }

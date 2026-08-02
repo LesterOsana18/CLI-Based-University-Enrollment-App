@@ -34,4 +34,11 @@ public interface UserService {
 
     // Permanently delete a user
     boolean deleteUser(int id);
+
+    // Register a new student account
+    String registerStudentAccount(
+        String studentNumber,
+        String email,
+        String username,
+        String password);
 }

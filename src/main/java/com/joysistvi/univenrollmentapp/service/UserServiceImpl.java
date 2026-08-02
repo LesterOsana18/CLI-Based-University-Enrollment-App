@@ -123,4 +123,14 @@ public class UserServiceImpl implements UserService {
 
     }
 
+    // Register a new student account
+    @Override
+    public String registerStudentAccount(String studentNumber, String email, String username, String password) {
+
+        return userRepository.registerStudentAccount(
+            studentNumber,
+            email,
+            username,
+            password);
+    }
 }
