@@ -1,4 +1,4 @@
-# 🎓 Automated University Enrollment App
+# 🎓 Automated University Enrollment App (Stable Version 1.0)
 
 ## 📘 Overview
 **Automated University Enrollment App** is a basic CRUD-based **Educational Portal** built with Java.
