@@ -74,7 +74,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         String sql = """
                 SELECT *
                 FROM enrollments
-                WHERE is_archived = FALSE
                 ORDER BY date_enrolled DESC
                 """;
 
@@ -107,7 +106,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
         String sql = """
                 SELECT *
                 FROM enrollments
-                WHERE is_archived = TRUE
                 ORDER BY date_enrolled DESC
                 """;
 
@@ -144,7 +142,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 ON e.student_id = s.id
                 JOIN courses c
                 ON e.course_id = c.id
-                WHERE e.is_archived = FALSE
                 AND (
                         s.student_number LIKE ?
                     OR s.first_name LIKE ?
@@ -199,7 +196,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 SELECT *
                 FROM enrollments
                 WHERE student_id = ?
-                  AND is_archived = FALSE
                 ORDER BY date_enrolled DESC
                 """;
 
@@ -235,7 +231,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                 SELECT *
                 FROM enrollments
                 WHERE id = ?
-                  AND is_archived = FALSE
                 """;
 
         try (Connection connection = dbConnection.getConnection();
@@ -277,7 +272,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
                   AND course_id = ?
                   AND school_year = ?
                   AND semester = ?
-                  AND is_archived = FALSE
                 """;
 
         try (Connection connection = dbConnection.getConnection();
@@ -321,64 +315,6 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
             statement.setInt(2, enrollment.getCourseId());
             statement.setString(3, enrollment.getSchoolYear());
             statement.setString(4, toDbValue(enrollment.getSemester()));
-
-            return statement.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-
-            System.out.println(
-                    "Database Error: " + e.getMessage());
-
-        }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean archiveEnrollment(int id) {
-
-        String sql = """
-                UPDATE enrollments
-                SET is_archived = TRUE
-                WHERE id = ?
-                  AND is_archived = FALSE
-                """;
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            return statement.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-
-            System.out.println(
-                    "Database Error: " + e.getMessage());
-
-        }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean restoreEnrollment(int id) {
-
-        String sql = """
-                UPDATE enrollments
-                SET is_archived = FALSE
-                WHERE id = ?
-                  AND is_archived = TRUE
-                """;
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement =
-                     connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
 
             return statement.executeUpdate() > 0;
 

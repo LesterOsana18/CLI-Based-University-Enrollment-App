@@ -143,19 +143,7 @@ public class EnrollmentServiceImpl implements EnrollmentService {
 
         }
 
-        return enrollmentRepository.archiveEnrollment(enrollmentId);
-    }
-
-    // Archive enrollment
-    @Override
-    public boolean archiveEnrollment(int id) {
-        return enrollmentRepository.archiveEnrollment(id);
-    }
-
-    // Restore enrollment
-    @Override
-    public boolean restoreEnrollment(int id) {
-        return enrollmentRepository.restoreEnrollment(id);
+        return enrollmentRepository.deleteEnrollment(enrollmentId);
     }
 
     // Delete enrollment

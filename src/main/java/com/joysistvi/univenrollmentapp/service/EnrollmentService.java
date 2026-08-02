@@ -31,14 +31,8 @@ public interface EnrollmentService {
             String schoolYear,
             Semester semester);
 
-        // Drop an enrollment for a student
-        boolean dropEnrollment(int enrollmentId, int studentId);
-
-    // Archive an enrollment
-    boolean archiveEnrollment(int id);
-
-    // Restore an archived enrollment
-    boolean restoreEnrollment(int id);
+    // Drop an enrollment for a student
+    boolean dropEnrollment(int enrollmentId, int studentId);
 
     // Permanently delete an enrollment
     boolean deleteEnrollment(int id);

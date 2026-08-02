@@ -34,12 +34,6 @@ public interface EnrollmentRepository {
     // Create a new enrollment
     boolean createEnrollment(Enrollment enrollment);
 
-    // Archive an enrollment
-    boolean archiveEnrollment(int id);
-
-    // Restore an archived enrollment
-    boolean restoreEnrollment(int id);
-
     // Permanently delete an enrollment
     boolean deleteEnrollment(int id);
 
