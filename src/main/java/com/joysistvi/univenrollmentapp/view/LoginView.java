@@ -192,7 +192,7 @@ public class LoginView {
                         password,
                         Role.STUDENT);
 
-        if (userController.register(user)) {
+        if (userController.createUser(user)) {
 
             MessagePrinter.success(
                     "Registration successful!");
