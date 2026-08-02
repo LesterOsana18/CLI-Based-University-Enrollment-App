@@ -41,10 +41,13 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         String sql = """
                 SELECT s.*,
-                       d.department_name
+                       d.department_name,
+                       u.username
                 FROM students s
                 JOIN departments d
                     ON s.department_id = d.id
+                LEFT JOIN users u
+                    ON s.user_id = u.id
                 WHERE s.id = ?
                   AND s.is_archived = FALSE
                 """;
@@ -77,10 +80,13 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         String sql = """
                 SELECT s.*,
-                       d.department_name
+                       d.department_name,
+                       u.username
                 FROM students s
                 JOIN departments d
                     ON s.department_id = d.id
+                LEFT JOIN users u
+                    ON s.user_id = u.id
                 WHERE s.user_id = ?
                   AND s.is_archived = FALSE
                 """;
@@ -113,10 +119,13 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         String sql = """
                 SELECT s.*,
-                       d.department_name
+                       d.department_name,
+                       u.username
                 FROM students s
                 JOIN departments d
                     ON s.department_id = d.id
+                LEFT JOIN users u
+                    ON s.user_id = u.id
                 WHERE (s.first_name LIKE ? OR
                        s.last_name LIKE ? OR
                        s.student_number LIKE ? OR
@@ -159,10 +168,13 @@ public class StudentRepositoryImpl implements StudentRepository {
 
         String sql = """
                 SELECT s.*,
-                       d.department_name
+                       d.department_name,
+                       u.username
                 FROM students s
                 JOIN departments d
                     ON s.department_id = d.id
+                LEFT JOIN users u
+                    ON s.user_id = u.id
                 WHERE s.is_archived = ?
                 ORDER BY s.student_number
                 """;
