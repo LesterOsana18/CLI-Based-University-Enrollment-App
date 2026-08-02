@@ -11,6 +11,9 @@ public interface UserService {
     // Retrieve all users
     List<User> getAllUsers();
 
+    // Retrieve all archived users
+    List<User> getArchivedUsers();
+
     // Retrieve a user by ID
     User getUserById(int id);
 
@@ -18,7 +21,7 @@ public interface UserService {
     User login(String username, String password);
 
     // Register a new user
-    boolean register(User user);
+    boolean createUser(User user);
 
     // Update an existing user
     boolean updateUser(User user);
@@ -30,5 +33,5 @@ public interface UserService {
     boolean restoreUser(int id);
 
     // Permanently delete a user
-    boolean permanentlyDeleteUser(int id);
+    boolean deleteUser(int id);
 }

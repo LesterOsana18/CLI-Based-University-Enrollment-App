@@ -9,28 +9,31 @@ import com.joysistvi.univenrollmentapp.model.User;
 public interface UserRepository {
 
     // Retrieve all users
-    List<User> findAll();
+    List<User> getAllUsers();
+
+    // Retrieve all archived users
+    List<User> getArchivedUsers();
 
     // Retrieve a user by ID
-    User findById(int id);
+    User getUserById(int id);
 
     // Retrieve a user by username
-    User findByUsername(String username);
+    User getUserByUsername(String username);
 
     // Insert a new user
-    boolean save(User user);
+    boolean createUser(User user);
 
     // Update an existing user
-    boolean update(User user);
+    boolean updateUser(User user);
 
     // Archive a user
-    boolean archive(int id);
+    boolean archiveUser(int id);
 
     // Restore an archived user
-    boolean restore(int id);
+    boolean restoreUser(int id);
 
     // Permanently delete a user
-    boolean delete(int id);
+    boolean deleteUser(int id);
 
     // Check if a username already exists
     boolean usernameExists(String username);

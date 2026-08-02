@@ -24,8 +24,9 @@ public class UserRepositoryImpl implements UserRepository {
         this.dbConnection = dbConnection;
     }
 
+    // Retrieve all users
     @Override
-    public List<User> findAll() {
+    public List<User> getAllUsers() {
 
         List<User> users = new ArrayList<>();
         String sql = "SELECT id, username, password, role, created_at FROM users ORDER BY username";
@@ -44,8 +45,30 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
+    // Retrieve all archived users
     @Override
-    public User findById(int id) {
+    public List<User> getArchivedUsers() {
+
+        List<User> users = new ArrayList<>();
+        String sql = "SELECT id, username, password, role, created_at FROM users WHERE is_archived = TRUE ORDER BY username";
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+            while (resultSet.next()) {
+                users.add(mapUser(resultSet));
+            }
+        } catch (SQLException e) {
+            System.out.println("Database Error: " + e.getMessage());
+        }
+
+        return users;
+
+    }
+
+    // Retrieve a user by ID
+    @Override
+    public User getUserById(int id) {
 
         String sql = "SELECT id, username, password, role, created_at FROM users WHERE id = ?";
         try (Connection connection = dbConnection.getConnection();
@@ -62,8 +85,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
+    // Retrieve a user by username
     @Override
-    public User findByUsername(String username) {
+    public User getUserByUsername(String username) {
 
         String sql =
                 "SELECT * FROM users WHERE username = ?";
@@ -93,8 +117,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
+    // Create a new user
     @Override
-    public boolean save(User user) {
+    public boolean createUser(User user) {
 
         String sql = """
             INSERT INTO users (username, password, role)
@@ -120,8 +145,9 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
+    // Update an existing user
     @Override
-    public boolean update(User user) {
+    public boolean updateUser(User user) {
 
         boolean changePassword = user.getPassword() != null && !user.getPassword().isBlank();
         String sql = changePassword
@@ -174,7 +200,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     // Archive a user
     @Override
-    public boolean archive(int id) {
+    public boolean archiveUser(int id) {
 
         String sql =
                 "UPDATE users " +
@@ -200,7 +226,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     // Restore an archived user
     @Override
-    public boolean restore(int id) {
+    public boolean restoreUser(int id) {
 
         String sql =
                 "UPDATE users " +
@@ -226,7 +252,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     // Permanently delete a user
     @Override
-    public boolean delete(int id) {
+    public boolean deleteUser(int id) {
 
         String sql =
                 "DELETE FROM users WHERE id = ?";
@@ -252,7 +278,7 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public boolean usernameExists(String username) {
 
-        return findByUsername(username) != null;
+        return getUserByUsername(username) != null;
 
     }
 

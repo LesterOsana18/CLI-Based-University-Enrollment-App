@@ -22,15 +22,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> getAllUsers() {
 
-        return userRepository.findAll();
+        return userRepository.getAllUsers();
 
+    }
+
+    // Retrieve all archived users
+    @Override
+    public List<User> getArchivedUsers() {
+        return userRepository.getArchivedUsers();
     }
 
     // Retrieve a user by ID
     @Override
     public User getUserById(int id) {
 
-        return userRepository.findById(id);
+        return userRepository.getUserById(id);
 
     }
 
@@ -38,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User login(String username, String password) {
 
-        User user = userRepository.findByUsername(username);
+        User user = userRepository.getUserByUsername(username);
 
         if (user == null) {
             return null;
@@ -54,7 +60,7 @@ public class UserServiceImpl implements UserService {
 
     // Register a new user
     @Override
-    public boolean register(User user) {
+    public boolean createUser(User user) {
 
         if (userRepository.usernameExists(user.getUsername())) {
             return false;
@@ -63,7 +69,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(
                 PasswordUtils.hashPassword(user.getPassword()));
 
-        return userRepository.save(user);
+        return userRepository.createUser(user);
 
     }
 
@@ -71,12 +77,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean updateUser(User user) {
 
-        User existingUser = userRepository.findById(user.getId());
+        User existingUser = userRepository.getUserById(user.getId());
         if (existingUser == null) {
             return false;
         }
 
-        User userWithSameUsername = userRepository.findByUsername(user.getUsername());
+        User userWithSameUsername = userRepository.getUserByUsername(user.getUsername());
         if (userWithSameUsername != null
                 && userWithSameUsername.getId() != user.getId()) {
 
@@ -89,7 +95,7 @@ public class UserServiceImpl implements UserService {
         } else {
             user.setPassword(null);
         }
-        return userRepository.update(user);
+        return userRepository.updateUser(user);
 
     }
 
@@ -97,7 +103,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean archiveUser(int id) {
 
-        return userRepository.archive(id);
+        return userRepository.archiveUser(id);
 
     }
 
@@ -105,17 +111,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean restoreUser(int id) {
 
-        return userRepository.restore(id);
+        return userRepository.restoreUser(id);
 
     }
 
     // Permanently delete a user
     @Override
-    public boolean permanentlyDeleteUser(int id) {
+    public boolean deleteUser(int id) {
 
-        return userRepository.delete(id);
+        return userRepository.deleteUser(id);
 
     }
 
-    
 }

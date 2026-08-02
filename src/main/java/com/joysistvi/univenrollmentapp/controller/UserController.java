@@ -18,8 +18,13 @@ public class UserController {
     }
 
     // Retrieve all users
-    public List<User> listUsers() {
+    public List<User> getAllUsers() {
         return userService.getAllUsers();
+    }
+
+    // Retrieve all archived users
+    public List<User> getArchivedUsers() {
+        return userService.getArchivedUsers();
     }
 
     // Retrieve a user by ID
@@ -38,9 +43,9 @@ public class UserController {
 
     }
 
-    // Register a new user
-    public boolean register(User user) {
-        return userService.register(user);
+    // Create a new user
+    public boolean createUser(User user) {
+        return userService.createUser(user);
     }
 
     // Update a user
@@ -59,7 +64,7 @@ public class UserController {
     }
 
     // Permanently delete a user
-    public boolean permanentlyDeleteUser(int id) {
-        return userService.permanentlyDeleteUser(id);
+    public boolean deleteUser(int id) {
+        return userService.deleteUser(id);
     }
 }

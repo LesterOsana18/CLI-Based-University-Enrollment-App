@@ -40,6 +40,16 @@ public class User {
 
     }
 
+    // Constructor for displaying user information (excludes password)
+    public User(int id, String username, Role role, Timestamp createdAt) {
+
+        this.id = id;
+        this.username = username;
+        this.role = role;
+        this.createdAt = createdAt;
+
+    }
+
     // ==========================================================
     // Getter (Accessor) and Setter (Mutator) Methods
     // ==========================================================
