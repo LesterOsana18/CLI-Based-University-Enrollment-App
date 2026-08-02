@@ -10,7 +10,7 @@ import com.joysistvi.univenrollmentapp.view.*;
 
 public final class App {
 
-    private static final Scanner INPUT = new Scanner(System.in);
+    private static final Scanner input = new Scanner(System.in);
 
     private App() {
     }
@@ -112,12 +112,13 @@ public final class App {
 
             CourseView courseView =
                     new CourseView(
+                            input,
                             courseController,
                             departmentController,
                             prerequisiteController);
 
             DepartmentView departmentView =
-                    new DepartmentView(departmentController);
+                    new DepartmentView(input, departmentController);
 
             EnrollmentView enrollmentView =
                     new EnrollmentView(enrollmentController);
@@ -135,7 +136,7 @@ public final class App {
 
             MainMenuView mainMenuView =
                     new MainMenuView(
-                            INPUT,
+                            input,
                             studentView,
                             courseView,
                             departmentView,
@@ -145,7 +146,7 @@ public final class App {
                             prerequisiteView);
 
             LoginView loginView =
-                    new LoginView(userController, INPUT);
+                    new LoginView(userController, input);
 
             while (true) {
 
@@ -161,7 +162,7 @@ public final class App {
 
         } finally {
 
-            INPUT.close();
+            input.close();
 
         }
 

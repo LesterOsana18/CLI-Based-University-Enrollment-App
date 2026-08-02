@@ -35,7 +35,6 @@ public class MainMenuView {
         this.employeeView = employeeView;
         this.userView = userView;
         this.prerequisiteView = prerequisiteView;
-
     }
 
     public void displayMenu() {
@@ -83,9 +82,9 @@ public class MainMenuView {
 
             case 1 -> studentView.displayMenu(input, currentUser.getId());
 
-            case 2 -> courseView.displayMenu(input);
+            case 2 -> courseView.displayMenu();
 
-            case 3 -> departmentView.displayMenu(input);
+            case 3 -> departmentView.displayMenu();
 
             case 4 -> enrollmentView.displayMenu(input);
 
@@ -117,7 +116,7 @@ public class MainMenuView {
 
             case 1 -> studentView.displayMenu(input, currentUser.getId());
 
-            case 2 -> courseView.displayMenu(input);
+            case 2 -> courseView.displayMenu();
 
             case 3 -> enrollmentView.displayMenu(input);
 
