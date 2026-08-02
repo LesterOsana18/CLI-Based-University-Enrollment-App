@@ -32,26 +32,44 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     // Retrieve all enrollments
+    @Override
     public List<Enrollment> getAllEnrollments() {
         return enrollmentRepository.getAllEnrollments();
     }
 
-    // Search enrollments by keyword
+    // Retrieve archived enrollments
+    @Override
+    public List<Enrollment> getArchivedEnrollments() {
+        return enrollmentRepository.getArchivedEnrollments();
+    }
+
+    // Search enrollments
+    @Override
     public List<Enrollment> searchEnrollments(String keyword) {
         return enrollmentRepository.searchEnrollments(keyword);
     }
 
+    // Retrieve enrollment by ID
     @Override
-    public List<Enrollment> getEnrollmentHistory(int studentId) {
-        return enrollmentRepository.findByStudentId(studentId);
+    public Enrollment getEnrollmentById(int id) {
+        return enrollmentRepository.getEnrollmentById(id);
     }
 
+    // Retrieve a student's enrollment history
+    @Override
+    public List<Enrollment> getEnrollmentHistory(int studentId) {
+        return enrollmentRepository.getEnrollmentHistory(studentId);
+    }
+
+    // Enroll a student
     @Override
     public String enrollStudent(
-            int studentId, int courseId, String schoolYear, Semester semester) {
+            int studentId,
+            int courseId,
+            String schoolYear,
+            Semester semester) {
 
-        // 1. Student must exist and be ACTIVE
-        Student student = studentRepository.findById(studentId);
+        Student student = studentRepository.getStudentById(studentId);
 
         if (student == null) {
             return "Student record not found.";
@@ -61,67 +79,89 @@ public class EnrollmentServiceImpl implements EnrollmentService {
             return "Only active students may enroll in courses.";
         }
 
-        // 2. Student must not already be enrolled in this course for this term
-        boolean alreadyEnrolled =
-                enrollmentRepository.existsByStudentCourseTerm(
-                        studentId, courseId, schoolYear, semester);
+        if (enrollmentRepository.enrollmentExists(
+                studentId,
+                courseId,
+                schoolYear,
+                semester)) {
 
-        if (alreadyEnrolled) {
             return "You are already enrolled in this course for the selected term.";
+
         }
 
-        // 3. All prerequisites of this course must already appear in the student's history
-        List<Prerequisite> allPrerequisites =
+        List<Prerequisite> prerequisites =
                 prerequisiteService.getAllPrerequisites();
 
         List<Enrollment> history =
-                enrollmentRepository.findByStudentId(studentId);
+                enrollmentRepository.getEnrollmentHistory(studentId);
 
-        for (Prerequisite prerequisite : allPrerequisites) {
+        for (Prerequisite prerequisite : prerequisites) {
 
             if (prerequisite.getCourseId() != courseId) {
                 continue;
             }
 
-            boolean hasTakenPrerequisite = history.stream()
-                    .anyMatch(e -> e.getCourseId()
-                            == prerequisite.getPrerequisiteCourseId());
+            boolean completed = history.stream()
+                    .anyMatch(enrollment ->
+                            enrollment.getCourseId()
+                                    == prerequisite.getPrerequisiteCourseId());
 
-            if (!hasTakenPrerequisite) {
+            if (!completed) {
 
-                String label = prerequisite.getPrerequisiteCourseCode() != null
-                        ? prerequisite.getPrerequisiteCourseCode()
-                        : ("Course ID " + prerequisite.getPrerequisiteCourseId());
+                String courseLabel =
+                        prerequisite.getPrerequisiteCourseCode() != null
+                                ? prerequisite.getPrerequisiteCourseCode()
+                                : "Course ID " + prerequisite.getPrerequisiteCourseId();
 
-                return "Missing prerequisite: " + label;
+                return "Missing prerequisite: " + courseLabel;
 
             }
-
         }
 
-        // 4. All checks passed — create the enrollment
-        Enrollment enrollment =
-                new Enrollment(studentId, courseId, schoolYear, semester);
+        Enrollment enrollment = new Enrollment(
+                studentId,
+                courseId,
+                schoolYear,
+                semester);
 
-        boolean saved = enrollmentRepository.save(enrollment);
-
-        return saved
+        return enrollmentRepository.createEnrollment(enrollment)
                 ? "Enrollment successful."
                 : "Enrollment failed due to a database error.";
-
     }
 
+    // Drop an enrollment
     @Override
     public boolean dropEnrollment(int enrollmentId, int studentId) {
 
-        Enrollment enrollment = enrollmentRepository.findById(enrollmentId);
+        Enrollment enrollment =
+                enrollmentRepository.getEnrollmentById(enrollmentId);
 
-        // Make sure this enrollment actually belongs to the requesting student
-        if (enrollment == null || enrollment.getStudentId() != studentId) {
+        if (enrollment == null
+                || enrollment.getStudentId() != studentId) {
+
             return false;
+
         }
 
-        return enrollmentRepository.delete(enrollmentId);
-
+        return enrollmentRepository.archiveEnrollment(enrollmentId);
     }
+
+    // Archive enrollment
+    @Override
+    public boolean archiveEnrollment(int id) {
+        return enrollmentRepository.archiveEnrollment(id);
+    }
+
+    // Restore enrollment
+    @Override
+    public boolean restoreEnrollment(int id) {
+        return enrollmentRepository.restoreEnrollment(id);
+    }
+
+    // Delete enrollment
+    @Override
+    public boolean deleteEnrollment(int id) {
+        return enrollmentRepository.deleteEnrollment(id);
+    }
+
 }

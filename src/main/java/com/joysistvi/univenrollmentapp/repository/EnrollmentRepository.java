@@ -12,32 +12,35 @@ public interface EnrollmentRepository {
     // Retrieve all enrollments
     List<Enrollment> getAllEnrollments();
 
-    // Search enrollments by keyword
+    // Retrieve all archived enrollments
+    List<Enrollment> getArchivedEnrollments();
+
+    // Search enrollments
     List<Enrollment> searchEnrollments(String keyword);
 
-    // Retrieve all enrollments of a specific student
-    List<Enrollment> findByStudentId(int studentId);
+    // Retrieve all enrollments of a student
+    List<Enrollment> getEnrollmentHistory(int studentId);
 
-    // Retrieve a single enrollment by ID
-    Enrollment findById(int id);
+    // Retrieve an enrollment by ID
+    Enrollment getEnrollmentById(int id);
 
-    // Check if a student is already enrolled in a course for a given term
-    boolean existsByStudentCourseTerm(
+    // Check if the student is already enrolled
+    boolean enrollmentExists(
             int studentId,
             int courseId,
             String schoolYear,
             Semester semester);
 
-    // Insert a new enrollment record
-    boolean save(Enrollment enrollment);
+    // Create a new enrollment
+    boolean createEnrollment(Enrollment enrollment);
 
     // Archive an enrollment
-    boolean archive(int id);
+    boolean archiveEnrollment(int id);
 
     // Restore an archived enrollment
-    boolean restore(int id);
+    boolean restoreEnrollment(int id);
 
     // Permanently delete an enrollment
-    boolean delete(int id);
+    boolean deleteEnrollment(int id);
 
 }

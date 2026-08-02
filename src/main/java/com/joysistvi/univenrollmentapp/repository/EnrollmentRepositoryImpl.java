@@ -1,7 +1,6 @@
 package com.joysistvi.univenrollmentapp.repository;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -52,25 +51,21 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     private Enrollment mapRow(ResultSet resultSet)
             throws SQLException {
 
-        Enrollment enrollment = new Enrollment();
-
-        enrollment.setId(resultSet.getInt("id"));
-        enrollment.setStudentId(resultSet.getInt("student_id"));
-        enrollment.setCourseId(resultSet.getInt("course_id"));
-        enrollment.setSchoolYear(resultSet.getString("school_year"));
-        enrollment.setSemester(
-                toSemester(resultSet.getString("semester")));
-
-        Date date = resultSet.getDate("date_enrolled");
-
-        if (date != null) {
-            enrollment.setDateEnrolled(date);
-        }
-
-        return enrollment;
+        return new Enrollment(
+            resultSet.getInt("id"),
+            resultSet.getInt("student_id"),
+            null,
+            null,
+            resultSet.getInt("course_id"),
+            null,
+            null,
+            resultSet.getString("school_year"),
+            toSemester(resultSet.getString("semester")),
+            resultSet.getDate("date_enrolled"));
 
     }
 
+    // Retrieves all enrollments from the database
     @Override
     public List<Enrollment> getAllEnrollments() {
 
@@ -103,6 +98,40 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
 
     }
 
+    // Retrieves all archived enrollments from the database
+    @Override
+    public List<Enrollment> getArchivedEnrollments() {
+
+        List<Enrollment> enrollments = new ArrayList<>();
+
+        String sql = """
+                SELECT *
+                FROM enrollments
+                WHERE is_archived = TRUE
+                ORDER BY date_enrolled DESC
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql);
+             ResultSet resultSet = statement.executeQuery()) {
+
+            while (resultSet.next()) {
+                enrollments.add(mapRow(resultSet));
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println(
+                    "Database Error: " + e.getMessage());
+
+        }
+
+        return enrollments;
+
+    }
+
+    // Searches enrollments based on a keyword
     @Override
     public List<Enrollment> searchEnrollments(String keyword) {
 
@@ -162,7 +191,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public List<Enrollment> findByStudentId(int studentId) {
+    public List<Enrollment> getEnrollmentHistory(int studentId) {
 
         List<Enrollment> enrollments = new ArrayList<>();
 
@@ -200,7 +229,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public Enrollment findById(int id) {
+    public Enrollment getEnrollmentById(int id) {
 
         String sql = """
                 SELECT *
@@ -235,7 +264,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public boolean existsByStudentCourseTerm(
+    public boolean enrollmentExists(
             int studentId,
             int courseId,
             String schoolYear,
@@ -276,7 +305,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public boolean save(Enrollment enrollment) {
+    public boolean createEnrollment(Enrollment enrollment) {
 
         String sql = """
                 INSERT INTO enrollments
@@ -307,7 +336,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public boolean archive(int id) {
+    public boolean archiveEnrollment(int id) {
 
         String sql = """
                 UPDATE enrollments
@@ -336,7 +365,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public boolean restore(int id) {
+    public boolean restoreEnrollment(int id) {
 
         String sql = """
                 UPDATE enrollments
@@ -365,7 +394,7 @@ public class EnrollmentRepositoryImpl implements EnrollmentRepository {
     }
 
     @Override
-    public boolean delete(int id) {
+    public boolean deleteEnrollment(int id) {
 
         String sql = """
                 DELETE FROM enrollments

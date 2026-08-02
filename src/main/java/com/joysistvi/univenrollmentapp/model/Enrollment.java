@@ -4,34 +4,44 @@ import java.sql.Date;
 
 import com.joysistvi.univenrollmentapp.enums.Semester;
 
-/**
- * Model class for Enrollment.
- * Stores enrollment information using encapsulation.
- */
+// Model Class
+// Stores the information of an Enrollment object using encapsulation
 public class Enrollment {
 
-    private int id;
-    private int studentId;
-    private String studentNumber;
-    private String studentName;
-    private int courseId;
-    private String courseCode;
-    private String courseName;
-    private String schoolYear;
-    private Semester semester;
-    private Date dateEnrolled;
+    // Enrollment information
+    private final int id;
+    private final int studentId;
+    private final String studentNumber;
+    private final String studentName;
+    private final int courseId;
+    private final String courseCode;
+    private final String courseName;
+    private final String schoolYear;
+    private final Semester semester;
+    private final Date dateEnrolled;
 
-    public Enrollment() {
-        // Default constructor
+    // Constructor for creating a new enrollment
+    public Enrollment(
+            int studentId,
+            int courseId,
+            String schoolYear,
+            Semester semester) {
+
+        this(
+                0,
+                studentId,
+                null,
+                null,
+                courseId,
+                null,
+                null,
+                schoolYear,
+                semester,
+                null);
+
     }
 
-    public Enrollment(int studentId, int courseId, String schoolYear, Semester semester) {
-        this.studentId = studentId;
-        this.courseId = courseId;
-        this.schoolYear = schoolYear;
-        this.semester = semester;
-    }
-
+    // Constructor for existing records
     public Enrollment(
             int id,
             int studentId,
@@ -43,6 +53,7 @@ public class Enrollment {
             String schoolYear,
             Semester semester,
             Date dateEnrolled) {
+
         this.id = id;
         this.studentId = studentId;
         this.studentNumber = studentNumber;
@@ -53,85 +64,47 @@ public class Enrollment {
         this.schoolYear = schoolYear;
         this.semester = semester;
         this.dateEnrolled = dateEnrolled;
+
     }
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getStudentId() {
         return studentId;
-    }
-
-    public void setStudentId(int studentId) {
-        this.studentId = studentId;
     }
 
     public String getStudentNumber() {
         return studentNumber;
     }
 
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
-    }
-
     public String getStudentName() {
         return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
     }
 
     public int getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
-    }
-
     public String getCourseCode() {
         return courseCode;
-    }
-
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
     }
 
     public String getCourseName() {
         return courseName;
     }
 
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
-    }
-
     public String getSchoolYear() {
         return schoolYear;
-    }
-
-    public void setSchoolYear(String schoolYear) {
-        this.schoolYear = schoolYear;
     }
 
     public Semester getSemester() {
         return semester;
     }
 
-    public void setSemester(Semester semester) {
-        this.semester = semester;
-    }
-
     public Date getDateEnrolled() {
         return dateEnrolled;
     }
 
-    public void setDateEnrolled(Date dateEnrolled) {
-        this.dateEnrolled = dateEnrolled;
-    }
 }
