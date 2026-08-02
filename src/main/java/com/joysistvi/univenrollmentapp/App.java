@@ -111,7 +111,7 @@ public final class App {
             // ======================================================
 
             StudentPortalView studentPortalView =
-                    new StudentPortalView(studentPortalController);
+                    new StudentPortalView(input, studentPortalController);
 
             StudentManagementView studentManagementView =
                     new StudentManagementView(input, studentManagementController, departmentController);

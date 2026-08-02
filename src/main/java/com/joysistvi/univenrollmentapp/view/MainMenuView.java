@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
 
 public class MainMenuView {
 
@@ -61,7 +63,6 @@ public class MainMenuView {
                 case REGISTRAR -> showRegistrarMenu(currentUser);
 
                 case STUDENT -> studentPortalView.displayMenu(
-                        input,
                         currentUser.getId());
 
             }
@@ -70,92 +71,78 @@ public class MainMenuView {
 
     }
 
+    // Show the administrator menu
     private void showAdminMenu(User currentUser) {
 
-        System.out.println("\n===== ADMIN MENU =====");
-        System.out.println("1. Student Management");
-        System.out.println("2. Course Management");
-        System.out.println("3. Department Management");
-        System.out.println("4. Enrollment Directory");
-        System.out.println("5. Employee Management");
-        System.out.println("6. User Management");
-        System.out.println("7. Prerequisite Management");
-        System.out.println("0. Logout");
-        System.out.print("Enter choice: ");
+        boolean back = false;
 
-        switch (readInt()) {
+        while (!back) {
 
-            case 1 -> studentManagementView.displayMenu();
+            MenuPrinter.printMenu(
+                "Administrator Menu", 
+                "Logout",
+                "Student Management",
+                "Course Management",
+                "Department Management",
+                "Enrollment Directory",
+                "Employee Management",
+                "User Management",
+                "Prerequisite Management");
 
-            case 2 -> courseView.displayMenu();
+            int choice = InputValidator.readMenuChoice(input, 0, 7);
 
-            case 3 -> departmentView.displayMenu();
-
-            case 4 -> enrollmentView.displayMenu();
-
-            case 5 -> employeeView.displayMenu();
-
-            case 6 -> userView.displayMenu();
-
-            case 7 -> prerequisiteView.displayMenu();
-
-            case 0 -> logout();
-
-            default -> System.out.println("Invalid menu option.");
-
+            switch (choice) {
+                case 1 -> studentManagementView.displayMenu();
+                case 2 -> courseView.displayMenu();
+                case 3 -> departmentView.displayMenu();
+                case 4 -> enrollmentView.displayMenu();
+                case 5 -> employeeView.displayMenu();
+                case 6 -> userView.displayMenu();
+                case 7 -> prerequisiteView.displayMenu();
+                case 0 -> {
+                        back = true;
+                        logout();
+                    }
+                default -> System.out.println("Invalid menu option.");
+            }
         }
-
     }
 
+    // Show the registrar menu
     private void showRegistrarMenu(User currentUser) {
 
-        System.out.println("\n===== REGISTRAR MENU =====");
-        System.out.println("1. Student Management");
-        System.out.println("2. Course Management");
-        System.out.println("3. Enrollment Directory");
-        System.out.println("4. Prerequisite Management");
-        System.out.println("0. Logout");
-        System.out.print("Enter choice: ");
+        boolean back = false;
 
-        switch (readInt()) {
+        while (!back) {
 
-            case 1 -> studentManagementView.displayMenu();
+            MenuPrinter.printMenu(
+                "Registrar Menu",
+                "Logout",
+                "Student Management",
+                "Course Management",
+                "Enrollment Directory",
+                "Prerequisite Management");
 
-            case 2 -> courseView.displayMenu();
+            int choice = InputValidator.readMenuChoice(input, 0, 4);
 
-            case 3 -> enrollmentView.displayMenu();
-
-            case 4 -> prerequisiteView.displayMenu();
-
-            case 0 -> logout();
-
-            default -> System.out.println("Invalid menu option.");
-
+            switch (choice) {
+                case 1 -> studentManagementView.displayMenu();
+                case 2 -> courseView.displayMenu();
+                case 3 -> enrollmentView.displayMenu();
+                case 4 -> prerequisiteView.displayMenu();
+                case 0 -> {
+                        back = true;
+                        logout();
+                    }
+                default -> System.out.println("Invalid menu option.");
+            }
         }
-
     }
 
     private void logout() {
 
         Session.logout();
-        System.out.println("Logged out successfully.");
-
-    }
-
-    private int readInt() {
-
-        while (!input.hasNextInt()) {
-
-            System.out.println("Please enter a valid number.");
-            input.nextLine();
-            System.out.print("Choice: ");
-
-        }
-
-        int value = input.nextInt();
-        input.nextLine();
-
-        return value;
+        System.out.println("Logged out successfully!");
 
     }
 

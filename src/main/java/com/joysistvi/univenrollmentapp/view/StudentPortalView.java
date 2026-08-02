@@ -9,46 +9,56 @@ import com.joysistvi.univenrollmentapp.model.Course;
 import com.joysistvi.univenrollmentapp.model.Enrollment;
 import com.joysistvi.univenrollmentapp.model.Prerequisite;
 import com.joysistvi.univenrollmentapp.model.Student;
+import com.joysistvi.univenrollmentapp.session.Session;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
 public class StudentPortalView {
 
     // Scanner for user input
-    private Scanner input;
+    private final Scanner input;
 
     // Controller for handling student portal operations
     private final StudentPortalController controller;
 
     // Constructor
-    public StudentPortalView(StudentPortalController controller) {
+    public StudentPortalView(
+            Scanner input, 
+            StudentPortalController controller) {
+
+        this.input = input;
         this.controller = controller;
     }
 
-    // Display the main menu for the student portal
-    public void displayMenu(Scanner input, int userId) {
+    // Displays the main menu for the student portal
+    public void displayMenu(int userId) {
 
-        this.input = input;
+        Student student = controller.getStudentByUserId(userId);
 
-        while (true) {
+        if (student == null) {
+            MessagePrinter.error("No student profile is linked to this account.");
+            return;
+        }
 
-            Student student = controller.getStudentByUserId(userId);
+        boolean back = false;
 
-            if (student == null) {
-                System.out.println("No student profile is linked to this account.");
-                return;
-            }
+        while (!back) {
 
-            System.out.println("\n===== Student Portal =====");
-            System.out.println("1. View Student Information");
-            System.out.println("2. View Available Courses");
-            System.out.println("3. View Enrollment History");
-            System.out.println("4. Enroll in a Course");
-            System.out.println("5. Drop Enrolled Course");
-            System.out.println("6. View Prerequisites");
-            System.out.println("0. Back");
-            System.out.print("Enter choice: ");
+            MenuPrinter.printMenu(
+                "Student Portal",
+                "Logout",
+                "View Student Information",
+                "View Available Courses",
+                "View Enrollment History",
+                "Enroll in a Course",
+                "Drop Enrolled Course",
+                "View Prerequisites");
 
-            switch (readInt()) {
+            int choice = InputValidator.readMenuChoice(input, 0, 6);
+
+            switch (choice) {
                 case 1 -> showStudentInformation(student);
                 case 2 -> showAvailableCourses();
                 case 3 -> showEnrollmentHistory(student);
@@ -56,9 +66,11 @@ public class StudentPortalView {
                 case 5 -> dropEnrollment(student);
                 case 6 -> showPrerequisites();
                 case 0 -> {
-                    return;
+                    Session.logout();
+                    System.out.println("Logged out successfully!");
+                    back = true;
                 }
-                default -> System.out.println("Invalid menu option.");
+                default -> MessagePrinter.error("Invalid menu option.");
             }
         }
     }
