@@ -69,6 +69,22 @@ INSERT INTO prerequisites (id, course_id, prerequisite_course_id) VALUES
 (19, 26, 25),
 (20, 30, 28);
 
+-- Students --
+INSERT INTO students (student_number, first_name, last_name, email, department_id, user_id, status, is_archived) VALUES
+('2022-00001-MN-0','John','Santos','john.santos@university.edu',1,NULL,'ACTIVE',FALSE),
+('2022-00002-MN-0','Maria','Cruz','maria.cruz@university.edu',1,NULL,'ACTIVE',FALSE),
+('2022-00003-MN-0','Jose','Reyes','jose.reyes@university.edu',2,NULL,'ACTIVE',FALSE),
+('2022-00004-MN-0','Anna','Garcia','anna.garcia@university.edu',3,NULL,'ACTIVE',FALSE),
+('2022-00005-MN-0','Mark','Torres','mark.torres@university.edu',4,NULL,'ACTIVE',FALSE),
+('2022-00006-MN-0','Ella','Ramos','ella.ramos@university.edu',5,NULL,'ACTIVE',FALSE),
+('2022-00007-MN-0','Paolo','Mendoza','paolo.mendoza@university.edu',6,NULL,'ACTIVE',FALSE),
+('2022-00008-MN-0','Grace','Villanueva','grace.villanueva@university.edu',1,NULL,'ACTIVE',FALSE),
+('2022-00009-MN-0','Miguel','Bautista','miguel.bautista@university.edu',2,NULL,'ACTIVE',FALSE),
+('2022-00010-MN-0','Sofia','Aquino','sofia.aquino@university.edu',3,NULL,'ACTIVE',FALSE),
+('2022-00011-MN-0','Daniel','Castillo','daniel.castillo@university.edu',4,NULL,'ACTIVE',FALSE),
+('2022-00012-MN-0','Isabel','Navarro','isabel.navarro@university.edu',5,NULL,'ACTIVE',FALSE),
+('2022-00013-MN-0','Rafael','Ocampo','rafael.ocampo@university.edu',6,NULL,'ACTIVE',FALSE);
+
 -- ===========================================================
 -- Default System Accounts
 -- These accounts are required to bootstrap the application.
