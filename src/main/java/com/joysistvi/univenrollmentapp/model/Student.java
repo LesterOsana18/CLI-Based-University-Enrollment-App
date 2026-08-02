@@ -7,22 +7,55 @@ import com.joysistvi.univenrollmentapp.enums.Status;
 public class Student {
 
     // Private fields (Encapsulation)
-    private int id;
-    private String studentNumber;
-    private String firstName;
-    private String lastName;
-    private String email;
-    private int departmentId;
-    private int userId;
-    private Status status;
+    private final int id;
+    private final String studentNumber;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final int departmentId;
+    private final String departmentName;
+    private final int userId;
+    private final String username;
+    private final Status status;
 
-    // Default constructor
-    public Student() {
+    // Constructor for creating a Student without a department name
+    public Student(
+            int id,
+            String studentNumber,
+            String firstName,
+            String lastName,
+            String email,
+            int departmentId,
+            int userId,
+            String username,
+            Status status) {
+
+        this(
+                id,
+                studentNumber,
+                firstName,
+                lastName,
+                email,
+                departmentId,
+                null,
+                userId,
+                username,
+                status);
+
     }
 
-    // Constructor for existing records (includes ID)
-    public Student(int id, String studentNumber, String firstName, String lastName,
-            String email, int departmentId, int userId, Status status) {
+    // Constructor for creating a Student with a department name
+    public Student(
+            int id,
+            String studentNumber,
+            String firstName,
+            String lastName,
+            String email,
+            int departmentId,
+            String departmentName,
+            int userId,
+            String username,
+            Status status) {
 
         this.id = id;
         this.studentNumber = studentNumber;
@@ -30,90 +63,52 @@ public class Student {
         this.lastName = lastName;
         this.email = email;
         this.departmentId = departmentId;
+        this.departmentName = departmentName;
         this.userId = userId;
+        this.username = username;
         this.status = status;
 
     }
 
-    // Constructor for creating a new student (no ID yet)
-    public Student(String studentNumber, String firstName, String lastName,
-            String email, int departmentId, int userId) {
-
-        this.studentNumber = studentNumber;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.departmentId = departmentId;
-        this.userId = userId;
-        this.status = Status.ACTIVE;
-
-    }
-
-    // ==========================================================
-    // Getter (Accessor) and Setter (Mutator) Methods
-    // ==========================================================
-
+    // Getters
     public int getId() {
         return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getStudentNumber() {
         return studentNumber;
     }
 
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
-    }
-
     public String getFirstName() {
         return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
     public String getEmail() {
         return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public int getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
+    public String getDepartmentName() {
+        return departmentName;
     }
 
     public int getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public String getUsername() {
+        return username;
     }
 
     public Status getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
-    }
 }

@@ -2,14 +2,7 @@ package com.joysistvi.univenrollmentapp.controller;
 
 import java.util.List;
 
-import com.joysistvi.univenrollmentapp.enums.Semester;
-import com.joysistvi.univenrollmentapp.model.Course;
-import com.joysistvi.univenrollmentapp.model.Enrollment;
-import com.joysistvi.univenrollmentapp.model.Prerequisite;
 import com.joysistvi.univenrollmentapp.model.Student;
-import com.joysistvi.univenrollmentapp.service.CourseService;
-import com.joysistvi.univenrollmentapp.service.EnrollmentService;
-import com.joysistvi.univenrollmentapp.service.PrerequisiteService;
 import com.joysistvi.univenrollmentapp.service.StudentService;
 
 // Controller Class
@@ -19,68 +12,60 @@ public class StudentController {
 
     // Dependency Injection
     private final StudentService studentService;
-    private final CourseService courseService;
-    private final EnrollmentService enrollmentService;
-    private final PrerequisiteService prerequisiteService;
 
     // Constructor
-    public StudentController(
-            StudentService studentService,
-            CourseService courseService,
-            EnrollmentService enrollmentService,
-            PrerequisiteService prerequisiteService) {
-
+    public StudentController(StudentService studentService) {
         this.studentService = studentService;
-        this.courseService = courseService;
-        this.enrollmentService = enrollmentService;
-        this.prerequisiteService = prerequisiteService;
-
     }
 
-    // Retrieve the logged-in student's profile
+    // Retrieve all students
+    public List<Student> getAllStudents() {
+        return studentService.getAllStudents();
+    }
+
+    // Retrieve archived students
+    public List<Student> getArchivedStudents() {
+        return studentService.getArchivedStudents();
+    }
+
+    // Retrieve a student by ID
+    public Student getStudentById(int id) {
+        return studentService.getStudentById(id);
+    }
+
+    // Retrieve a student by user ID
     public Student getStudentByUserId(int userId) {
         return studentService.getStudentByUserId(userId);
     }
 
-    // Retrieve all available courses
-    public List<Course> getAllCourses() {
-        return courseService.getAllCourses();
+    // Create a new student
+    public boolean createStudent(Student student, String password) {
+        return studentService.createStudent(student, password);
     }
 
-    // Retrieve the student's enrollment history
-    public List<Enrollment> getEnrollmentHistory(int studentId) {
-        return enrollmentService.getEnrollmentHistory(studentId);
+    // Update an existing student
+    public boolean updateStudent(Student student) {
+        return studentService.updateStudent(student);
     }
 
-    // Enroll the student in a course
-    public String enrollStudent(
-            int studentId,
-            int courseId,
-            String schoolYear,
-            Semester semester) {
-
-        return enrollmentService.enrollStudent(
-                studentId,
-                courseId,
-                schoolYear,
-                semester);
-
+    // Archive a student
+    public boolean archiveStudent(int id) {
+        return studentService.archiveStudent(id);
     }
 
-    // Drop an enrollment
-    public boolean dropEnrollment(
-            int enrollmentId,
-            int studentId) {
-
-        return enrollmentService.dropEnrollment(
-                enrollmentId,
-                studentId);
-
+    // Restore an archived student
+    public boolean restoreStudent(int id) {
+        return studentService.restoreStudent(id);
     }
 
-    // Retrieve all prerequisites
-    public List<Prerequisite> getAllPrerequisites() {
-        return prerequisiteService.getAllPrerequisites();
+    // Permanently delete a student
+    public boolean deleteStudent(int id) {
+        return studentService.deleteStudent(id);
+    }
+
+    // Reset the password of a student
+    public boolean resetPassword(int userId, String newPassword) {
+        return studentService.resetPassword(userId, newPassword);
     }
 
 }

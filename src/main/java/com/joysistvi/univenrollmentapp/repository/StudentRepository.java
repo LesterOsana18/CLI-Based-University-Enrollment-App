@@ -8,32 +8,32 @@ import java.util.List;
 public interface StudentRepository {
 
     // Retrieve all students
-    List<Student> findAll();
+    List<Student> getAllStudents();
 
     // Retrieve all archived students
-    List<Student> findArchived();
+    List<Student> getArchivedStudents();
 
     // Retrieve a student by ID
-    Student findById(int id);
+    Student getStudentById(int id);
 
-    // Retrieve a student by their linked user account ID
-    Student findByUserId(int userId);
+    // Retrieve a student using the linked user account
+    Student getStudentByUserId(int userId);
 
-    // Insert a new student
-    boolean save(Student student);
+    // Create a new student
+    boolean createStudent(Student student, String password);
 
     // Update an existing student
-    boolean update(Student student);
+    boolean updateStudent(Student student);
 
     // Archive a student
-    boolean archive(int id);
+    boolean archiveStudent(int id);
 
     // Restore an archived student
-    boolean restore(int id);
+    boolean restoreStudent(int id);
 
-    // Delete a student
-    boolean delete(int id);
+    // Permanently delete a student
+    boolean deleteStudent(int id);
 
-    // Check if a student number already exists
-    boolean studentNumberExists(String studentNumber);
+    // Reset the student's account password
+    boolean resetPassword(int userId, String newPassword);
 }
