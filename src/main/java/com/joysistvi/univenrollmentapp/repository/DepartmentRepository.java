@@ -8,28 +8,27 @@ import com.joysistvi.univenrollmentapp.model.Department;
 // Defines the database operations for Department objects
 public interface DepartmentRepository {
 
-    // Retrieve all active departments
+    // Retrieve all departments
     List<Department> getAllDepartments();
 
     // Retrieve all archived departments
     List<Department> getArchivedDepartments();
 
     // Retrieve a department by ID
-    Department findById(int id);
+    Department getDepartmentById(int id);
 
-    // Insert a department
-    boolean save(Department department);
+    // Create a new department
+    boolean createDepartment(Department department);
 
-    // Update a department
-    boolean update(int id, String departmentName);
+    // Update an existing department
+    boolean updateDepartment(Department department);
 
     // Archive a department
-    boolean archive(int id);
+    boolean archiveDepartment(int id);
 
     // Restore an archived department
-    boolean restore(int id);
+    boolean restoreDepartment(int id);
 
     // Permanently delete a department
-    boolean delete(int id);
-
+    boolean deleteDepartment(int id);
 }

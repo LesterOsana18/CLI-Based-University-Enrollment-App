@@ -14,24 +14,29 @@ import com.joysistvi.univenrollmentapp.model.Department;
 // Implements database operations for Department objects
 public class DepartmentRepositoryImpl implements DepartmentRepository {
 
+    // Database Connection
     private final DbConnection dbConnection;
 
+    // Constructor for Dependency Injection
     public DepartmentRepositoryImpl(DbConnection dbConnection) {
         this.dbConnection = dbConnection;
     }
 
+    // Retrieve all active departments
     @Override
     public List<Department> getAllDepartments() {
         return findDepartments(false);
     }
 
+    // Retrieve all archived departments
     @Override
     public List<Department> getArchivedDepartments() {
         return findDepartments(true);
     }
 
+    // Retrieve a department by ID
     @Override
-    public Department findById(int id) {
+    public Department getDepartmentById(int id) {
 
         String sql = """
                 SELECT *
@@ -65,6 +70,7 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
 
     }
 
+    // Helper method to retrieve departments based on their archived status
     private List<Department> findDepartments(boolean archived) {
 
         List<Department> departments = new ArrayList<>();
@@ -102,8 +108,9 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
 
     }
 
+    // Create a new department
     @Override
-    public boolean save(Department department) {
+    public boolean createDepartment(Department department) {
 
         String sql =
                 "INSERT INTO departments (department_name) VALUES (?)";
@@ -126,8 +133,9 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
 
     }
 
+    // Update an existing department
     @Override
-    public boolean update(int id, String departmentName) {
+    public boolean updateDepartment(Department department) {
 
         String sql = """
                 UPDATE departments
@@ -139,8 +147,9 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
              PreparedStatement statement =
                      connection.prepareStatement(sql)) {
 
-            statement.setString(1, departmentName);
-            statement.setInt(2, id);
+
+            statement.setString(1, department.getDepartmentName());
+            statement.setInt(2, department.getId());
 
             return statement.executeUpdate() > 0;
 
@@ -154,27 +163,31 @@ public class DepartmentRepositoryImpl implements DepartmentRepository {
 
     }
 
+    // Archive a department
     @Override
-    public boolean archive(int id) {
+    public boolean archiveDepartment(int id) {
         return executeUpdate(
                 "UPDATE departments SET is_archived = TRUE WHERE id = ?",
                 id);
     }
 
+    // Restore an archived department
     @Override
-    public boolean restore(int id) {
+    public boolean restoreDepartment(int id) {
         return executeUpdate(
                 "UPDATE departments SET is_archived = FALSE WHERE id = ?",
                 id);
     }
 
+    // Permanently delete a department
     @Override
-    public boolean delete(int id) {
+    public boolean deleteDepartment(int id) {
         return executeUpdate(
                 "DELETE FROM departments WHERE id = ?",
                 id);
     }
 
+    // Helper method for UPDATE/DELETE queries that only require an ID
     private boolean executeUpdate(String sql, int id) {
 
         try (Connection connection = dbConnection.getConnection();
