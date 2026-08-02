@@ -1,36 +1,47 @@
 package com.joysistvi.univenrollmentapp.model;
 
 // Model Class
-// Stores the information of a Prerequisite object using encapsulation
+// Stores the information of a Prerequisite object
 public class Prerequisite {
 
     // Private fields (Encapsulation)
-    private int id;
-    private int courseId;
-    private String courseCode;
-    private String courseName;
-    private int prerequisiteCourseId;
-    private String prerequisiteCourseCode;
-    private String prerequisiteCourseName;
+    private final int id;
+    private final int courseId;
+    private final String courseCode;
+    private final String courseName;
+    private final int prerequisiteCourseId;
+    private final String prerequisiteCourseCode;
+    private final String prerequisiteCourseName;
 
-    // Default constructor
-    public Prerequisite() {
-    }
-
-    // Constructor for existing records (includes ID)
-    public Prerequisite(int id, int courseId, int prerequisiteCourseId) {
-        this.id = id;
-        this.courseId = courseId;
-        this.prerequisiteCourseId = prerequisiteCourseId;
-    }
-
-    // Constructor for creating a new prerequisite link (no ID yet)
+    // Constructor for creating a new prerequisite
     public Prerequisite(int courseId, int prerequisiteCourseId) {
-        this.courseId = courseId;
-        this.prerequisiteCourseId = prerequisiteCourseId;
+        this(
+                0,
+                courseId,
+                null,
+                null,
+                prerequisiteCourseId,
+                null,
+                null);
     }
 
-    // Constructor for full details from joins
+    // Constructor for existing prerequisite records
+    public Prerequisite(
+            int id,
+            int courseId,
+            int prerequisiteCourseId) {
+
+        this(
+                id,
+                courseId,
+                null,
+                null,
+                prerequisiteCourseId,
+                null,
+                null);
+    }
+
+    // Constructor for joined query results
     public Prerequisite(
             int id,
             int courseId,
@@ -39,6 +50,7 @@ public class Prerequisite {
             int prerequisiteCourseId,
             String prerequisiteCourseCode,
             String prerequisiteCourseName) {
+
         this.id = id;
         this.courseId = courseId;
         this.courseCode = courseCode;
@@ -49,62 +61,35 @@ public class Prerequisite {
     }
 
     // ==========================================================
-    // Getter (Accessor) and Setter (Mutator) Methods
+    // Getter (Accessor) Methods
     // ==========================================================
 
     public int getId() {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getCourseId() {
         return courseId;
-    }
-
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
     }
 
     public String getCourseCode() {
         return courseCode;
     }
 
-    public void setCourseCode(String courseCode) {
-        this.courseCode = courseCode;
-    }
-
     public String getCourseName() {
         return courseName;
-    }
-
-    public void setCourseName(String courseName) {
-        this.courseName = courseName;
     }
 
     public int getPrerequisiteCourseId() {
         return prerequisiteCourseId;
     }
 
-    public void setPrerequisiteCourseId(int prerequisiteCourseId) {
-        this.prerequisiteCourseId = prerequisiteCourseId;
-    }
-
     public String getPrerequisiteCourseCode() {
         return prerequisiteCourseCode;
-    }
-
-    public void setPrerequisiteCourseCode(String prerequisiteCourseCode) {
-        this.prerequisiteCourseCode = prerequisiteCourseCode;
     }
 
     public String getPrerequisiteCourseName() {
         return prerequisiteCourseName;
     }
 
-    public void setPrerequisiteCourseName(String prerequisiteCourseName) {
-        this.prerequisiteCourseName = prerequisiteCourseName;
-    }
 }

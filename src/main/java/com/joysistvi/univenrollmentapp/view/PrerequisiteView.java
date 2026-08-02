@@ -1,41 +1,27 @@
 package com.joysistvi.univenrollmentapp.view;
 
-import com.joysistvi.univenrollmentapp.config.DbConnection;
+import java.util.List;
+import java.util.Scanner;
+
 import com.joysistvi.univenrollmentapp.controller.CourseController;
 import com.joysistvi.univenrollmentapp.controller.PrerequisiteController;
 import com.joysistvi.univenrollmentapp.model.Course;
 import com.joysistvi.univenrollmentapp.model.Prerequisite;
-import com.joysistvi.univenrollmentapp.repository.CourseRepositoryImpl;
-import com.joysistvi.univenrollmentapp.repository.PrerequisiteRepositoryImpl;
-import com.joysistvi.univenrollmentapp.service.CourseServiceImpl;
-import com.joysistvi.univenrollmentapp.service.PrerequisiteServiceImpl;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
-
-import java.util.List;
-import java.util.Scanner;
 
 public class PrerequisiteView {
 
     private Scanner input;
 
-    private final PrerequisiteController controller;
+    private final PrerequisiteController prerequisiteController;
     private final CourseController courseController;
 
-    public PrerequisiteView() {
-        this(
-                new PrerequisiteController(
-                        new PrerequisiteServiceImpl(
-                                new PrerequisiteRepositoryImpl(new DbConnection()))),
-                new CourseController(
-                        new CourseServiceImpl(
-                                new CourseRepositoryImpl(new DbConnection()))));
-    }
-
     public PrerequisiteView(
-            PrerequisiteController controller,
+            PrerequisiteController prerequisiteController,
             CourseController courseController) {
 
-        this.controller = controller;
+        this.prerequisiteController = prerequisiteController;
         this.courseController = courseController;
 
     }
@@ -44,23 +30,28 @@ public class PrerequisiteView {
 
         this.input = input;
 
-        System.out.println("===== Prerequisite Management =====");
-        System.out.println("1. View All Prerequisites");
-        System.out.println("2. Add Prerequisite");
-        System.out.println("3. Update Prerequisite");
-        System.out.println("4. Delete Prerequisite");
-        System.out.println("0. Back");
-        System.out.print("Enter choice: ");
+        while (true) {
 
-        switch (readInt()) {
+            System.out.println("\n===== Prerequisite Management =====");
+            System.out.println("1. View All Prerequisites");
+            System.out.println("2. Add Prerequisite");
+            System.out.println("3. Update Prerequisite");
+            System.out.println("4. Delete Prerequisite");
+            System.out.println("0. Back");
+            System.out.print("Enter choice: ");
 
-            case 1 -> displayAllPrerequisites();
-            case 2 -> createPrerequisite();
-            case 3 -> updatePrerequisite();
-            case 4 -> deletePrerequisite();
-            case 0 -> {
+            switch (InputValidator.readPositiveInt(input, "Selected menu option")) {
+
+                case 1 -> displayAllPrerequisites();
+                case 2 -> createPrerequisite();
+                case 3 -> updatePrerequisite();
+                case 4 -> deletePrerequisite();
+                case 0 -> {
+                    return;
+                }
+                default -> System.out.println("Invalid menu option.");
+
             }
-            default -> System.out.println("Invalid menu option.");
 
         }
 
@@ -68,14 +59,15 @@ public class PrerequisiteView {
 
     private void displayAllPrerequisites() {
 
-        List<Prerequisite> prerequisites = controller.getAllPrerequisites();
+        List<Prerequisite> prerequisites =
+                prerequisiteController.getAllPrerequisites();
 
         if (prerequisites.isEmpty()) {
             TableFormatter.printNoRecordsFound();
             return;
         }
 
-        printDivider();
+        TableFormatter.printDivider();
 
         System.out.printf(
                 "%-5s %-15s %-30s %-15s %-30s%n",
@@ -85,7 +77,7 @@ public class PrerequisiteView {
                 "Prerequisite",
                 "Prerequisite Name");
 
-        printDivider();
+        TableFormatter.printDivider();
 
         for (Prerequisite prerequisite : prerequisites) {
 
@@ -111,7 +103,7 @@ public class PrerequisiteView {
             return;
         }
 
-        if (controller.createPrerequisite(
+        if (prerequisiteController.createPrerequisite(
                 pair.courseId(),
                 pair.prerequisiteCourseId())) {
 
@@ -129,8 +121,8 @@ public class PrerequisiteView {
 
         displayAllPrerequisites();
 
-        System.out.print("Enter prerequisite ID to update: ");
-        int id = readInt();
+        System.out.print("Enter Prerequisite ID to update: ");
+        int id = InputValidator.readPositiveInt(input, "Prerequisite ID");
 
         CoursePair pair = readCoursePair();
 
@@ -138,7 +130,7 @@ public class PrerequisiteView {
             return;
         }
 
-        if (controller.updatePrerequisite(
+        if (prerequisiteController.updatePrerequisite(
                 id,
                 pair.courseId(),
                 pair.prerequisiteCourseId())) {
@@ -157,10 +149,10 @@ public class PrerequisiteView {
 
         displayAllPrerequisites();
 
-        System.out.print("Enter prerequisite ID to delete: ");
-        int id = readInt();
+        System.out.print("Enter Prerequisite ID to delete: ");
+        int id = InputValidator.readPositiveInt(input, "Prerequisite ID");
 
-        if (controller.deletePrerequisite(id)) {
+        if (prerequisiteController.deletePrerequisite(id)) {
 
             System.out.println("Prerequisite deleted successfully.");
 
@@ -184,10 +176,10 @@ public class PrerequisiteView {
         printCourses(courses);
 
         System.out.print("Enter Course ID: ");
-        int courseId = readInt();
+        int courseId = InputValidator.readPositiveInt(input, "Course ID");
 
         System.out.print("Enter Prerequisite Course ID: ");
-        int prerequisiteCourseId = readInt();
+        int prerequisiteCourseId = InputValidator.readPositiveInt(input, "Prerequisite Course ID");
 
         if (!containsCourse(courses, courseId)
                 || !containsCourse(courses, prerequisiteCourseId)) {
@@ -210,7 +202,7 @@ public class PrerequisiteView {
 
     private void printCourses(List<Course> courses) {
 
-        printDivider();
+        TableFormatter.printDivider();
 
         System.out.printf(
                 "%-5s %-15s %-35s%n",
@@ -218,7 +210,7 @@ public class PrerequisiteView {
                 "Code",
                 "Course Name");
 
-        printDivider();
+        TableFormatter.printDivider();
 
         for (Course course : courses) {
 
@@ -238,29 +230,6 @@ public class PrerequisiteView {
 
         return courses.stream()
                 .anyMatch(course -> course.getId() == id);
-
-    }
-
-    private int readInt() {
-
-        while (!input.hasNextInt()) {
-
-            System.out.println("Please enter a valid number.");
-            input.nextLine();
-            System.out.print("Choice: ");
-
-        }
-
-        int value = input.nextInt();
-        input.nextLine();
-
-        return value;
-
-    }
-
-    private void printDivider() {
-
-        System.out.println("--------------------------------------------------------------------------------------------------------------");
 
     }
 

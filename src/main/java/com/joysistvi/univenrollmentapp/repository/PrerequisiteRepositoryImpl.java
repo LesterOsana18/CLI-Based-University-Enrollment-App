@@ -10,14 +10,19 @@ import java.util.List;
 import com.joysistvi.univenrollmentapp.config.DbConnection;
 import com.joysistvi.univenrollmentapp.model.Prerequisite;
 
+// Repository Implementation Class
+// Implements all database operations for Prerequisite objects
 public class PrerequisiteRepositoryImpl implements PrerequisiteRepository {
 
+    // Dependency Injection
     private final DbConnection dbConnection;
 
+    // Constructor
     public PrerequisiteRepositoryImpl(DbConnection dbConnection) {
         this.dbConnection = dbConnection;
     }
 
+    // Retrieve all prerequisites
     @Override
     public List<Prerequisite> getAllPrerequisites() {
 
@@ -66,8 +71,9 @@ public class PrerequisiteRepositoryImpl implements PrerequisiteRepository {
 
     }
 
+    // Retrieve a prerequisite by ID
     @Override
-    public Prerequisite findById(int id) {
+    public Prerequisite getPrerequisiteById(int id) {
 
         String sql = """
                 SELECT p.id,
@@ -117,8 +123,9 @@ public class PrerequisiteRepositoryImpl implements PrerequisiteRepository {
 
     }
 
+    // Create a prerequisite
     @Override
-    public boolean save(Prerequisite prerequisite) {
+    public boolean createPrerequisite(Prerequisite prerequisite) {
 
         String sql = """
                 INSERT INTO prerequisites (course_id, prerequisite_course_id)
@@ -143,8 +150,12 @@ public class PrerequisiteRepositoryImpl implements PrerequisiteRepository {
 
     }
 
+    // Update a prerequisite
     @Override
-    public boolean update(int id, int courseId, int prerequisiteCourseId) {
+    public boolean updatePrerequisite(
+            int id,
+            int courseId,
+            int prerequisiteCourseId) {
 
         String sql = """
                 UPDATE prerequisites
@@ -172,10 +183,14 @@ public class PrerequisiteRepositoryImpl implements PrerequisiteRepository {
 
     }
 
+    // Delete a prerequisite
     @Override
-    public boolean delete(int id) {
+    public boolean deletePrerequisite(int id) {
 
-        String sql = "DELETE FROM prerequisites WHERE id = ?";
+        String sql = """
+                DELETE FROM prerequisites
+                WHERE id = ?
+                """;
 
         try (Connection connection = dbConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -183,6 +198,39 @@ public class PrerequisiteRepositoryImpl implements PrerequisiteRepository {
             statement.setInt(1, id);
 
             return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+
+    }
+
+    // Check if a prerequisite relationship already exists
+    @Override
+    public boolean relationshipExists(
+            int courseId,
+            int prerequisiteCourseId) {
+
+        String sql = """
+                SELECT 1
+                FROM prerequisites
+                WHERE course_id = ?
+                  AND prerequisite_course_id = ?
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, courseId);
+            statement.setInt(2, prerequisiteCourseId);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                return resultSet.next();
+            }
 
         } catch (SQLException e) {
 

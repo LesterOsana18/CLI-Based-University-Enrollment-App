@@ -1,77 +1,166 @@
 package com.joysistvi.univenrollmentapp.service;
 
-import com.joysistvi.univenrollmentapp.model.Prerequisite;
-import com.joysistvi.univenrollmentapp.repository.PrerequisiteRepository;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.joysistvi.univenrollmentapp.model.Prerequisite;
+import com.joysistvi.univenrollmentapp.repository.PrerequisiteRepository;
+
 // Service Implementation
 // Implements the business operations for Prerequisite objects
 public class PrerequisiteServiceImpl implements PrerequisiteService {
-    
+
     // Dependency Injection
-    private final PrerequisiteRepository repository;
+    private final PrerequisiteRepository prerequisiteRepository;
 
     // Constructor
     public PrerequisiteServiceImpl(
-            PrerequisiteRepository repository) {
+            PrerequisiteRepository prerequisiteRepository) {
 
-        this.repository = repository;
+        this.prerequisiteRepository = prerequisiteRepository;
 
     }
 
-    // Method to retrieve all prerequisites
+    // Retrieve all prerequisites
     @Override
     public List<Prerequisite> getAllPrerequisites() {
-        return repository.getAllPrerequisites();
+        return prerequisiteRepository.getAllPrerequisites();
     }
 
-    // Method to create a new prerequisite relationship
+    // Retrieve a prerequisite by ID
     @Override
-    public boolean createPrerequisite(int courseId, int prerequisiteCourseId) {
-        if (!isValidRelationship(courseId, prerequisiteCourseId, null)) return false;
-        return repository.save(new Prerequisite(0, courseId, prerequisiteCourseId));
+    public Prerequisite getPrerequisiteById(int id) {
+        return prerequisiteRepository.getPrerequisiteById(id);
     }
 
-    // Method to update an existing prerequisite relationship
+    // Create a prerequisite relationship
     @Override
-    public boolean updatePrerequisite(int id, int courseId, int prerequisiteCourseId) {
-        if (!isValidRelationship(courseId, prerequisiteCourseId, id)) return false;
-        return repository.update(id, courseId, prerequisiteCourseId);
+    public boolean createPrerequisite(
+            int courseId,
+            int prerequisiteCourseId) {
+
+        if (!isValidRelationship(courseId, prerequisiteCourseId, null)) {
+            return false;
+        }
+
+        return prerequisiteRepository.createPrerequisite(
+                new Prerequisite(courseId, prerequisiteCourseId));
+
     }
 
-    // Method to delete a prerequisite relationship
+    // Update a prerequisite relationship
+    @Override
+    public boolean updatePrerequisite(
+            int id,
+            int courseId,
+            int prerequisiteCourseId) {
+
+        if (!isValidRelationship(courseId, prerequisiteCourseId, id)) {
+            return false;
+        }
+
+        return prerequisiteRepository.updatePrerequisite(
+                id,
+                courseId,
+                prerequisiteCourseId);
+
+    }
+
+    // Delete a prerequisite relationship
     @Override
     public boolean deletePrerequisite(int id) {
-        return repository.delete(id);
+        return prerequisiteRepository.deletePrerequisite(id);
     }
 
-    // Helper method to validate the prerequisite relationship
-    private boolean isValidRelationship(int courseId, int prerequisiteCourseId, Integer ignoredPrerequisiteId) {
-        if (courseId == prerequisiteCourseId) return false;
+    // Check if a prerequisite relationship already exists
+    @Override
+    public boolean relationshipExists(
+            int courseId,
+            int prerequisiteCourseId) {
+
+        return prerequisiteRepository.relationshipExists(
+                courseId,
+                prerequisiteCourseId);
+
+    }
+
+    // ==========================================================
+    // Helper Methods
+    // ==========================================================
+
+    // Validates that the prerequisite relationship does not create a cycle
+    private boolean isValidRelationship(
+            int courseId,
+            int prerequisiteCourseId,
+            Integer ignoredPrerequisiteId) {
+
+        if (courseId == prerequisiteCourseId) {
+            return false;
+        }
 
         Map<Integer, Set<Integer>> prerequisitesByCourse = new HashMap<>();
-        for (Prerequisite prerequisite : repository.getAllPrerequisites()) {
-            if (ignoredPrerequisiteId != null && prerequisite.getId() == ignoredPrerequisiteId) continue;
+
+        for (Prerequisite prerequisite : prerequisiteRepository.getAllPrerequisites()) {
+
+            if (ignoredPrerequisiteId != null
+                    && prerequisite.getId() == ignoredPrerequisiteId) {
+                continue;
+            }
+
             prerequisitesByCourse
-                    .computeIfAbsent(prerequisite.getCourseId(), key -> new HashSet<>())
+                    .computeIfAbsent(
+                            prerequisite.getCourseId(),
+                            key -> new HashSet<>())
                     .add(prerequisite.getPrerequisiteCourseId());
+
         }
-        prerequisitesByCourse.computeIfAbsent(courseId, key -> new HashSet<>()).add(prerequisiteCourseId);
-        return !hasPath(prerequisiteCourseId, courseId, prerequisitesByCourse, new HashSet<>());
+
+        prerequisitesByCourse
+                .computeIfAbsent(courseId, key -> new HashSet<>())
+                .add(prerequisiteCourseId);
+
+        return !hasPath(
+                prerequisiteCourseId,
+                courseId,
+                prerequisitesByCourse,
+                new HashSet<>());
+
     }
 
-    // Recursive method to check for cycles in the prerequisite graph
-    private boolean hasPath(int currentCourseId, int targetCourseId,
-            Map<Integer, Set<Integer>> prerequisitesByCourse, Set<Integer> visited) {
-        if (currentCourseId == targetCourseId) return true;
-        if (!visited.add(currentCourseId)) return false;
-        for (int prerequisiteId : prerequisitesByCourse.getOrDefault(currentCourseId, Set.of())) {
-            if (hasPath(prerequisiteId, targetCourseId, prerequisitesByCourse, visited)) return true;
+    // Detects circular prerequisite chains
+    private boolean hasPath(
+            int currentCourseId,
+            int targetCourseId,
+            Map<Integer, Set<Integer>> prerequisitesByCourse,
+            Set<Integer> visited) {
+
+        if (currentCourseId == targetCourseId) {
+            return true;
         }
+
+        if (!visited.add(currentCourseId)) {
+            return false;
+        }
+
+        for (int prerequisiteId
+                : prerequisitesByCourse.getOrDefault(currentCourseId, Set.of())) {
+
+            if (hasPath(
+                    prerequisiteId,
+                    targetCourseId,
+                    prerequisitesByCourse,
+                    visited)) {
+
+                return true;
+
+            }
+        }
+
         return false;
+
     }
+
 }

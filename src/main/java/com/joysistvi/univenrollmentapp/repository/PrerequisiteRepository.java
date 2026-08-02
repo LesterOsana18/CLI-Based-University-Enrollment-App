@@ -6,14 +6,21 @@ import com.joysistvi.univenrollmentapp.model.Prerequisite;
 
 public interface PrerequisiteRepository {
 
+    // Retrieves all prerequisites from the database
     List<Prerequisite> getAllPrerequisites();
 
-    Prerequisite findById(int id);
+    // Finds a prerequisite by its ID
+    Prerequisite getPrerequisiteById(int id);
 
-    boolean save(Prerequisite prerequisite);
+    // Creates a new prerequisite in the database
+    boolean createPrerequisite(Prerequisite prerequisite);
 
-    boolean update(int id, int courseId, int prerequisiteCourseId);
+    // Updates an existing prerequisite in the database
+    boolean updatePrerequisite(int id, int courseId, int prerequisiteCourseId);
 
-    boolean delete(int id);
+    // Permanently deletes a prerequisite from the database
+    boolean deletePrerequisite(int id);
 
+    // Checks if a prerequisite relationship exists between two courses
+    boolean relationshipExists(int courseId, int prerequisiteCourseId);
 }
