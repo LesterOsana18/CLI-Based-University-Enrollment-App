@@ -176,7 +176,11 @@ public final class App {
 
             }
 
+            System.out.println();
+            System.out.println("Exiting the application...");
             System.out.println("\nThank you for using the University Enrollment System!");
+            System.out.println("Copyright (c) 2026 University Enrollment System");
+            System.out.println("B226 JOYSIS Java - Group 2. All rights reserved.\n");
 
         } finally {
 
