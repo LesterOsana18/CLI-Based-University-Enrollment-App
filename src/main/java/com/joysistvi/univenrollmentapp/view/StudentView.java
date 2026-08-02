@@ -21,6 +21,7 @@ public class StudentView {
     }
 
     public void displayMenu(Scanner input, int userId) {
+
         this.input = input;
 
         Student student = controller.getStudentByUserId(userId);
@@ -54,21 +55,35 @@ public class StudentView {
                 }
                 default -> System.out.println("Invalid menu option.");
             }
+
         }
+
     }
+
+    // ==========================================================
+    // Student Information
+    // ==========================================================
 
     private void showStudentInformation(Student student) {
 
-        printDivider();
+        TableFormatter.printDivider();
+
         System.out.println("Student Information");
-        printDivider();
+
+        TableFormatter.printDivider();
 
         System.out.println("Student Number : " + student.getStudentNumber());
         System.out.println("Name           : " + student.getFirstName() + " " + student.getLastName());
         System.out.println("Email          : " + student.getEmail());
-        System.out.println("Status         : " + student.getStatus());
+        System.out.println("Status         : " + student.getStatus().getDisplayName());
+
+        TableFormatter.printDivider();
 
     }
+
+    // ==========================================================
+    // Available Courses
+    // ==========================================================
 
     private void showAvailableCourses() {
 
@@ -79,22 +94,38 @@ public class StudentView {
             return;
         }
 
-        printDivider();
-        System.out.printf("%-5s %-12s %-35s %-7s %-25s%n",
-                "ID", "Code", "Course Name", "Units", "Department");
-        printDivider();
+        TableFormatter.printDivider();
+
+        System.out.printf(
+                "%-5s %-12s %-35s %-7s %-25s%n",
+                "ID",
+                "Code",
+                "Course Name",
+                "Units",
+                "Department");
+
+        TableFormatter.printDivider();
 
         for (Course course : courses) {
-            System.out.printf("%-5d %-12s %-35s %-7d %-25s%n",
+
+            System.out.printf(
+                    "%-5d %-12s %-35s %-7d %-25s%n",
                     course.getId(),
                     course.getCourseCode(),
                     course.getCourseName(),
                     course.getUnits(),
                     course.getDepartmentName());
+
         }
 
+        TableFormatter.printDivider();
         TableFormatter.printTotalRecords(courses.size());
+
     }
+
+    // ==========================================================
+    // Enrollment History
+    // ==========================================================
 
     private void showEnrollmentHistory(Student student) {
 
@@ -106,29 +137,40 @@ public class StudentView {
             return;
         }
 
-        printDivider();
-        System.out.printf("%-5s %-12s %-18s %-12s %-15s %-15s%n",
+        TableFormatter.printDivider();
+
+        System.out.printf(
+                "%-5s %-12s %-30s %-15s %-12s %-15s%n",
                 "ID",
-                "Course ID",
+                "Course",
+                "Course Name",
                 "School Year",
                 "Semester",
-                "Enrolled",
-                "Status");
-        printDivider();
+                "Enrolled");
+
+        TableFormatter.printDivider();
 
         for (Enrollment enrollment : enrollments) {
 
-            System.out.printf("%-5d %-12d %-18s %-12s %-15s %-15s%n",
+            System.out.printf(
+                    "%-5d %-12s %-30s %-15s %-12s %-15s%n",
                     enrollment.getId(),
-                    enrollment.getCourseId(),
+                    enrollment.getCourseCode(),
+                    enrollment.getCourseName(),
                     enrollment.getSchoolYear(),
                     enrollment.getSemester().getDisplayName(),
-                    enrollment.getDateEnrolled(),
-                    "ACTIVE");
+                    enrollment.getDateEnrolled());
+
         }
 
+        TableFormatter.printDivider();
         TableFormatter.printTotalRecords(enrollments.size());
+
     }
+
+    // ==========================================================
+    // Enroll
+    // ==========================================================
 
     private void enrollInCourse(Student student) {
 
@@ -149,9 +191,14 @@ public class StudentView {
                 semester);
 
         System.out.println(result);
+
     }
 
-        private void dropEnrollment(Student student) {
+    // ==========================================================
+    // Drop Enrollment
+    // ==========================================================
+
+    private void dropEnrollment(Student student) {
 
         List<Enrollment> enrollments =
                 controller.getEnrollmentHistory(student.getId());
@@ -161,23 +208,33 @@ public class StudentView {
             return;
         }
 
-        printDivider();
-        System.out.printf("%-5s %-12s %-18s %-12s%n",
+        TableFormatter.printDivider();
+
+        System.out.printf(
+                "%-5s %-12s %-30s %-15s %-12s%n",
                 "ID",
-                "Course ID",
+                "Course",
+                "Course Name",
                 "School Year",
                 "Semester");
-        printDivider();
+
+        TableFormatter.printDivider();
 
         for (Enrollment enrollment : enrollments) {
-            System.out.printf("%-5d %-12d %-18s %-12s%n",
+
+            System.out.printf(
+                    "%-5d %-12s %-30s %-15s %-12s%n",
                     enrollment.getId(),
-                    enrollment.getCourseId(),
+                    enrollment.getCourseCode(),
+                    enrollment.getCourseName(),
                     enrollment.getSchoolYear(),
                     enrollment.getSemester().getDisplayName());
+
         }
 
-        System.out.print("\nEnter Enrollment ID to drop: ");
+        TableFormatter.printDivider();
+
+        System.out.print("Enter Enrollment ID to drop: ");
         int enrollmentId = readInt();
 
         if (controller.dropEnrollment(enrollmentId, student.getId())) {
@@ -185,7 +242,12 @@ public class StudentView {
         } else {
             System.out.println("Failed to drop enrollment.");
         }
+
     }
+
+    // ==========================================================
+    // Prerequisites
+    // ==========================================================
 
     private void showPrerequisites() {
 
@@ -197,18 +259,22 @@ public class StudentView {
             return;
         }
 
-        printDivider();
-        System.out.printf("%-5s %-15s %-30s %-15s %-30s%n",
+        TableFormatter.printDivider();
+
+        System.out.printf(
+                "%-5s %-15s %-30s %-15s %-30s%n",
                 "ID",
                 "Course",
                 "Course Name",
                 "Prerequisite",
                 "Prerequisite Name");
-        printDivider();
+
+        TableFormatter.printDivider();
 
         for (Prerequisite prerequisite : prerequisites) {
 
-            System.out.printf("%-5d %-15s %-30s %-15s %-30s%n",
+            System.out.printf(
+                    "%-5d %-15s %-30s %-15s %-30s%n",
                     prerequisite.getId(),
                     prerequisite.getCourseCode(),
                     prerequisite.getCourseName(),
@@ -217,8 +283,14 @@ public class StudentView {
 
         }
 
+        TableFormatter.printDivider();
         TableFormatter.printTotalRecords(prerequisites.size());
+
     }
+
+    // ==========================================================
+    // Helpers
+    // ==========================================================
 
     private Semester readSemester() {
 
@@ -233,10 +305,11 @@ public class StudentView {
             case 2 -> Semester.SECOND;
             case 3 -> Semester.SUMMER;
             default -> {
-                System.out.println("Invalid semester. Defaulting to First Semester.");
+                System.out.println("Invalid semester.");
                 yield Semester.FIRST;
             }
         };
+
     }
 
     private int readInt() {
@@ -253,10 +326,7 @@ public class StudentView {
         input.nextLine();
 
         return value;
-    }
 
-    private void printDivider() {
-        System.out.println("--------------------------------------------------------------------------------------------------------");
     }
 
 }
