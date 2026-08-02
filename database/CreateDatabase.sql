@@ -35,7 +35,7 @@ CREATE TABLE students (
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(100) UNIQUE,
     department_id INT NOT NULL,
-    user_id INT NOT NULL UNIQUE,
+    user_id INT NULL,
     status ENUM('ACTIVE','INACTIVE') NOT NULL DEFAULT 'ACTIVE',
 
     is_archived BOOLEAN NOT NULL DEFAULT FALSE,
