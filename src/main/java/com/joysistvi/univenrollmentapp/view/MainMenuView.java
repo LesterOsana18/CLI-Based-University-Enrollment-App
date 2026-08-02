@@ -7,9 +7,12 @@ import com.joysistvi.univenrollmentapp.session.Session;
 
 public class MainMenuView {
 
+    // Scanner for user input
     private final Scanner input;
 
-    private final StudentPortalView studentView;
+    // Views for different functionalities
+    private final StudentPortalView studentPortalView;
+    private final StudentManagementView studentManagementView;
     private final CourseView courseView;
     private final DepartmentView departmentView;
     private final EnrollmentView enrollmentView;
@@ -19,7 +22,8 @@ public class MainMenuView {
 
     public MainMenuView(
             Scanner input,
-            StudentPortalView studentView,
+            StudentPortalView studentPortalView,
+            StudentManagementView studentManagementView,
             CourseView courseView,
             DepartmentView departmentView,
             EnrollmentView enrollmentView,
@@ -28,7 +32,8 @@ public class MainMenuView {
             PrerequisiteView prerequisiteView) {
 
         this.input = input;
-        this.studentView = studentView;
+        this.studentPortalView = studentPortalView;
+        this.studentManagementView = studentManagementView;
         this.courseView = courseView;
         this.departmentView = departmentView;
         this.enrollmentView = enrollmentView;
@@ -55,7 +60,7 @@ public class MainMenuView {
 
                 case REGISTRAR -> showRegistrarMenu(currentUser);
 
-                case STUDENT -> studentView.displayMenu(
+                case STUDENT -> studentPortalView.displayMenu(
                         input,
                         currentUser.getId());
 
@@ -80,7 +85,7 @@ public class MainMenuView {
 
         switch (readInt()) {
 
-            case 1 -> studentView.displayMenu(input, currentUser.getId());
+            case 1 -> studentManagementView.displayMenu(input);
 
             case 2 -> courseView.displayMenu();
 
@@ -114,7 +119,7 @@ public class MainMenuView {
 
         switch (readInt()) {
 
-            case 1 -> studentView.displayMenu(input, currentUser.getId());
+            case 1 -> studentManagementView.displayMenu(input);
 
             case 2 -> courseView.displayMenu();
 

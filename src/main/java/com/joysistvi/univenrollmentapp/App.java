@@ -96,19 +96,25 @@ public final class App {
             EmployeeController employeeController =
                     new EmployeeController(employeeService);
 
-            StudentController studentController =
-                    new StudentController(
+            StudentPortalController studentPortalController =
+                    new StudentPortalController(
                             studentService,
                             courseService,
                             enrollmentService,
                             prerequisiteService);
 
+            StudentManagementController studentManagementController =
+                    new StudentManagementController(studentService);
+
             // ======================================================
             // Views
             // ======================================================
 
-            StudentPortalView studentView =
-                    new StudentPortalView(studentController);
+            StudentPortalView studentPortalView =
+                    new StudentPortalView(studentPortalController);
+
+            StudentManagementView studentManagementView =
+                    new StudentManagementView(studentManagementController);
 
             CourseView courseView =
                     new CourseView(
@@ -118,16 +124,24 @@ public final class App {
                             prerequisiteController);
 
             DepartmentView departmentView =
-                    new DepartmentView(input, departmentController);
+                    new DepartmentView(
+                            input,
+                            departmentController);
 
             EnrollmentView enrollmentView =
-                    new EnrollmentView(input, enrollmentController);
+                    new EnrollmentView(
+                            input,
+                            enrollmentController);
 
             EmployeeView employeeView =
-                    new EmployeeView(input, employeeController);
+                    new EmployeeView(
+                            input,
+                            employeeController);
 
             UserView userView =
-                    new UserView(input, userController);
+                    new UserView(
+                            input,
+                            userController);
 
             PrerequisiteView prerequisiteView =
                     new PrerequisiteView(
@@ -138,7 +152,8 @@ public final class App {
             MainMenuView mainMenuView =
                     new MainMenuView(
                             input,
-                            studentView,
+                            studentPortalView,
+                            studentManagementView,
                             courseView,
                             departmentView,
                             enrollmentView,
@@ -147,7 +162,9 @@ public final class App {
                             prerequisiteView);
 
             LoginView loginView =
-                    new LoginView(userController, input);
+                    new LoginView(
+                            userController,
+                            input);
 
             while (true) {
 
