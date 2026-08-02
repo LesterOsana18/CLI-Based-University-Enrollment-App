@@ -38,8 +38,8 @@ public class StudentManagementController {
     }
 
     // Create a new student with an associated user account
-    public boolean createStudent(Student student, String password) {
-        return studentService.createStudent(student, password);
+    public boolean createStudent(Student student) {
+        return studentService.createStudent(student);
     }
 
     // Update an existing student

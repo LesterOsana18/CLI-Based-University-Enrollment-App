@@ -3,8 +3,11 @@ package com.joysistvi.univenrollmentapp.view;
 import java.util.List;
 import java.util.Scanner;
 
-import com.joysistvi.univenrollmentapp.controller.StudentManagementController;
 import com.joysistvi.univenrollmentapp.model.Student;
+import com.joysistvi.univenrollmentapp.model.Department;
+import com.joysistvi.univenrollmentapp.controller.StudentManagementController;
+import com.joysistvi.univenrollmentapp.controller.DepartmentController;
+import com.joysistvi.univenrollmentapp.enums.Status;
 import com.joysistvi.univenrollmentapp.utils.InputValidator;
 import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
 import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
@@ -17,14 +20,17 @@ public class StudentManagementView {
 
     // Controller for handling student management operations
     private final StudentManagementController controller;
+    private final DepartmentController departmentController;
 
     // Constructor
     public StudentManagementView(
             Scanner input, 
-            StudentManagementController controller) {
+            StudentManagementController controller,
+            DepartmentController departmentController) {
 
         this.input = input;
         this.controller = controller;
+        this.departmentController = departmentController;
 
     }
 
@@ -114,15 +120,44 @@ public class StudentManagementView {
         System.out.print("Email: ");
         student.setEmail(input.nextLine().trim());
 
-        System.out.print("Password: ");
-        String password = input.nextLine();
+        // Display available departments
+        List<Department> departments = departmentController.getAllDepartments();
 
-        if (controller.createStudent(student, password)) {
+        if (departments.isEmpty()) {
+            System.out.println("No departments found.");
+            return;
+        }
+
+        TableFormatter.printDivider();
+
+        System.out.printf(
+                "%-5s %-30s%n",
+                "ID",
+                "Department");
+
+        TableFormatter.printDivider();
+
+        for (Department department : departments) {
+            System.out.printf(
+                    "%-5d %-30s%n",
+                    department.getId(),
+                    department.getDepartmentName());
+        }
+
+        TableFormatter.printDivider();
+        TableFormatter.printTotalRecords(departments.size());
+
+        System.out.print("Department ID: ");
+        student.setDepartmentId(readInt());
+
+        // Every newly-created student starts as ACTIVE
+        student.setStatus(Status.ACTIVE);
+
+        if (controller.createStudent(student)) {
             System.out.println("Student created successfully.");
         } else {
             System.out.println("Failed to create student.");
         }
-
     }
 
     // ==========================================================

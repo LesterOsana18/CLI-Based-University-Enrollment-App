@@ -232,119 +232,37 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     }
 
-        // Create a new student
+    // Create a new student
     @Override
-    public boolean createStudent(
-            Student student,
-            String password) {
+    public boolean createStudent(Student student) {
 
-        String createUser = """
-                INSERT INTO users(
-                    username,
-                    password,
-                    role
-                )
-                VALUES (?, ?, ?)
-                """;
-
-        String createStudent = """
+        String sql = """
                 INSERT INTO students(
                     student_number,
                     first_name,
                     last_name,
                     email,
                     department_id,
-                    user_id,
                     status
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
-        try (Connection connection = dbConnection.getConnection()) {
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
 
-            connection.setAutoCommit(false);
+            statement.setString(1, student.getStudentNumber());
+            statement.setString(2, student.getFirstName());
+            statement.setString(3, student.getLastName());
+            statement.setString(4, student.getEmail());
+            statement.setInt(5, student.getDepartmentId());
+            statement.setString(6, student.getStatus().name());
 
-            try (PreparedStatement userStatement =
-                         connection.prepareStatement(
-                                 createUser,
-                                 java.sql.Statement.RETURN_GENERATED_KEYS);
-                 PreparedStatement studentStatement =
-                         connection.prepareStatement(createStudent)) {
-
-                userStatement.setString(1, student.getUsername());
-                userStatement.setString(
-                        2,
-                        com.joysistvi.univenrollmentapp.utils.PasswordUtils
-                                .hashPassword(password));
-                userStatement.setString(3, "STUDENT");
-
-                userStatement.executeUpdate();
-
-                ResultSet generatedKeys =
-                        userStatement.getGeneratedKeys();
-
-                if (!generatedKeys.next()) {
-
-                    connection.rollback();
-                    return false;
-
-                }
-
-                int userId = generatedKeys.getInt(1);
-
-                studentStatement.setString(
-                        1,
-                        student.getStudentNumber());
-
-                studentStatement.setString(
-                        2,
-                        student.getFirstName());
-
-                studentStatement.setString(
-                        3,
-                        student.getLastName());
-
-                studentStatement.setString(
-                        4,
-                        student.getEmail());
-
-                studentStatement.setInt(
-                        5,
-                        student.getDepartmentId());
-
-                studentStatement.setInt(
-                        6,
-                        userId);
-
-                studentStatement.setString(
-                        7,
-                        student.getStatus().name());
-
-                studentStatement.executeUpdate();
-
-                connection.commit();
-
-                return true;
-
-            } catch (SQLException e) {
-
-                connection.rollback();
-
-                System.out.println(
-                        "Database Error: "
-                                + e.getMessage());
-
-            } finally {
-
-                connection.setAutoCommit(true);
-
-            }
+            return statement.executeUpdate() > 0;
 
         } catch (SQLException e) {
 
-            System.out.println(
-                    "Database Error: "
-                            + e.getMessage());
+            System.out.println("Database Error: " + e.getMessage());
 
         }
 

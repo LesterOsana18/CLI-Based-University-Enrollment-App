@@ -49,8 +49,8 @@ public class StudentServiceImpl implements StudentService {
 
     // Create a new student
     @Override
-    public boolean createStudent(Student student, String password) {
-        return studentRepository.createStudent(student, password);
+    public boolean createStudent(Student student) {
+        return studentRepository.createStudent(student);
     }
 
     // Update an existing student

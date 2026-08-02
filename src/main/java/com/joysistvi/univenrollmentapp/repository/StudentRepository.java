@@ -23,7 +23,7 @@ public interface StudentRepository {
     List<Student> searchStudents(String keyword);
 
     // Create a new student
-    boolean createStudent(Student student, String password);
+    boolean createStudent(Student student);
 
     // Update an existing student
     boolean updateStudent(Student student);
