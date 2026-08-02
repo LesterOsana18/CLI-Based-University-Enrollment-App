@@ -85,7 +85,7 @@ public class MainMenuView {
 
         switch (readInt()) {
 
-            case 1 -> studentManagementView.displayMenu(input);
+            case 1 -> studentManagementView.displayMenu();
 
             case 2 -> courseView.displayMenu();
 
@@ -119,7 +119,7 @@ public class MainMenuView {
 
         switch (readInt()) {
 
-            case 1 -> studentManagementView.displayMenu(input);
+            case 1 -> studentManagementView.displayMenu();
 
             case 2 -> courseView.displayMenu();
 

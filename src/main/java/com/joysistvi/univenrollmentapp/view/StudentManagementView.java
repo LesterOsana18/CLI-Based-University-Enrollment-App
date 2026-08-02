@@ -5,41 +5,51 @@ import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.controller.StudentManagementController;
 import com.joysistvi.univenrollmentapp.model.Student;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
 public class StudentManagementView {
 
-    // Scanner for user input
-    private Scanner input;
+    // Create Scanner object for user input
+    private final Scanner input;
 
     // Controller for handling student management operations
     private final StudentManagementController controller;
 
     // Constructor
-    public StudentManagementView(StudentManagementController controller) {
-        this.controller = controller;
-    }
-
-    public void displayMenu(Scanner input) {
+    public StudentManagementView(
+            Scanner input, 
+            StudentManagementController controller) {
 
         this.input = input;
+        this.controller = controller;
 
-        while (true) {
+    }
 
-            System.out.println("\n===== Student Management =====");
-            System.out.println("1. View All Students");
-            System.out.println("2. Search Student");
-            System.out.println("3. Add Student");
-            System.out.println("4. Update Student");
-            System.out.println("5. Archive Student");
-            System.out.println("6. Restore Student");
-            System.out.println("7. Delete Student");
-            System.out.println("8. View Archived Students");
-            System.out.println("0. Back");
-            System.out.print("Enter choice: ");
+    // Displays the main menu for student management
+    public void displayMenu() {
 
-            switch (readInt()) {
+        boolean back = false;
 
+        while (!back) {
+
+            MenuPrinter.printMenu(
+                "Student Management", 
+                "Back", 
+            "View All Students",
+                "Search Student", 
+                "Add Student",
+                "Update Student", 
+                "Archive Student",
+                "Restore Student", 
+                "Delete Student",
+                "View Archived Students");
+
+            int choice = InputValidator.readMenuChoice(input, 0, 8);
+
+            switch (choice) {
                 case 1 -> viewAllStudents();
                 case 2 -> searchStudent();
                 case 3 -> addStudent();
@@ -48,15 +58,10 @@ public class StudentManagementView {
                 case 6 -> restoreStudent();
                 case 7 -> deleteStudent();
                 case 8 -> viewArchivedStudents();
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid menu option.");
-
+                case 0 -> back = true;
+                default -> MessagePrinter.error("Invalid menu option.");
             }
-
         }
-
     }
 
     // ==========================================================
