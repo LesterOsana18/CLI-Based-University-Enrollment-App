@@ -75,9 +75,8 @@ public class CourseView {
                 case 5 -> displayArchivedCourses();
 
                 case 6 -> new PrerequisiteView(
-                        input,
                         prerequisiteController,
-                        courseController).displayMenu();
+                        courseController).displayMenu(input);
 
                 case 0 -> back = true;
 
