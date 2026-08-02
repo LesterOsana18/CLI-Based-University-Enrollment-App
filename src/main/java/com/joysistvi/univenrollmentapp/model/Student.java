@@ -7,16 +7,21 @@ import com.joysistvi.univenrollmentapp.enums.Status;
 public class Student {
 
     // Private fields (Encapsulation)
-    private final int id;
-    private final String studentNumber;
-    private final String firstName;
-    private final String lastName;
-    private final String email;
-    private final int departmentId;
-    private final String departmentName;
-    private final int userId;
-    private final String username;
-    private final Status status;
+    private  int id;
+    private  String studentNumber;
+    private  String firstName;
+    private  String lastName;
+    private  String email;
+    private  int departmentId;
+    private  String departmentName;
+    private  int userId;
+    private  String username;
+    private  Status status;
+
+    // Constructor
+    public Student() {
+        // Default constructor
+    }
 
     // Constructor for creating a Student without a department name
     public Student(
@@ -111,4 +116,45 @@ public class Student {
         return status;
     }
 
+
+    // Setters (if needed, but not provided in this case)
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setStudentNumber(String studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setDepartmentId(int departmentId) {
+        this.departmentId = departmentId;
+    }
+
+    public void setDepartmentName(String departmentName) {
+        this.departmentName = departmentName;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
 }

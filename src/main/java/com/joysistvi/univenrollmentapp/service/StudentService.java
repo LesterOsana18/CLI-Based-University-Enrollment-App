@@ -20,6 +20,9 @@ public interface StudentService {
     // Retrieve a student using the linked user account
     Student getStudentByUserId(int userId);
 
+    // Search students by keyword (name, student number, or email)
+    List<Student> searchStudents(String keyword);
+
     // Create a new student
     boolean createStudent(Student student, String password);
 

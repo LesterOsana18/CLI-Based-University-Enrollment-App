@@ -41,6 +41,12 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.getStudentByUserId(userId);
     }
 
+    // Search students by keyword (name, student number, or email)
+    @Override
+    public List<Student> searchStudents(String keyword) {
+        return studentRepository.searchStudents(keyword);
+    }
+
     // Create a new student
     @Override
     public boolean createStudent(Student student, String password) {

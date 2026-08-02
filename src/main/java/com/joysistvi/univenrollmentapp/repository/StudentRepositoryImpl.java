@@ -107,6 +107,51 @@ public class StudentRepositoryImpl implements StudentRepository {
 
     }
 
+    // Search students by keyword (name, student number, or email)
+    @Override
+    public List<Student> searchStudents(String keyword) {
+
+        String sql = """
+                SELECT s.*,
+                       d.department_name
+                FROM students s
+                JOIN departments d
+                    ON s.department_id = d.id
+                WHERE (s.first_name LIKE ? OR
+                       s.last_name LIKE ? OR
+                       s.student_number LIKE ? OR
+                       s.email LIKE ?)
+                  AND s.is_archived = FALSE
+                """;
+
+        List<Student> students = new ArrayList<>();
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            String searchPattern = "%" + keyword + "%";
+            statement.setString(1, searchPattern);
+            statement.setString(2, searchPattern);
+            statement.setString(3, searchPattern);
+            statement.setString(4, searchPattern);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+                students.add(mapStudent(resultSet));
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return students;
+
+    }
+
     // Helper method for retrieving students
     private List<Student> findStudents(boolean archived) {
 
