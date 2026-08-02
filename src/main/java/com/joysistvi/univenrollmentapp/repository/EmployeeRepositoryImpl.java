@@ -323,6 +323,34 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     }
 
+    // Reset the password of an employee
+    @Override
+    public boolean resetPassword(int userId, String hashedPassword) {
+
+        String sql = """
+                UPDATE users
+                SET password = ?
+                WHERE id = ?
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+            PreparedStatement statement =
+                    connection.prepareStatement(sql)) {
+
+            statement.setString(1, hashedPassword);
+            statement.setInt(2, userId);
+
+            return statement.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return false;
+    }
+
     // Helper method to map a ResultSet into an Employee object
     private Employee mapEmployee(ResultSet resultSet) throws SQLException {
 

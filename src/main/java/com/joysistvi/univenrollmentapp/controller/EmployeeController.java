@@ -63,4 +63,9 @@ public class EmployeeController {
         return employeeService.deleteEmployee(id);
     }
 
+    // Reset the password of an employee
+    public boolean resetPassword(int userId, String password) {
+        return employeeService.resetPassword(userId, password);
+    }
+
 }

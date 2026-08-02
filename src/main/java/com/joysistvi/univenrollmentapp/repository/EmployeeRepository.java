@@ -32,4 +32,7 @@ public interface EmployeeRepository {
     // Permanently delete an employee
     boolean deleteEmployee(int id);
 
+    // Reset the password of an employee
+    boolean resetPassword(int userId, String hashedPassword);
+
 }

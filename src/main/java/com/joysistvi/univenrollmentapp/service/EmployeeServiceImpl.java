@@ -72,4 +72,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.deleteEmployee(id);
     }
 
+    // Reset the password of an employee
+    @Override
+    public boolean resetPassword(int userId, String password) {
+
+        String hashedPassword =
+                PasswordUtils.hashPassword(password);
+
+        return employeeRepository.resetPassword(
+                userId,
+                hashedPassword);
+
+    }
+
 }

@@ -31,6 +31,7 @@ public class EmployeeView {
         System.out.println("4. Archive Employee");
         System.out.println("5. View Archived Employees");
         System.out.println("6. Restore Employee");
+        System.out.println("7. Reset Password");
         System.out.println("0. Back");
         System.out.print("Enter choice: ");
 
@@ -41,6 +42,7 @@ public class EmployeeView {
             case 4 -> archiveEmployee();
             case 5 -> displayArchivedEmployees();
             case 6 -> restoreEmployee();
+            case 7 -> resetPassword();
             case 0 -> {
             }
             default -> System.out.println("Invalid menu option.");
@@ -60,19 +62,28 @@ public class EmployeeView {
     // Create employee
     private void createEmployee() {
 
-        System.out.print("Enter Password: ");
-        String password = input.nextLine();
-
         Employee employee = readEmployeeDetails(0);
 
         if (employee == null) {
             return;
         }
 
+        System.out.print("Enter Password: ");
+        String password = input.nextLine().trim();
+
+        if (password.isBlank()) {
+            System.out.println("Password cannot be empty.");
+            return;
+        }
+
         if (controller.createEmployee(employee, password)) {
+
             System.out.println("Employee created successfully.");
+
         } else {
+
             System.out.println("Failed to create employee.");
+
         }
     }
 
@@ -91,9 +102,13 @@ public class EmployeeView {
         }
 
         if (controller.updateEmployee(employee)) {
+
             System.out.println("Employee updated successfully.");
+
         } else {
+
             System.out.println("Failed to update employee.");
+
         }
     }
 
@@ -127,6 +142,55 @@ public class EmployeeView {
         }
     }
 
+    // Reset employee password
+    private void resetPassword() {
+
+        displayAllEmployees();
+
+        System.out.print("Enter Employee Record ID: ");
+        int id = readInt();
+
+        Employee employee = controller.getEmployeeById(id);
+
+        if (employee == null) {
+
+            System.out.println("Employee not found.");
+            return;
+
+        }
+
+        System.out.print("Enter New Password: ");
+        String password = input.nextLine().trim();
+
+        System.out.print("Confirm New Password: ");
+        String confirmPassword = input.nextLine().trim();
+
+        if (!password.equals(confirmPassword)) {
+
+            System.out.println("Passwords do not match.");
+            return;
+
+        }
+
+        if (password.isBlank()) {
+
+            System.out.println("Password cannot be empty.");
+            return;
+
+        }
+
+        if (controller.resetPassword(employee.getUserId(), password)) {
+
+            System.out.println("Password reset successfully.");
+
+        } else {
+
+            System.out.println("Failed to reset password.");
+
+        }
+
+    }
+
     // Read employee information
     private Employee readEmployeeDetails(int id) {
 
@@ -142,16 +206,12 @@ public class EmployeeView {
         System.out.print("Enter Username: ");
         String username = input.nextLine().trim();
 
-        System.out.print("Enter Password: ");
-        String password = input.nextLine().trim();
-
         Position position = readPosition();
 
         if (employeeId.isBlank()
                 || firstName.isBlank()
                 || lastName.isBlank()
                 || username.isBlank()
-                || password.isBlank()
                 || position == null) {
 
             System.out.println("All fields are required.");
