@@ -10,46 +10,58 @@ import com.joysistvi.univenrollmentapp.repository.DepartmentRepository;
 public class DepartmentServiceImpl implements DepartmentService {
 
     // Dependency Injection
-    private final DepartmentRepository repository;
+    private final DepartmentRepository departmentRepository;
 
     // Constructor
     public DepartmentServiceImpl(DepartmentRepository repository) {
-        this.repository = repository;
+        this.departmentRepository = repository;
     }
 
+    // Retrieve all departments
     @Override
     public List<Department> getAllDepartments() {
-        return repository.getAllDepartments();
+        return departmentRepository.getAllDepartments();
     }
 
+    // Retrieve all archived departments
     @Override
     public List<Department> getArchivedDepartments() {
-        return repository.getArchivedDepartments();
+        return departmentRepository.getArchivedDepartments();
     }
 
+    // Retrieve a department by ID
+    @Override
+    public Department getDepartmentById(int id) {
+        return departmentRepository.getDepartmentById(id);
+    }
+
+    // Create a new department
     @Override
     public boolean createDepartment(Department department) {
-        return repository.save(department);
+        return departmentRepository.createDepartment(department);
     }
 
+    // Update an existing department
     @Override
-    public boolean updateDepartment(int id, String departmentName) {
-        return repository.update(id, departmentName);
+    public boolean updateDepartment(Department department) {
+        return departmentRepository.updateDepartment(department);
     }
 
+    // Archive a department
     @Override
     public boolean archiveDepartment(int id) {
-        return repository.archive(id);
+        return departmentRepository.archiveDepartment(id);
     }
 
+    // Restore an archived department
     @Override
     public boolean restoreDepartment(int id) {
-        return repository.restore(id);
+        return departmentRepository.restoreDepartment(id);
     }
 
-    // Delete a department permanently
+    // Permanently delete a department
     @Override
     public boolean deleteDepartment(int id) {
-        return repository.delete(id);
+        return departmentRepository.deleteDepartment(id);
     }
 }

@@ -8,17 +8,20 @@ import com.joysistvi.univenrollmentapp.model.Department;
 // Defines the business operations for Department management
 public interface DepartmentService {
 
-    // Retrieve all active departments
+    // Retrieve all departments
     List<Department> getAllDepartments();
 
-    // Retrieve archived departments
+    // Retrieve all archived departments
     List<Department> getArchivedDepartments();
 
-    // Create a department
+    // Retrieve a department by ID
+    Department getDepartmentById(int id);
+
+    // Create a new department
     boolean createDepartment(Department department);
 
-    // Update a department
-    boolean updateDepartment(int id, String departmentName);
+    // Update an existing department
+    boolean updateDepartment(Department department);
 
     // Archive a department
     boolean archiveDepartment(int id);
@@ -26,6 +29,6 @@ public interface DepartmentService {
     // Restore an archived department
     boolean restoreDepartment(int id);
 
-    // Delete a department permanently
+    // Permanently delete a department
     boolean deleteDepartment(int id);
 }
