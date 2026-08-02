@@ -8,38 +8,50 @@ import com.joysistvi.univenrollmentapp.enums.Role;
 import com.joysistvi.univenrollmentapp.model.User;
 import com.joysistvi.univenrollmentapp.session.Session;
 import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.PasswordUtils;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
 public class UserView {
 
-    private Scanner input;
+    // Scanner object for user input
+    private final Scanner input;
 
+    // Controller for user operations
     private final UserController controller;
 
-    public UserView(UserController controller) {
-        this.controller = controller;
-    }
-
-    public void displayMenu(Scanner input) {
+    // Constructor
+    public UserView(
+            Scanner input, 
+            UserController controller) {
 
         this.input = input;
+        this.controller = controller;
 
-        while (true) {
+    }
 
-            System.out.println("\n===== User Management =====");
-            System.out.println("1. View Users");
-            System.out.println("2. Create User");
-            System.out.println("3. Update User");
-            System.out.println("4. Archive User");
-            System.out.println("5. View Archived Users");
-            System.out.println("6. Restore User");
-            System.out.println("7. Delete User");
-            System.out.println("0. Back");
-            System.out.print("Enter choice: ");
+    // Displays the main menu for user management
+    public void displayMenu() {
 
-            switch (InputValidator.readPositiveInt(input, "Selected menu option")) {
+        boolean back = false;
 
+        while (!back) {
+
+            MenuPrinter.printMenu(
+                "User Management",
+                "Back",
+                "View Users",
+                "Create User",
+                "Update User",
+                "Archive User",
+                "View Archived Users",
+                "Restore User",
+                "Delete User");
+
+            int choice = InputValidator.readMenuChoice(input, 0, 7);
+
+            switch (choice) {
                 case 1 -> displayUsers(controller.getAllUsers());
                 case 2 -> createUser();
                 case 3 -> updateUser();
@@ -47,15 +59,10 @@ public class UserView {
                 case 5 -> displayUsers(controller.getArchivedUsers());
                 case 6 -> restoreUser();
                 case 7 -> deleteUser();
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid menu option.");
-
+                case 0 -> back = true;
+                default -> MessagePrinter.error("Invalid menu option.");
             }
-
         }
-
     }
 
     private void createUser() {
@@ -242,7 +249,7 @@ public class UserView {
         System.out.println("3. Administrator");
         System.out.print("Choice: ");
 
-        return switch (InputValidator.readPositiveInt(input, "Selected role option")) {
+        return switch (readInt()) {
 
             case 1 -> Role.STUDENT;
             case 2 -> Role.REGISTRAR;
@@ -304,4 +311,20 @@ public class UserView {
 
     }
 
+    // Read integer safely
+    private int readInt() {
+
+        while (!input.hasNextInt()) {
+
+            System.out.println("Please enter a valid number.");
+            input.nextLine();
+            System.out.print("Choice: ");
+
+        }
+
+        int value = input.nextInt();
+        input.nextLine();
+
+        return value;
+    }
 }

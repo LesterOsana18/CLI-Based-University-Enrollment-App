@@ -48,10 +48,8 @@ public class CourseView {
 
         while (!back) {
 
-            HeaderPrinter.printHeader("Course Management");
-
             MenuPrinter.printMenu(
-                    "COURSE MANAGEMENT",
+                    "Course Management",
                     "Back",
                     "View All Courses",
                     "Create Course",
@@ -63,27 +61,19 @@ public class CourseView {
             int choice = InputValidator.readMenuChoice(input, 0, 6);
 
             switch (choice) {
-
                 case 1 -> displayAllCourses();
-
                 case 2 -> createCourse();
-
                 case 3 -> updateCourse();
-
                 case 4 -> archiveCourse();
-
                 case 5 -> displayArchivedCourses();
-
                 case 6 -> new PrerequisiteView(
+                        input,
                         prerequisiteController,
-                        courseController).displayMenu(input);
-
+                        courseController).displayMenu();
                 case 0 -> back = true;
-
+                default -> MessagePrinter.error("Invalid menu option.");
             }
-
         }
-
     }
 
     // Displays all courses in a formatted table

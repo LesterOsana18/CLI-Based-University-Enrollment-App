@@ -107,8 +107,8 @@ public final class App {
             // Views
             // ======================================================
 
-            StudentView studentView =
-                    new StudentView(studentController);
+            StudentPortalView studentView =
+                    new StudentPortalView(studentController);
 
             CourseView courseView =
                     new CourseView(
@@ -121,16 +121,17 @@ public final class App {
                     new DepartmentView(input, departmentController);
 
             EnrollmentView enrollmentView =
-                    new EnrollmentView(enrollmentController);
+                    new EnrollmentView(input, enrollmentController);
 
             EmployeeView employeeView =
-                    new EmployeeView(employeeController);
+                    new EmployeeView(input, employeeController);
 
             UserView userView =
-                    new UserView(userController);
+                    new UserView(input, userController);
 
             PrerequisiteView prerequisiteView =
                     new PrerequisiteView(
+                            input,
                             prerequisiteController,
                             courseController);
 

@@ -6,7 +6,7 @@ import java.util.Scanner;
 import com.joysistvi.univenrollmentapp.controller.DepartmentController;
 import com.joysistvi.univenrollmentapp.model.Department;
 import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
-import com.joysistvi.univenrollmentapp.utils.HeaderPrinter;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
 import com.joysistvi.univenrollmentapp.utils.InputValidator;
 import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
@@ -31,47 +31,36 @@ public class DepartmentView {
 
     }
 
-    // Display Department Menu
+    // Displays the main menu for department management
     public void displayMenu() {
 
         boolean back = false;
 
         while (!back) {
 
-            HeaderPrinter.printHeader("Department Management");
+            MenuPrinter.printMenu(
+                    "Department Management",
+                    "Back",
+                    "View All Departments",
+                    "Create Department",
+                    "Update Department",
+                    "Archive Department",
+                    "View Archived Departments",
+                    "Restore Department");
 
-            System.out.println("1. View All Departments");
-            System.out.println("2. Create Department");
-            System.out.println("3. Update Department");
-            System.out.println("4. Archive Department");
-            System.out.println("5. View Archived Departments");
-            System.out.println("6. Restore Department");
-            System.out.println("0. Back");
-
-            int choice = InputValidator.readMenuChoice(input);
+            int choice = InputValidator.readMenuChoice(input, 0, 6);
 
             switch (choice) {
-
                 case 1 -> displayAllDepartments();
-
                 case 2 -> createDepartment();
-
                 case 3 -> updateDepartment();
-
                 case 4 -> archiveDepartment();
-
                 case 5 -> displayArchivedDepartments();
-
                 case 6 -> restoreDepartment();
-
                 case 0 -> back = true;
-
                 default -> MessagePrinter.error("Invalid menu option.");
-
             }
-
         }
-
     }
 
     // Display all active departments

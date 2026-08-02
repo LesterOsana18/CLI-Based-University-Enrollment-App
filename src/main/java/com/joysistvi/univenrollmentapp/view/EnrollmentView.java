@@ -5,37 +5,53 @@ import java.util.Scanner;
 
 import com.joysistvi.univenrollmentapp.controller.EnrollmentController;
 import com.joysistvi.univenrollmentapp.model.Enrollment;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
 // View Class
 // Handles the user interface for enrollment management
 public class EnrollmentView {
 
-    private Scanner input;
+    // Scanner object for user input
+    private final Scanner input;
+
+    // Controller for enrollment operations
     private final EnrollmentController controller;
 
-    public EnrollmentView(EnrollmentController controller) {
-        this.controller = controller;
-    }
-
-    public void displayMenu(Scanner input) {
+    // Constructor
+    public EnrollmentView(
+            Scanner input, 
+            EnrollmentController controller) {
 
         this.input = input;
+        this.controller = controller;
 
-        System.out.println("===== Enrollment Management =====");
-        System.out.println("1. View All Enrollments");
-        System.out.println("2. Search Enrollments");
-        System.out.println("0. Back");
-        System.out.print("Enter choice: ");
+    }
 
-        switch (readInt()) {
-            case 1 -> displayAllEnrollments();
-            case 2 -> searchEnrollments();
-            case 0 -> {
+    // Displays the main menu for enrollment management
+    public void displayMenu() {
+
+        boolean back = false;
+
+        while (!back) {
+
+            MenuPrinter.printMenu(
+                    "Enrollment Management",
+                    "Back",
+                    "View All Enrollments",
+                    "Search Enrollments");
+            
+            int choice = InputValidator.readMenuChoice(input, 0, 2);
+
+            switch (choice) {
+                case 1 -> displayAllEnrollments();
+                case 2 -> searchEnrollments();
+                case 0 -> back = true;
+                default -> MessagePrinter.error("Invalid menu option.");
             }
-            default -> System.out.println("Invalid menu option.");
         }
-
     }
 
     // Display all enrollments
@@ -100,23 +116,4 @@ public class EnrollmentView {
         TableFormatter.printTotalRecords(enrollments.size());
 
     }
-
-    // Read integer safely
-    private int readInt() {
-
-        while (!input.hasNextInt()) {
-
-            System.out.println("Please enter a valid number.");
-            input.nextLine();
-            System.out.print("Choice: ");
-
-        }
-
-        int value = input.nextInt();
-        input.nextLine();
-
-        return value;
-
-    }
-
 }

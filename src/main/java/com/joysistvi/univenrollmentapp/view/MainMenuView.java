@@ -9,7 +9,7 @@ public class MainMenuView {
 
     private final Scanner input;
 
-    private final StudentView studentView;
+    private final StudentPortalView studentView;
     private final CourseView courseView;
     private final DepartmentView departmentView;
     private final EnrollmentView enrollmentView;
@@ -19,7 +19,7 @@ public class MainMenuView {
 
     public MainMenuView(
             Scanner input,
-            StudentView studentView,
+            StudentPortalView studentView,
             CourseView courseView,
             DepartmentView departmentView,
             EnrollmentView enrollmentView,
@@ -86,13 +86,13 @@ public class MainMenuView {
 
             case 3 -> departmentView.displayMenu();
 
-            case 4 -> enrollmentView.displayMenu(input);
+            case 4 -> enrollmentView.displayMenu();
 
-            case 5 -> employeeView.displayMenu(input);
+            case 5 -> employeeView.displayMenu();
 
-            case 6 -> userView.displayMenu(input);
+            case 6 -> userView.displayMenu();
 
-            case 7 -> prerequisiteView.displayMenu(input);
+            case 7 -> prerequisiteView.displayMenu();
 
             case 0 -> logout();
 
@@ -118,9 +118,9 @@ public class MainMenuView {
 
             case 2 -> courseView.displayMenu();
 
-            case 3 -> enrollmentView.displayMenu(input);
+            case 3 -> enrollmentView.displayMenu();
 
-            case 4 -> prerequisiteView.displayMenu(input);
+            case 4 -> prerequisiteView.displayMenu();
 
             case 0 -> logout();
 

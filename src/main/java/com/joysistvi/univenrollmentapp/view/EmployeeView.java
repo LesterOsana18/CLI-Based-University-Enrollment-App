@@ -7,45 +7,61 @@ import com.joysistvi.univenrollmentapp.controller.EmployeeController;
 import com.joysistvi.univenrollmentapp.enums.Position;
 import com.joysistvi.univenrollmentapp.enums.Status;
 import com.joysistvi.univenrollmentapp.model.Employee;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
 // View Class
 // Handles the user interface for employee management
 public class EmployeeView {
 
-    private Scanner input;
+    // Scanner object for user input
+    private final Scanner input;
+
+    // Controller for employee operations
     private final EmployeeController controller;
 
-    public EmployeeView(EmployeeController controller) {
+    // Constructor
+    public EmployeeView(
+            Scanner input, 
+            EmployeeController controller) {
+
+        this.input = input;
         this.controller = controller;
     }
 
-    public void displayMenu(Scanner input) {
+    // Displays the main menu for employee management
+    public void displayMenu() {
 
-        this.input = input;
+        boolean back = false;
 
-        System.out.println("===== Employee Management =====");
-        System.out.println("1. View Employees");
-        System.out.println("2. Create Employee");
-        System.out.println("3. Update Employee");
-        System.out.println("4. Archive Employee");
-        System.out.println("5. View Archived Employees");
-        System.out.println("6. Restore Employee");
-        System.out.println("7. Reset Password");
-        System.out.println("0. Back");
-        System.out.print("Enter choice: ");
+        while (!back) {
 
-        switch (readInt()) {
-            case 1 -> displayAllEmployees();
-            case 2 -> createEmployee();
-            case 3 -> updateEmployee();
-            case 4 -> archiveEmployee();
-            case 5 -> displayArchivedEmployees();
-            case 6 -> restoreEmployee();
-            case 7 -> resetPassword();
-            case 0 -> {
+            MenuPrinter.printMenu(
+                    "Employee Management",
+                    "Back",
+                    "View Employees",
+                    "Create Employee",
+                    "Update Employee",
+                    "Archive Employee",
+                    "View Archived Employees",
+                    "Restore Employee",
+                    "Reset Password");
+
+            int choice = InputValidator.readMenuChoice(input, 0, 7);
+
+            switch (choice) {
+                case 1 -> displayAllEmployees();
+                case 2 -> createEmployee();
+                case 3 -> updateEmployee();
+                case 4 -> archiveEmployee();
+                case 5 -> displayArchivedEmployees();
+                case 6 -> restoreEmployee();
+                case 7 -> resetPassword();
+                case 0 -> back = true;
+                default -> MessagePrinter.error("Invalid menu option.");
             }
-            default -> System.out.println("Invalid menu option.");
         }
     }
 

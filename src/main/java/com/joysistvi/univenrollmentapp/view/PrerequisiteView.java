@@ -8,53 +8,57 @@ import com.joysistvi.univenrollmentapp.controller.PrerequisiteController;
 import com.joysistvi.univenrollmentapp.model.Course;
 import com.joysistvi.univenrollmentapp.model.Prerequisite;
 import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MenuPrinter;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
 public class PrerequisiteView {
 
-    private Scanner input;
+    // Scanner object for user input
+    private final Scanner input;
 
+    // Controllers for prerequisite and course operations
     private final PrerequisiteController prerequisiteController;
     private final CourseController courseController;
 
+    // Constructor
     public PrerequisiteView(
+            Scanner input,
             PrerequisiteController prerequisiteController,
             CourseController courseController) {
 
+        this.input = input;
         this.prerequisiteController = prerequisiteController;
         this.courseController = courseController;
 
     }
 
-    public void displayMenu(Scanner input) {
+    // Displays the main menu for prerequisite management
+    public void displayMenu() {
 
-        this.input = input;
+        boolean back = false;
 
-        while (true) {
+        while (!back) {
 
-            System.out.println("\n===== Prerequisite Management =====");
-            System.out.println("1. View All Prerequisites");
-            System.out.println("2. Add Prerequisite");
-            System.out.println("3. Update Prerequisite");
-            System.out.println("4. Delete Prerequisite");
-            System.out.println("0. Back");
-            System.out.print("Enter choice: ");
+            MenuPrinter.printMenu(
+                    "Prerequisite Management",
+                    "Back",
+                    "View All Prerequisites",
+                    "Add Prerequisite",
+                    "Update Prerequisite",
+                    "Delete Prerequisite");
+            
+            int choice = InputValidator.readMenuChoice(input, 0, 4);
 
-            switch (InputValidator.readPositiveInt(input, "Selected menu option")) {
-
+            switch (choice) {
                 case 1 -> displayAllPrerequisites();
                 case 2 -> createPrerequisite();
                 case 3 -> updatePrerequisite();
                 case 4 -> deletePrerequisite();
-                case 0 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid menu option.");
-
+                case 0 -> back = true;
+                default -> MessagePrinter.error("Invalid menu option.");
             }
-
         }
-
     }
 
     private void displayAllPrerequisites() {
@@ -237,5 +241,4 @@ public class PrerequisiteView {
             int courseId,
             int prerequisiteCourseId) {
     }
-
 }
