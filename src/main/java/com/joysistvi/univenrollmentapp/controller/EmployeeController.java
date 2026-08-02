@@ -2,8 +2,6 @@ package com.joysistvi.univenrollmentapp.controller;
 
 import java.util.List;
 
-import com.joysistvi.univenrollmentapp.enums.Position;
-import com.joysistvi.univenrollmentapp.enums.Status;
 import com.joysistvi.univenrollmentapp.model.Employee;
 import com.joysistvi.univenrollmentapp.service.EmployeeService;
 
@@ -19,9 +17,9 @@ public class EmployeeController {
         this.employeeService = employeeService;
     }
 
-    // Retrieve all active employees
-    public List<Employee> getActiveEmployees() {
-        return employeeService.getActiveEmployees();
+    // Retrieve all employees
+    public List<Employee> getAllEmployees() {
+        return employeeService.getAllEmployees();
     }
 
     // Retrieve all archived employees
@@ -29,61 +27,40 @@ public class EmployeeController {
         return employeeService.getArchivedEmployees();
     }
 
+    // Retrieve an employee by ID
+    public Employee getEmployeeById(int id) {
+        return employeeService.getEmployeeById(id);
+    }
+
     // Create a new employee
     public boolean createEmployee(
-            String employeeId,
-            String firstName,
-            String lastName,
-            String username,
-            String password,
-            Position position) {
+            Employee employee,
+            String password) {
 
         return employeeService.createEmployee(
-                employeeId,
-                firstName,
-                lastName,
-                username,
-                password,
-                position);
+                employee,
+                password);
+
     }
 
     // Update an existing employee
-    public boolean updateEmployee(
-            Employee employee,
-            String employeeId,
-            String firstName,
-            String lastName,
-            Position position,
-            Status status) {
-
-        return employeeService.updateEmployee(
-                employee.getId(),
-                employeeId,
-                firstName,
-                lastName,
-                position,
-                employee.getUserId(),
-                employee.getUsername(),
-                status);
+    public boolean updateEmployee(Employee employee) {
+        return employeeService.updateEmployee(employee);
     }
 
-    // Deactivate employee
-    public boolean deactivateEmployee(int id) {
-        return employeeService.archiveEmployee(id);
-    }
-
-    // Reactivate employee
-    public boolean reactivateEmployee(int id) {
-        return employeeService.restoreEmployee(id);
-    }
-
-    // Archive employee
+    // Archive an employee
     public boolean archiveEmployee(int id) {
         return employeeService.archiveEmployee(id);
     }
 
-    // Restore employee
+    // Restore an archived employee
     public boolean restoreEmployee(int id) {
         return employeeService.restoreEmployee(id);
     }
+
+    // Permanently delete an employee
+    public boolean deleteEmployee(int id) {
+        return employeeService.deleteEmployee(id);
+    }
+
 }

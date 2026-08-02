@@ -2,44 +2,34 @@ package com.joysistvi.univenrollmentapp.service;
 
 import java.util.List;
 
-import com.joysistvi.univenrollmentapp.enums.Position;
-import com.joysistvi.univenrollmentapp.enums.Status;
 import com.joysistvi.univenrollmentapp.model.Employee;
 
 // Service Interface
-// Defines the business operations for Employee management
+// Defines the business operations for employee management
 public interface EmployeeService {
 
-    // Retrieve all active employees
-    List<Employee> getActiveEmployees();
+    // Retrieve all employees
+    List<Employee> getAllEmployees();
 
-    // Retrieve archived employees
+    // Retrieve all archived employees
     List<Employee> getArchivedEmployees();
 
-    // Create an employee
-    boolean createEmployee(
-            String employeeId,
-            String firstName,
-            String lastName,
-            String username,
-            String password,
-            Position position);
+    // Retrieve an employee by ID
+    Employee getEmployeeById(int id);
 
-    // Update an employee
-    boolean updateEmployee(
-            int id,
-            String employeeId,
-            String firstName,
-            String lastName,
-            Position position,
-            int userId,
-            String username,
-            Status status);
+    // Create a new employee
+    boolean createEmployee(Employee employee, String password);
+
+    // Update an existing employee
+    boolean updateEmployee(Employee employee);
 
     // Archive an employee
     boolean archiveEmployee(int id);
 
-    // Restore an employee
+    // Restore an archived employee
     boolean restoreEmployee(int id);
+
+    // Permanently delete an employee
+    boolean deleteEmployee(int id);
 
 }

@@ -1,98 +1,45 @@
 package com.joysistvi.univenrollmentapp.repository;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.joysistvi.univenrollmentapp.config.DbConnection;
 import com.joysistvi.univenrollmentapp.enums.Position;
 import com.joysistvi.univenrollmentapp.enums.Status;
 import com.joysistvi.univenrollmentapp.model.Employee;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-
+// Repository Implementation
+// Implements database operations for Employee objects
 public class EmployeeRepositoryImpl implements EmployeeRepository {
 
+    // Database Connection
     private final DbConnection dbConnection;
 
+    // Constructor for Dependency Injection
     public EmployeeRepositoryImpl(DbConnection dbConnection) {
         this.dbConnection = dbConnection;
     }
 
+    // Retrieve all employees
     @Override
-    public List<Employee> getActiveEmployees() {
-
-        List<Employee> employees = new ArrayList<>();
-
-        String sql = """
-                SELECT e.id,
-                       e.employee_id,
-                       e.first_name,
-                       e.last_name,
-                       e.position,
-                       e.user_id,
-                       e.status,
-                       u.username
-                FROM employees e
-                JOIN users u
-                    ON e.user_id = u.id
-                WHERE e.is_archived = FALSE
-                ORDER BY e.employee_id
-                """;
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                employees.add(mapEmployee(resultSet));
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Database Error: " + e.getMessage());
-        }
-
-        return employees;
-
+    public List<Employee> getAllEmployees() {
+        return findEmployees(false);
     }
 
+    // Retrieve all archived employees
     @Override
     public List<Employee> getArchivedEmployees() {
-
-        List<Employee> employees = new ArrayList<>();
-
-        String sql = """
-                SELECT e.id,
-                       e.employee_id,
-                       e.first_name,
-                       e.last_name,
-                       e.position,
-                       e.user_id,
-                       e.status,
-                       u.username
-                FROM employees e
-                JOIN users u
-                    ON e.user_id = u.id
-                WHERE e.is_archived = TRUE
-                ORDER BY e.employee_id
-                """;
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql);
-             ResultSet resultSet = statement.executeQuery()) {
-
-            while (resultSet.next()) {
-                employees.add(mapEmployee(resultSet));
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Database Error: " + e.getMessage());
-        }
-
-        return employees;
-
+        return findEmployees(true);
     }
 
+    // Retrieve an employee by ID
     @Override
-    public Employee findById(int id) {
+    public Employee getEmployeeById(int id) {
 
         String sql = """
                 SELECT e.id,
@@ -111,7 +58,8 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                 """;
 
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
 
@@ -122,23 +70,71 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             }
 
         } catch (SQLException e) {
+
             System.out.println("Database Error: " + e.getMessage());
+
         }
 
         return null;
 
     }
 
+    // Helper method to retrieve employees
+    private List<Employee> findEmployees(boolean archived) {
+
+        List<Employee> employees = new ArrayList<>();
+
+        String sql = """
+                SELECT e.id,
+                       e.employee_id,
+                       e.first_name,
+                       e.last_name,
+                       e.position,
+                       e.user_id,
+                       e.status,
+                       u.username
+                FROM employees e
+                JOIN users u
+                    ON e.user_id = u.id
+                WHERE e.is_archived = ?
+                ORDER BY e.employee_id
+                """;
+
+        try (Connection connection = dbConnection.getConnection();
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
+
+            statement.setBoolean(1, archived);
+
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()) {
+
+                employees.add(mapEmployee(resultSet));
+
+            }
+
+        } catch (SQLException e) {
+
+            System.out.println("Database Error: " + e.getMessage());
+
+        }
+
+        return employees;
+
+    }
+
+    // Create a new employee
     @Override
-    public boolean save(Employee employee, String hashedPassword) {
+    public boolean createEmployee(Employee employee, String hashedPassword) {
 
         String createUser = """
-                INSERT INTO users(username,password,role)
-                VALUES(?,?,?)
+                INSERT INTO users (username, password, role)
+                VALUES (?, ?, ?)
                 """;
 
         String createEmployee = """
-                INSERT INTO employees(
+                INSERT INTO employees (
                     employee_id,
                     first_name,
                     last_name,
@@ -146,7 +142,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
                     user_id,
                     status
                 )
-                VALUES(?,?,?,?,?,?)
+                VALUES (?, ?, ?, ?, ?, ?)
                 """;
 
         try (Connection connection = dbConnection.getConnection()) {
@@ -166,14 +162,17 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
                 userStatement.executeUpdate();
 
-                ResultSet keys = userStatement.getGeneratedKeys();
+                ResultSet generatedKeys =
+                        userStatement.getGeneratedKeys();
 
-                if (!keys.next()) {
+                if (!generatedKeys.next()) {
+
                     connection.rollback();
                     return false;
+
                 }
 
-                int userId = keys.getInt(1);
+                int userId = generatedKeys.getInt(1);
 
                 employeeStatement.setString(1, employee.getEmployeeId());
                 employeeStatement.setString(2, employee.getFirstName());
@@ -191,6 +190,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             } catch (SQLException e) {
 
                 connection.rollback();
+
                 System.out.println("Database Error: " + e.getMessage());
 
             } finally {
@@ -209,8 +209,9 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     }
 
+    // Update an existing employee
     @Override
-    public boolean update(Employee employee) {
+    public boolean updateEmployee(Employee employee) {
 
         String updateEmployee = """
                 UPDATE employees
@@ -258,6 +259,7 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
             } catch (SQLException e) {
 
                 connection.rollback();
+
                 System.out.println("Database Error: " + e.getMessage());
 
             } finally {
@@ -276,18 +278,36 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     }
 
+    // Archive an employee
     @Override
-    public boolean archive(int id) {
+    public boolean archiveEmployee(int id) {
+        return executeUpdate(
+                "UPDATE employees SET is_archived = TRUE WHERE id = ?",
+                id);
+    }
 
-        String sql = """
-                UPDATE employees
-                SET is_archived = TRUE
-                WHERE id = ?
-                  AND is_archived = FALSE
-                """;
+    // Restore an archived employee
+    @Override
+    public boolean restoreEmployee(int id) {
+        return executeUpdate(
+                "UPDATE employees SET is_archived = FALSE WHERE id = ?",
+                id);
+    }
+
+    // Permanently delete an employee
+    @Override
+    public boolean deleteEmployee(int id) {
+        return executeUpdate(
+                "DELETE FROM employees WHERE id = ?",
+                id);
+    }
+
+    // Helper method to execute update queries
+    private boolean executeUpdate(String sql, int id) {
 
         try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement =
+                     connection.prepareStatement(sql)) {
 
             statement.setInt(1, id);
 
@@ -303,71 +323,18 @@ public class EmployeeRepositoryImpl implements EmployeeRepository {
 
     }
 
-    @Override
-    public boolean restore(int id) {
-
-        String sql = """
-                UPDATE employees
-                SET is_archived = FALSE
-                WHERE id = ?
-                  AND is_archived = TRUE
-                """;
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            return statement.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-
-            System.out.println("Database Error: " + e.getMessage());
-
-        }
-
-        return false;
-
-    }
-
-    @Override
-    public boolean delete(int id) {
-
-        String sql = """
-                DELETE FROM employees
-                WHERE id = ?
-                  AND is_archived = TRUE
-                """;
-
-        try (Connection connection = dbConnection.getConnection();
-             PreparedStatement statement = connection.prepareStatement(sql)) {
-
-            statement.setInt(1, id);
-
-            return statement.executeUpdate() > 0;
-
-        } catch (SQLException e) {
-
-            System.out.println("Database Error: " + e.getMessage());
-
-        }
-
-        return false;
-
-    }
-
-    private Employee mapEmployee(ResultSet rs) throws SQLException {
+    // Helper method to map a ResultSet into an Employee object
+    private Employee mapEmployee(ResultSet resultSet) throws SQLException {
 
         return new Employee(
-                rs.getInt("id"),
-                rs.getString("employee_id"),
-                rs.getString("first_name"),
-                rs.getString("last_name"),
-                Position.valueOf(rs.getString("position")),
-                rs.getInt("user_id"),
-                rs.getString("username"),
-                Status.valueOf(rs.getString("status"))
-        );
+                resultSet.getInt("id"),
+                resultSet.getString("employee_id"),
+                resultSet.getString("first_name"),
+                resultSet.getString("last_name"),
+                Position.valueOf(resultSet.getString("position")),
+                resultSet.getInt("user_id"),
+                resultSet.getString("username"),
+                Status.valueOf(resultSet.getString("status")));
 
     }
 
