@@ -3,7 +3,7 @@ package com.joysistvi.univenrollmentapp.view;
 import java.util.List;
 import java.util.Scanner;
 
-import com.joysistvi.univenrollmentapp.controller.StudentController;
+import com.joysistvi.univenrollmentapp.controller.StudentPortalController;
 import com.joysistvi.univenrollmentapp.enums.Semester;
 import com.joysistvi.univenrollmentapp.model.Course;
 import com.joysistvi.univenrollmentapp.model.Enrollment;
@@ -11,29 +11,34 @@ import com.joysistvi.univenrollmentapp.model.Prerequisite;
 import com.joysistvi.univenrollmentapp.model.Student;
 import com.joysistvi.univenrollmentapp.utils.TableFormatter;
 
-public class StudentView {
+public class StudentPortalView {
 
+    // Scanner for user input
     private Scanner input;
-    private final StudentController controller;
 
-    public StudentView(StudentController controller) {
+    // Controller for handling student portal operations
+    private final StudentPortalController controller;
+
+    // Constructor
+    public StudentPortalView(StudentPortalController controller) {
         this.controller = controller;
     }
 
+    // Display the main menu for the student portal
     public void displayMenu(Scanner input, int userId) {
 
         this.input = input;
 
-        Student student = controller.getStudentByUserId(userId);
-
-        if (student == null) {
-            System.out.println("No student profile is linked to this account.");
-            return;
-        }
-
         while (true) {
 
-            System.out.println("\n===== Student Menu =====");
+            Student student = controller.getStudentByUserId(userId);
+
+            if (student == null) {
+                System.out.println("No student profile is linked to this account.");
+                return;
+            }
+
+            System.out.println("\n===== Student Portal =====");
             System.out.println("1. View Student Information");
             System.out.println("2. View Available Courses");
             System.out.println("3. View Enrollment History");
@@ -55,9 +60,7 @@ public class StudentView {
                 }
                 default -> System.out.println("Invalid menu option.");
             }
-
         }
-
     }
 
     // ==========================================================
@@ -78,7 +81,6 @@ public class StudentView {
         System.out.println("Status         : " + student.getStatus().getDisplayName());
 
         TableFormatter.printDivider();
-
     }
 
     // ==========================================================
@@ -120,7 +122,6 @@ public class StudentView {
 
         TableFormatter.printDivider();
         TableFormatter.printTotalRecords(courses.size());
-
     }
 
     // ==========================================================
@@ -165,7 +166,6 @@ public class StudentView {
 
         TableFormatter.printDivider();
         TableFormatter.printTotalRecords(enrollments.size());
-
     }
 
     // ==========================================================
@@ -191,7 +191,7 @@ public class StudentView {
                 semester);
 
         System.out.println(result);
-
+        System.out.println();
     }
 
     // ==========================================================
@@ -243,6 +243,7 @@ public class StudentView {
             System.out.println("Failed to drop enrollment.");
         }
 
+        System.out.println();
     }
 
     // ==========================================================
@@ -285,7 +286,6 @@ public class StudentView {
 
         TableFormatter.printDivider();
         TableFormatter.printTotalRecords(prerequisites.size());
-
     }
 
     // ==========================================================
@@ -309,7 +309,6 @@ public class StudentView {
                 yield Semester.FIRST;
             }
         };
-
     }
 
     private int readInt() {
@@ -326,7 +325,5 @@ public class StudentView {
         input.nextLine();
 
         return value;
-
     }
-
 }
