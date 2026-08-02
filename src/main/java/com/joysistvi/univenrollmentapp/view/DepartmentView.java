@@ -1,170 +1,249 @@
 package com.joysistvi.univenrollmentapp.view;
 
-import com.joysistvi.univenrollmentapp.controller.DepartmentController;
-import com.joysistvi.univenrollmentapp.model.Department;
-import com.joysistvi.univenrollmentapp.utils.TableFormatter;
-
 import java.util.List;
 import java.util.Scanner;
 
+import com.joysistvi.univenrollmentapp.controller.DepartmentController;
+import com.joysistvi.univenrollmentapp.model.Department;
+import com.joysistvi.univenrollmentapp.utils.ConsoleUtils;
+import com.joysistvi.univenrollmentapp.utils.HeaderPrinter;
+import com.joysistvi.univenrollmentapp.utils.InputValidator;
+import com.joysistvi.univenrollmentapp.utils.MessagePrinter;
+import com.joysistvi.univenrollmentapp.utils.TableFormatter;
+
+// View Class
+// Displays the Department Management menu
 public class DepartmentView {
 
-    private Scanner input;
+    // Scanner object for user input
+    private final Scanner input;
+
+    // Controller for department operations
     private final DepartmentController controller;
 
-    public DepartmentView(DepartmentController controller) {
-        this.controller = controller;
-    }
+    // Constructor
+    public DepartmentView(
+            Scanner input,
+            DepartmentController controller) {
 
-    public void displayMenu(Scanner input) {
         this.input = input;
+        this.controller = controller;
 
-        System.out.println("===== Department Management =====");
-        System.out.println("1. View All Departments");
-        System.out.println("2. Create Department");
-        System.out.println("3. Update Department");
-        System.out.println("4. Archive Department");
-        System.out.println("5. View Archived Departments");
-        System.out.println("6. Restore Department");
-        System.out.println("0. Back");
-        System.out.print("Enter choice: ");
+    }
 
-        switch (readInt()) {
-            case 1 -> displayAllDepartments();
-            case 2 -> createDepartment();
-            case 3 -> updateDepartment();
-            case 4 -> archiveDepartment();
-            case 5 -> displayArchivedDepartments();
-            case 6 -> restoreDepartment();
-            case 0 -> {
+    // Display Department Menu
+    public void displayMenu() {
+
+        boolean back = false;
+
+        while (!back) {
+
+            HeaderPrinter.printHeader("Department Management");
+
+            System.out.println("1. View All Departments");
+            System.out.println("2. Create Department");
+            System.out.println("3. Update Department");
+            System.out.println("4. Archive Department");
+            System.out.println("5. View Archived Departments");
+            System.out.println("6. Restore Department");
+            System.out.println("0. Back");
+
+            int choice = InputValidator.readMenuChoice(input);
+
+            switch (choice) {
+
+                case 1 -> displayAllDepartments();
+
+                case 2 -> createDepartment();
+
+                case 3 -> updateDepartment();
+
+                case 4 -> archiveDepartment();
+
+                case 5 -> displayArchivedDepartments();
+
+                case 6 -> restoreDepartment();
+
+                case 0 -> back = true;
+
+                default -> MessagePrinter.error("Invalid menu option.");
+
             }
-            default -> System.out.println("Invalid menu option.");
+
         }
+
     }
 
-    public void displayAllDepartments() {
+    // Display all active departments
+    private void displayAllDepartments() {
+
         printDepartments(controller.getAllDepartments());
+
+        ConsoleUtils.pressEnterToContinue(input);
+
     }
 
-    public void displayArchivedDepartments() {
+    // Display archived departments
+    private void displayArchivedDepartments() {
+
         printDepartments(controller.getArchivedDepartments());
+
+        ConsoleUtils.pressEnterToContinue(input);
+
     }
 
+    // Create a new department
     private void createDepartment() {
-        String departmentName = readDepartmentName("Enter department name: ");
 
-        if (departmentName == null) {
-            return;
-        }
+        String departmentName =
+                InputValidator.readRequiredString(
+                        input,
+                        "Department Name");
 
-        if (controller.createDepartment(departmentName)) {
-            System.out.println("Department created successfully.");
+        Department department =
+                new Department(
+                        0,
+                        departmentName);
+
+        if (controller.createDepartment(department)) {
+
+            MessagePrinter.success(
+                    "Department created successfully.");
+
         } else {
-            System.out.println("Failed to create department.");
+
+            MessagePrinter.error(
+                    "Failed to create department.");
+
         }
+
+        ConsoleUtils.pressEnterToContinue(input);
+
     }
 
+    // Update an existing department
     private void updateDepartment() {
+
         displayAllDepartments();
 
-        System.out.print("Enter department ID to update: ");
-        int id = readInt();
+        int id =
+                InputValidator.readPositiveInt(
+                        input,
+                        "Department ID");
 
-        String departmentName = readDepartmentName("Enter new department name: ");
+        String departmentName =
+                InputValidator.readRequiredString(
+                        input,
+                        "New Department Name");
 
-        if (departmentName == null) {
-            return;
-        }
+        Department department =
+                new Department(
+                        id,
+                        departmentName);
 
-        if (controller.updateDepartment(id, departmentName)) {
-            System.out.println("Department updated successfully.");
+        if (controller.updateDepartment(department)) {
+
+            MessagePrinter.success(
+                    "Department updated successfully.");
+
         } else {
-            System.out.println("Failed to update department.");
+
+            MessagePrinter.error(
+                    "Failed to update department.");
+
         }
+
+        ConsoleUtils.pressEnterToContinue(input);
+
     }
 
+    // Archive a department
     private void archiveDepartment() {
+
         displayAllDepartments();
 
-        System.out.print("Enter department ID to archive: ");
-        int id = readInt();
+        int id =
+                InputValidator.readPositiveInt(
+                        input,
+                        "Department ID");
 
         if (controller.archiveDepartment(id)) {
-            System.out.println("Department archived successfully.");
+
+            MessagePrinter.success(
+                    "Department archived successfully.");
+
         } else {
-            System.out.println("Failed to archive department.");
+
+            MessagePrinter.error(
+                    "Failed to archive department.");
+
         }
+
+        ConsoleUtils.pressEnterToContinue(input);
+
     }
 
+    // Restore an archived department
     private void restoreDepartment() {
+
         displayArchivedDepartments();
 
-        System.out.print("Enter department ID to restore: ");
-        int id = readInt();
+        int id =
+                InputValidator.readPositiveInt(
+                        input,
+                        "Department ID");
 
         if (controller.restoreDepartment(id)) {
-            System.out.println("Department restored successfully.");
+
+            MessagePrinter.success(
+                    "Department restored successfully.");
+
         } else {
-            System.out.println("Failed to restore department.");
+
+            MessagePrinter.error(
+                    "Failed to restore department.");
+
         }
+
+        ConsoleUtils.pressEnterToContinue(input);
+
     }
 
-    private void printDepartments(List<Department> departments) {
+    // Print departments
+    private void printDepartments(
+            List<Department> departments) {
 
         if (departments.isEmpty()) {
+
             TableFormatter.printNoRecordsFound();
+
             return;
+
         }
 
-        printDivider();
+        TableFormatter.printDivider();
 
         System.out.printf(
                 "%-5s %-35s%n",
                 "ID",
                 "Department Name");
 
-        printDivider();
+        TableFormatter.printDivider();
 
         for (Department department : departments) {
+
             System.out.printf(
                     "%-5d %-35s%n",
                     department.getId(),
                     department.getDepartmentName());
+
         }
 
-        printDivider();
-        TableFormatter.printTotalRecords(departments.size());
+        TableFormatter.printDivider();
+
+        TableFormatter.printTotalRecords(
+                departments.size());
+
     }
 
-    private String readDepartmentName(String prompt) {
-
-        System.out.print(prompt);
-
-        String name = input.nextLine().trim();
-
-        if (name.isEmpty()) {
-            System.out.println("Department name cannot be empty.");
-            return null;
-        }
-
-        return name;
-    }
-
-    private int readInt() {
-
-        while (!input.hasNextInt()) {
-            System.out.println("Please enter a valid number.");
-            input.nextLine();
-            System.out.print("Choice: ");
-        }
-
-        int value = input.nextInt();
-        input.nextLine();
-
-        return value;
-    }
-
-    private void printDivider() {
-        System.out.println("------------------------------------------------");
-    }
 }

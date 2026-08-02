@@ -1,18 +1,30 @@
 package com.joysistvi.univenrollmentapp.model;
 
+// Model Class
+// Stores the information of a Department object using encapsulation
 public class Department {
 
-    private int id;
-    private String department_name;
+    // Attributes
+    private final int id;
+    private final String departmentName;
 
-    public Department(int id, String department_name) {
+    // Constructor
+    public Department(
+            int id,
+            String departmentName) {
+
         this.id = id;
-        this.department_name = department_name;
+        this.departmentName = departmentName;
+
     }
-    public int getId(){
+
+    // Getters
+    public int getId() {
         return id;
     }
-    public String getDepartmentName(){
-        return department_name;
+
+    public String getDepartmentName() {
+        return departmentName;
     }
+
 }

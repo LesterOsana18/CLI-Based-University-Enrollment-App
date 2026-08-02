@@ -13,14 +13,11 @@ public class DepartmentController {
     private final DepartmentService departmentService;
 
     // Constructor
-    public DepartmentController(
-            DepartmentService departmentService) {
-
+    public DepartmentController(DepartmentService departmentService) {
         this.departmentService = departmentService;
-
     }
 
-    // Retrieve all active departments
+    // Retrieve all departments
     public List<Department> getAllDepartments() {
         return departmentService.getAllDepartments();
     }
@@ -30,27 +27,19 @@ public class DepartmentController {
         return departmentService.getArchivedDepartments();
     }
 
+    // Retrieve a department by ID
+    public Department getDepartmentById(int id) {
+        return departmentService.getDepartmentById(id);
+    }
+
     // Create a new department
-    public boolean createDepartment(String departmentName) {
-
-        Department department =
-                new Department(
-                        0,
-                        departmentName);
-
+    public boolean createDepartment(Department department) {
         return departmentService.createDepartment(department);
-
     }
 
     // Update an existing department
-    public boolean updateDepartment(
-            int id,
-            String departmentName) {
-
-        return departmentService.updateDepartment(
-                id,
-                departmentName);
-
+    public boolean updateDepartment(Department department) {
+        return departmentService.updateDepartment(department);
     }
 
     // Archive a department
@@ -63,7 +52,7 @@ public class DepartmentController {
         return departmentService.restoreDepartment(id);
     }
 
-    // Delete a department permanently
+    // Permanently delete a department
     public boolean deleteDepartment(int id) {
         return departmentService.deleteDepartment(id);
     }
